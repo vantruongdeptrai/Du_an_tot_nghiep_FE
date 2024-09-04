@@ -12,7 +12,7 @@ const useCategory = () => {
     const fetchCategories = async () => {
         try {
             setIsLoading(true);
-            const respon  = await axios.get("/categories");
+            const respon  = await axios.get("http://localhost:8000/api/categories");
             setCategories(respon.data);
         } catch (err) {
             setError("Failed to fetch categories");
