@@ -1,11 +1,26 @@
-import { HiOutlineSave } from "react-icons/hi";
-import { ImageUpload, InputWithLabel, Sidebar, SimpleInput, TextAreaInput } from "../../components";
-import SelectInput from "../../components/SelectInput";
-import { selectList } from "../../utils/data";
-import { AiOutlineSave } from "react-icons/ai";
-import { Link } from "react-router-dom";
-
+import { ImageUpload, InputWithLabel, Sidebar, SimpleInput } from "../../components";
+import { categoryInput } from "../../api/categories/types";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import categorySchema from "../../api/categories/categorySchema";
+import  useCategory from "../../hooks/category";
+import { zodResolver } from "@hookform/resolvers/zod"
 const CreateCategory = () => {
+    // Khởi tạo các hàm của React Hook Form
+    const {
+        register,
+        handleSubmit,
+        formState:{errors},
+    } = useForm<categoryInput>({
+        resolver: zodResolver(categorySchema)
+    });
+    const {createCategory} = useCategory();
+    const nav = useNavigate();
+    // Hàm xử lý khi form được submit
+    const onSubmit: SubmitHandler<categoryInput> = (data) => {
+        createCategory(data);
+        nav("/categories");
+    };
     return (
         <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
             <Sidebar />
@@ -17,73 +32,48 @@ const CreateCategory = () => {
                                 Add new category
                             </h2>
                         </div>
-                        <div className="flex gap-x-2 max-[370px]:flex-col max-[370px]:gap-2 max-[370px]:items-center">
-                            <button className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-48 py-2 text-lg dark:hover:border-gray-500 hover:border-gray-400 duration-200 flex items-center justify-center gap-x-2">
-                                <AiOutlineSave className="dark:text-whiteSecondary text-blackPrimary text-xl" />
-                                <span className="dark:text-whiteSecondary text-blackPrimary font-medium">
-                                    Save draft
-                                </span>
-                            </button>
-                            <Link
-                                to="/categories/add-category"
-                                className="dark:bg-whiteSecondary bg-blackPrimary w-48 py-2 text-lg dark:hover:bg-white hover:bg-black duration-200 flex items-center justify-center gap-x-2"
-                            >
-                                <HiOutlineSave className="dark:hover:text-blackPrimary hover:text-whiteSecondary dark:text-blackPrimary text-whiteSecondary text-xl" />
-                                <span className="dark:text-blackPrimary text-whiteSecondary font-semibold">
-                                    Publish category
-                                </span>
-                            </Link>
-                        </div>
                     </div>
 
                     {/* Add Category section here  */}
-                    <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 grid grid-cols-2 gap-x-10 max-xl:grid-cols-1 max-xl:gap-y-10">
-                        {/* left div */}
-                        <div>
-                            <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                                Basic information
-                            </h3>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 grid grid-cols-2 gap-x-10 max-xl:grid-cols-1 max-xl:gap-y-10">
+                            {/* left div */}
+                            <div>
+                                <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
+                                    Basic information
+                                </h3>
 
-                            <div className="mt-4 flex flex-col gap-5">
-                                <InputWithLabel label="Category title">
-                                    <SimpleInput type="text" placeholder="Enter a category title..." />
-                                </InputWithLabel>
+                                <div className="mt-4 flex flex-col gap-5">
+                                    <InputWithLabel label="Category name">
+                                        <SimpleInput {...register("name")} type="text" placeholder="Enter a category name..." />
+                                        {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
+                                    </InputWithLabel>
 
-                                <InputWithLabel label="Category description">
-                                    <TextAreaInput placeholder="Enter a category description..." rows={4} cols={50} />
-                                </InputWithLabel>
-
-                                <InputWithLabel label="Category slug">
-                                    <SimpleInput type="text" placeholder="Enter a category slug..." />
-                                </InputWithLabel>
-
-                                <InputWithLabel label="Parent category (optional)">
-                                    <SelectInput selectList={selectList} />
-                                </InputWithLabel>
+                                    <InputWithLabel label="Category slug">
+                                        <SimpleInput {...register("slug")} type="text" placeholder="Enter a category slug..." />
+                                        {errors.slug && <span className="text-sm text-red-500">{errors.slug.message}</span>}
+                                    </InputWithLabel>
+                                </div>
                             </div>
-                            <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mt-16">
-                                SEO
-                            </h3>
-                            <div className="mt-4 flex flex-col gap-5">
-                                <InputWithLabel label="Meta title">
-                                    <SimpleInput type="text" placeholder="Enter a meta title..." />
-                                </InputWithLabel>
+                            {/* right div */}
+                            <div>
+                                <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
+                                    Category image
+                                </h3>
 
-                                <InputWithLabel label="Meta description">
-                                    <TextAreaInput placeholder="Enter a meta description..." rows={4} cols={50} />
-                                </InputWithLabel>
+                                <ImageUpload />
+                            </div>
+                            <div className="mt-4 flex flex-col gap-5">
+                                <button
+                                    type="submit"
+                                    className="focus:outline-none text-white bg-black hover:border hover:border-white focus:ring-1 focus:ring-white font-medium rounded-none text-sm px-5 py-2.5 me-2 mb-2"
+                                >
+                                    Thêm mới
+                                </button>
                             </div>
                         </div>
-
-                        {/* right div */}
-                        <div>
-                            <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                                Category image
-                            </h3>
-
-                            <ImageUpload />
-                        </div>
-                    </div>
+                    </form>
+                    
                 </div>
             </div>
         </div>

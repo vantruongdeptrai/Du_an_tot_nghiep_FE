@@ -1,40 +1,8 @@
-import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
-import axios from "axios";
-import { Category } from "../api/categories/types";
-
-const CategoryTable: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const fetchCategories = async () => {
-    try {
-      setIsLoading(true);
-      const response = await axios.get<Category[]>(
-        "http://localhost:8000/api/categories"
-      );
-      console.log(response.data); // Kiểm tra dữ liệu nhận được
-      setCategories(response.data);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        console.error("Thông báo lỗi:", err.message);
-        setError(`Lỗi mạng: ${err.message}`);
-      } else {
-        console.error("Lỗi không mong đợi:", err);
-        setError("Không thể lấy danh mục");
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-
+import  useCategory from "../hooks/category";
+const CategoryTable = () => {
+  const { categories } = useCategory();
   return (
     <table className="mt-6 w-full whitespace-nowrap text-left max-lg:block max-lg:overflow-x-scroll">
       <colgroup>
@@ -53,6 +21,9 @@ const CategoryTable: React.FC = () => {
             Category
           </th>
           <th scope="col" className="py-2 pl-0 pr-8 font-semibold table-cell">
+            Image
+          </th>
+          <th scope="col" className="py-2 pl-0 pr-8 font-semibold table-cell">
             Slug
           </th>
           <th
@@ -68,14 +39,18 @@ const CategoryTable: React.FC = () => {
           <tr key={item.id}>
             <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
               <div className="flex items-center gap-x-4">
+                <div className="text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
+                  {item.name}
+                </div>
+              </div>
+            </td>
+            <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
+              <div className="flex items-center gap-x-4">
                 <img
-                  src={item.image}
+                  src={item.image_url}
                   alt={item.name}
                   className="h-8 w-8 rounded-full bg-gray-800"
                 />
-                <div className="truncate text-sm font-medium leading-6 dark:text-whiteSecondary text-blackPrimary">
-                  {item.name}
-                </div>
               </div>
             </td>
             <td className="py-4 pl-0 table-cell pr-8">
