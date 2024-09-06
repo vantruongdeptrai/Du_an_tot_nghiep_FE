@@ -12,3 +12,15 @@ export interface Category {
 // export interface CategoriesResponse {
 //     data: Category[];
 // }
+export type categories = {
+    id?: string;
+    name: string;
+}
+
+export type categoryInput = {
+    id?: string ;
+    name: string;
+    slug: string;
+    image: string;
+    image_url: string
+}
