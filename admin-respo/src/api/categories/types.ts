@@ -6,7 +6,6 @@ export interface Category {
     deleted_at: null,
     created_at: string,
     updated_at: string,
-    image_url: string
 }
 
 // export interface CategoriesResponse {
@@ -22,5 +21,4 @@ export type categoryInput = {
     name: string;
     slug: string;
     image: string;
-    image_url: string
 }
