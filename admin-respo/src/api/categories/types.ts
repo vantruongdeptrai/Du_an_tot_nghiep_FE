@@ -20,7 +20,6 @@ export type categories = {
 export type categoryInput = {
     id?: string ;
     name: string;
-    slug: string;
     image: string;
     image_url: string
 }
