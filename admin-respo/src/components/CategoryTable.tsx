@@ -47,9 +47,9 @@ const CategoryTable = () => {
             <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
               <div className="flex items-center gap-x-4">
                 <img
-                  src={item.image_url}
+                  src={item.image}
                   alt={item.name}
-                  className="h-8 w-8 rounded-full bg-gray-800"
+                  className="h-8 w-8 bg-gray-800"
                 />
               </div>
             </td>
