@@ -2,13 +2,25 @@
 // Role of the component: The image upload component
 // Name of the component: ImageUpload.tsx
 // Developer: Aleksandar Kuzmanovic
-// Version: 1.0
-// Component call: <ImageUpload />
-// Input parameters: No input parameters
+// Version: 1.1
+// Component call: <ImageUpload onFileChange={handleFileChange} />
+// Input parameters: onFileChange (function to handle file selection)
 // Output: The upload input component
 // *********************
 
-const ImageUpload = () => {
+import React, { ChangeEvent } from "react";
+
+interface ImageUploadProps {
+  onFileChange: (file: File | null) => void;
+}
+
+const ImageUpload: React.FC<ImageUploadProps> = ({ onFileChange }) => {
+  // Hàm xử lý khi người dùng chọn file
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    onFileChange(file);
+  };
+
   return (
     <div className="flex items-center justify-center w-full mt-5">
       <label
@@ -32,14 +44,20 @@ const ImageUpload = () => {
             />
           </svg>
           <p className="mb-2 text-sm text-blackPrimary dark:text-whiteSecondary">
-            <span className="font-semibold">Click to upload</span> or drag and
-            drop
+            <span className="font-semibold">Click to upload</span> or drag and drop
           </p>
           <p className="text-xs dark:text-whiteSecondary text-blackPrimary">
             SVG, PNG, JPG or GIF (MAX. 800x400px)
           </p>
         </div>
-        <input id="dropzone-file" type="file" className="hidden" />
+        {/* Input file */}
+        <input
+          id="dropzone-file"
+          type="file"
+          className="hidden"
+          onChange={handleFileChange}
+          accept="image/*"
+        />
       </label>
     </div>
   );
