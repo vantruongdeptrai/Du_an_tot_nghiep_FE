@@ -3,6 +3,7 @@ export interface Category {
     name: string;
     image: string;
     slug: string;
+    image_url: string;
     deleted_at: null,
     created_at: string,
     updated_at: string,

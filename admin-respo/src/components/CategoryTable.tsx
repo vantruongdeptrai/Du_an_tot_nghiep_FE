@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
 import  useCategory from "../hooks/category";
+// import { removePrefixFromImageUrl } from "../utils/image";
 const CategoryTable = () => {
   const { categories } = useCategory();
   return (
@@ -47,9 +48,9 @@ const CategoryTable = () => {
             <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
               <div className="flex items-center gap-x-4">
                 <img
-                  src={item.image}
+                  src={item.image_url}
                   alt={item.name}
-                  className="h-8 w-8 bg-gray-800"
+                  className="h-20 w-20 rounded-md bg-gray-800"
                 />
               </div>
             </td>
