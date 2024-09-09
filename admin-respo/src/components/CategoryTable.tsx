@@ -1,8 +1,23 @@
 import { Link } from "react-router-dom";
 import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
-import  useCategory from "../hooks/category";
+import useCategory from "../hooks/category";
+
 const CategoryTable = () => {
-  const { categories } = useCategory();
+  const { categories, deleteCategory, isLoading, error } = useCategory();
+
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa danh mục này không?"
+    );
+    if (confirmDelete) {
+      try {
+        await deleteCategory(id);
+      } catch (err) {
+        console.error("Xóa danh mục không thành công:", err);
+      }
+    }
+  };
+
   return (
     <table className="mt-6 w-full whitespace-nowrap text-left max-lg:block max-lg:overflow-x-scroll">
       <colgroup>
@@ -74,12 +89,13 @@ const CategoryTable = () => {
                 >
                   <HiOutlineEye className="text-lg" />
                 </Link>
-                <Link
-                  to="#"
+                <button
+                  onClick={() => handleDelete(item.id!)}
                   className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
+                  disabled={isLoading}
                 >
                   <HiOutlineTrash className="text-lg" />
-                </Link>
+                </button>
               </div>
             </td>
           </tr>

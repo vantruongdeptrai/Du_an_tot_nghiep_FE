@@ -50,25 +50,45 @@ const useCategory = () => {
         }
     };
 
+
+    
     const updateCategory = async (id: string, data: categoryInput, file?: File) => {
-        const formData = new FormData();
-        formData.append('name', data.name);
-        formData.append('slug', data.slug);
+      const formData = new FormData();
+      
+      // Ensure name and slug are not null or undefined
+      if (!data.name) {
+        throw new Error("Name and slug are required fields.");
+      }
     
-        if (file) {
-          formData.append('image', file);
-        }
+      formData.append('name', data.name);
+
     
-        try {
-            await axios.put(`/api/categories/${id}`, formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-        } catch (error) {
-          console.error('Error updating category:', error);
+      if (file) {
+        formData.append('image', file);
+      }
+    
+      try {
+        const response = await axios.put(`http://localhost:8000/api/categories/${id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+    
+        console.log('Cập nhật danh mục thành công:', response.data);
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          const errorMsg = error.response?.data?.message || error.message;
+          console.error('Lỗi khi cập nhật danh mục:', errorMsg);
+        } else {
+          console.error('Lỗi không mong muốn:', error);
         }
-      };
+        throw error;
+      }
+    };
+      
+    
+
 
     const deleteCategory = async (id: string) => {
         try {
