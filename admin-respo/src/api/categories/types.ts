@@ -1,5 +1,5 @@
 export interface Category {
-    id?: string;
+    id?: string | undefined
     name: string;
     image: string;
     slug: string;
@@ -13,12 +13,12 @@ export interface Category {
 //     data: Category[];
 // }
 export type categories = {
-    id?: string;
+    id?: string | undefined
     name: string;
 }
 
 export type categoryInput = {
-    id?: string ;
+    id?: string | undefined ;
     name: string;
     image: string;
 }
