@@ -74,7 +74,6 @@ const CreateCategory = () => {
                                         )}
                                     </InputWithLabel>
 
-                                    
                                 </div>
                             </div>
                             {/* right div */}
