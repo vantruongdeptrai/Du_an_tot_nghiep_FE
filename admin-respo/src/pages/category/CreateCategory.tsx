@@ -73,6 +73,7 @@ const CreateCategory = () => {
                                             <span className="text-sm text-red-500">{errors.name.message}</span>
                                         )}
                                     </InputWithLabel>
+
                                 </div>
                             </div>
                             {/* right div */}
