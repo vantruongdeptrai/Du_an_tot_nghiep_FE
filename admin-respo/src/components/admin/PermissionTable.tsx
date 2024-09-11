@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { HiOutlinePencil } from "react-icons/hi";
 import { HiOutlineTrash } from "react-icons/hi";
 import { HiOutlineEye } from "react-icons/hi";
-import usePermission from "../hooks/permissions";
+import usePermission from "../../hooks/permissions";
 
 const PermissionTable = () => {
     const { permissions, deletePermission } = usePermission();

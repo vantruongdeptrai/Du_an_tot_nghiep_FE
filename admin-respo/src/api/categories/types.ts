@@ -1,4 +1,4 @@
-export interface Category {
+export type Category = {
     id?: string | undefined
     name: string;
     image: string;
