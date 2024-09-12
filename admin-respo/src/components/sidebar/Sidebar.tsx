@@ -8,7 +8,8 @@
 // Output: Sidebar component that displays the sidebar navigation
 // *********************
 
-import { HiLogin, HiOutlineHome, HiShieldCheck, HiUserGroup } from "react-icons/hi";
+import { HiCash, HiCurrencyDollar, HiLogin, HiOutlineHome, HiShieldCheck, HiUserGroup } from "react-icons/hi";
+
 import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
 import { HiOutlineTag } from "react-icons/hi";
 import { HiOutlineTruck } from "react-icons/hi";
@@ -101,7 +102,22 @@ const Sidebar = () => {
                         <span className="text-lg">Permissions</span>
                     </NavLink>
                     <NavLink
-                        to="/users"
+
+                        to="/coupons"
+                        className={(isActiveObj) => (isActiveObj.isActive ? navActiveClass : navInactiveClass)}
+                    >
+                        <HiCash className="text-xl" />
+                        <span className="text-lg">Coupons</span>
+                    </NavLink>
+                    <NavLink
+                        to="/operating-costs"
+                        className={(isActiveObj) => (isActiveObj.isActive ? navActiveClass : navInactiveClass)}
+                    >
+                        <HiCurrencyDollar className="text-xl" />
+                        <span className="text-lg">Operating Cost</span>
+                    </NavLink>
+                    <NavLink
+                      to="/users"
                         className={(isActiveObj) => (isActiveObj.isActive ? navActiveClass : navInactiveClass)}
                     >
                         <HiOutlineUser className="text-xl" />
