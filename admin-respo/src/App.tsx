@@ -27,6 +27,12 @@ import {
 import Permissions from "./pages/permission/Permissions";
 import CreatePermission from "./pages/permission/CreatePermission";
 import EditPermission from "./pages/permission/EditPermission";
+import Coupon from "./pages/coupon/Coupon";
+import CreateCoupon from "./pages/coupon/CreateCoupon";
+import EditCoupon from "./pages/coupon/EditCoupon";
+import OperatingCost from "./pages/operating_costs/OperatingCost";
+import CreateOperatingCost from "./pages/operating_costs/CreateOperatingCost";
+import EditOperatingCost from "./pages/operating_costs/EditOperatingCost";
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -73,6 +79,30 @@ const router = createBrowserRouter([
         element: <EditPermission />,
       },
       {
+        path: "/operating-costs",
+        element: <OperatingCost />,
+      },
+      {
+        path: "/operating-costs/create-operating-cost",
+        element: <CreateOperatingCost />,
+      },
+      {
+        path: "/operating-costs/:id",
+        element: <EditOperatingCost />,
+      },
+      {
+        path: "/coupons",
+        element: <Coupon />,
+      },
+      {
+        path: "/coupons/create-coupon",
+        element: <CreateCoupon />,
+      },
+      {
+        path: "/coupons/:id",
+        element: <EditCoupon />,
+      },
+      {
         path: "/categories",
         element: <Categories />,
       },
@@ -81,7 +111,7 @@ const router = createBrowserRouter([
         element: <CreateCategory />,
       },
       {
-        path: "/categories/:id/edit",
+        path: "/categories/:id",
         element: <EditCategory />,
       },
       {
