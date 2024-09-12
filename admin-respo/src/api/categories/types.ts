@@ -1,8 +1,9 @@
-export interface Category {
-    id?: string;
+export type Category = {
+    id?: string | undefined
     name: string;
     image: string;
     slug: string;
+    image_url: string;
     deleted_at: null,
     created_at: string,
     updated_at: string,
@@ -12,12 +13,12 @@ export interface Category {
 //     data: Category[];
 // }
 export type categories = {
-    id?: string;
+    id?: string | undefined
     name: string;
 }
 
 export type categoryInput = {
-    id?: string ;
+    id?: string | undefined ;
     name: string;
     image: string;
 }
