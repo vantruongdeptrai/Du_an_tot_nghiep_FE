@@ -13,7 +13,13 @@ export type ProductInput = {
     id?: string;
     name: string;
     image: string;
-    price: number;
+    price: string;
     description: string;
-    category: Category[]
+    category_id: Category[];
+    saleprice:string;
+    salestart:string;
+    saleend:string;
+    new_product:boolean;
+    best_seller_product:boolean;
+    featured_product:boolean;
 }

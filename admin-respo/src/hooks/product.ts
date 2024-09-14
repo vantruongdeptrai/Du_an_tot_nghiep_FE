@@ -43,7 +43,11 @@ const useProduct = () => {
 
         // Append thông tin danh mục vào FormData
         formData.append("name", data.name);
-
+        formData.append("price", data.price);
+        formData.append("description", data.description);
+        formData.append("saleprice", data.saleprice);
+        formData.append("salestart", data.salestart);
+        formData.append("saleend", data.saleend);
         // Nếu có file ảnh thì thêm vào FormData
         if (file) {
             formData.append("image", file);
