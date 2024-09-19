@@ -9,12 +9,24 @@ import SimpleInput from "../../components/SimpleInput";
 import TextAreaInput from "../../components/TextAreaInput";
 import SelectInput from "../../components/SelectInput";
 import { InputWithLabel, Sidebar } from "../../components";
+import React, { ChangeEvent } from "react";
 
-const CreateProduct = () => {
+interface Variant {
+  type: string;
+  value: string;
+}
+
+interface Product {
+  name: string;
+  price: number;
+  description: string;
+  variants: Variant[];
+}
+const CreateProduct: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {},
   } = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
   });
@@ -33,6 +45,36 @@ const CreateProduct = () => {
       const objectUrl = URL.createObjectURL(file);
       setImagePreview(objectUrl);
     }
+  };
+
+  const [product, setProduct] = useState<Product>({
+    name: "",
+    price: 0,
+    description: "",
+    variants: [{ type: "", value: "" }],
+  });
+
+  const handleVariantChange = (
+    index: number,
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    const newVariants = [...product.variants];
+    newVariants[index] = {
+      ...newVariants[index],
+      [name]: value,
+    };
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      variants: newVariants,
+    }));
+  };
+
+  const addVariant = () => {
+    setProduct((prevProduct) => ({
+      ...prevProduct,
+      variants: [...prevProduct.variants, { type: "", value: "" }],
+    }));
   };
 
   const onSubmit: SubmitHandler<ProductInput> = (data) => {
@@ -165,16 +207,62 @@ const CreateProduct = () => {
                   )}
                 </div>
               </div>
+              <div>
+                <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mt-16">
+                  Thuộc tính
+                </h3>
+                
+                  <div>
+                    {product.variants.map((variant, index) => (
+                      <div
+                        key={index}
+                        className="mt-4 grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5"
+                      >
+                        <InputWithLabel label="Tên thuộc tính">
+                          <SimpleInput
+                            type="text"
+                            name="type"
+                            placeholder="Tên thuộc tính"
+                            
+                          />
+                        </InputWithLabel>
+                        <InputWithLabel label="Giá trị">
+                          <SimpleInput
+                            type="text"
+                            name="type"
+                            placeholder="Giá trị"
+                            
+                            
+                          />
+                        </InputWithLabel>
+                        <InputWithLabel label="Số lượng">
+                          <SimpleInput
+                            type="text"
+                            name="type"
+                            placeholder="Số lượng"
+                            
+                            
+                          />
+                        </InputWithLabel>
+                      </div>
+                    ))}
+                    <button type="button" onClick={addVariant} className="focus:outline-none text-white bg-black focus:ring-1 focus:ring-white font-medium rounded-none text-sm px-5 py-2.5 me-2 mb-2 mt-4">
+                      Thêm thuộc tính
+                    </button>
+                  </div>
+                
+              </div>
             </div>
 
             <div className="px-4 sm:px-6 lg:px-8 pb-8">
               <button
                 type="submit"
-                className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-full py-2 text-lg dark:hover:border-gray-500 hover:border-gray-400 duration-200 flex items-center justify-center gap-x-2 text-black dark:text-white"
+                className="focus:outline-none text-white bg-black focus:ring-1 focus:ring-white font-medium rounded-none text-sm px-5 py-2.5 me-2 mb-2"
               >
                 <span className="font-semibold">Thêm sản phẩm</span>
               </button>
             </div>
+            
           </form>
         </div>
       </div>
