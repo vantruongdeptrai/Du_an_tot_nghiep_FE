@@ -14,7 +14,7 @@ const useProduct = () => {
         try {
             setIsLoading(true);
             const respon = await axios.get("http://localhost:8000/api/products");
-            setProducts(respon.data[0]);
+            setProducts(respon.data);
         } catch (err) {
             setError("Failed to fetch permissions");
         } finally {
