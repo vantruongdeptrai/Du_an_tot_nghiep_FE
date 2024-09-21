@@ -1,272 +1,431 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import productSchema from "../../api/products/productSchema";
-import useProduct from "../../hooks/product";
-import { ProductInput } from "../../api/products/types";
-import SimpleInput from "../../components/SimpleInput";
-import TextAreaInput from "../../components/TextAreaInput";
-import SelectInput from "../../components/SelectInput";
-import { InputWithLabel, Sidebar } from "../../components";
-import React, { ChangeEvent } from "react";
-
-interface Variant {
-  type: string;
-  value: string;
-}
-
-interface Product {
-  name: string;
-  price: number;
-  description: string;
-  variants: Variant[];
-}
-const CreateProduct: React.FC = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: {},
-  } = useForm<ProductInput>({
-    resolver: zodResolver(productSchema),
-  });
+import React, { useState, useEffect } from "react";
+import { useProduct } from "../../hooks/product";
+import axios from "axios";
+const CreateProduct = () => {
   const { createProduct } = useProduct();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
-    []
-  );
-  const nav = useNavigate();
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    setSelectedFile(file);
-    if (file) {
-      const objectUrl = URL.createObjectURL(file);
-      setImagePreview(objectUrl);
-    }
-  };
-
-  const [product, setProduct] = useState<Product>({
+  const [productData, setProductData] = useState({
     name: "",
-    price: 0,
     description: "",
-    variants: [{ type: "", value: "" }],
+    price: "",
+    sale_price: "",
+    category_id: "",
+    sale_start: new Date().toISOString().slice(0, 10),
+    sale_end: new Date(new Date().setDate(new Date().getDate() + 7))
+      .toISOString()
+      .slice(0, 10),
+    new_product: false,
+    best_seller_product: false,
+    featured_product: false,
+    image: null,
+    attributes: [],
+    variants: [{ quantity: "", price: "", status: "", attributes: [] }],
   });
-
-  const handleVariantChange = (
-    index: number,
-    e: ChangeEvent<HTMLInputElement>
-  ) => {
-    const { name, value } = e.target;
-    const newVariants = [...product.variants];
-    newVariants[index] = {
-      ...newVariants[index],
-      [name]: value,
-    };
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      variants: newVariants,
-    }));
-  };
-
-  const addVariant = () => {
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      variants: [...prevProduct.variants, { type: "", value: "" }],
-    }));
-  };
-
-  const onSubmit: SubmitHandler<ProductInput> = (data) => {
-    createProduct(data, selectedFile || undefined);
-    console.log(data);
-
-    nav("/products");
-  };
+  const [categories, setCategories] = useState([]); // State để lưu danh sách danh mục
+  const [attributes, setAttributes] = useState([]);
+  const [attributeValues, setAttributeValues] = useState([]);
+  const [sizeAttributeId, setSizeAttributeId] = useState(null);
+  const [colorAttributeId, setColorAttributeId] = useState(null);
+  // Gọi API để lấy danh sách danh mục
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/categories");
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-        const data = await response.json();
-        setCategories(
-          data.map((cat: { id: string; name: string }) => ({
-            id: cat.id,
-            name: cat.name,
-          }))
-        );
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/categories"
+        ); // Đường dẫn API để lấy danh mục
+        setCategories(response.data); // Giả sử API trả về một mảng danh mục
       } catch (error) {
-        console.error("Failed to fetch categories:", error);
+        console.error("Error fetching categories:", error);
       }
     };
 
     fetchCategories();
   }, []);
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/attributes"
+        );
+        setAttributes(response.data);
+
+        // Tìm ID của thuộc tính "Size" và "Color"
+        const sizeAttr = response.data.find(
+          (attr) => attr.name.toLowerCase() === "size"
+        );
+        const colorAttr = response.data.find(
+          (attr) => attr.name.toLowerCase() === "color"
+        );
+
+        if (sizeAttr) setSizeAttributeId(sizeAttr.id);
+        if (colorAttr) setColorAttributeId(colorAttr.id);
+      } catch (error) {
+        console.error("Error fetching attributes:", error);
+      }
+    };
+
+    const fetchAttributeValues = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/attribute-values"
+        );
+        setAttributeValues(response.data);
+      } catch (error) {
+        console.error("Error fetching attribute values:", error);
+      }
+    };
+
+    fetchAttributes();
+    fetchAttributeValues();
+  }, []);
+  // Fetch attributes
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/attributes"
+        );
+        setAttributes(response.data);
+      } catch (error) {
+        console.error("Error fetching attributes:", error);
+      }
+    };
+
+    fetchAttributes();
+  }, []);
+
+  // Fetch attribute values
+  useEffect(() => {
+    const fetchAttributeValues = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/attribute-values"
+        );
+        setAttributeValues(response.data);
+      } catch (error) {
+        console.error("Error fetching attribute values:", error);
+      }
+    };
+
+    fetchAttributeValues();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setProductData({
+      ...productData,
+      [name]: type === "checkbox" ? checked : value,
+    });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setProductData({
+        ...productData,
+        image: e.target.files[0],
+      });
+    }
+  };
+
+  // Hàm để thêm thuộc tính mới
+  const handleAddAttribute = () => {
+    setProductData({
+      ...productData,
+      attributes: [
+        ...productData.attributes,
+        { attribute_name: "", attribute_value: "" },
+      ],
+    });
+  };
+
+  // Hàm để thay đổi giá trị của thuộc tính
+  const handleAttributeChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    const attributes = [...productData.attributes];
+    attributes[index] = { ...attributes[index], [name]: value };
+    setProductData({ ...productData, attributes });
+  };
+
+  // Hàm để xóa thuộc tính
+  const handleRemoveAttribute = (index: number) => {
+    const attributes = [...productData.attributes];
+    attributes.splice(index, 1);
+    setProductData({ ...productData, attributes });
+  };
+
+  // Hàm để thêm biến thể mới
+  const handleAddVariant = () => {
+    setProductData({
+      ...productData,
+      variants: [
+        ...productData.variants,
+        { quantity: "", price: "", status: "", attributes: [] },
+      ],
+    });
+  };
+
+  // Hàm để thay đổi thông tin của biến thể
+  const handleVariantChange = (
+    index: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    const variants = [...productData.variants];
+    variants[index] = { ...variants[index], [name]: value };
+    setProductData({ ...productData, variants });
+  };
+
+  // Hàm xử lý sự kiện submit
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    // Gửi dữ liệu thông tin chung của sản phẩm
+    for (const key in productData) {
+      if (key !== "variants" && key !== "attributes") {
+        formData.append(key, productData[key as keyof typeof productData]);
+      }
+    }
+    console.log(formData);
+    // Gửi dữ liệu các thuộc tính
+    productData.attributes.forEach((attr, index) => {
+      formData.append(
+        `attributes[${index}][attribute_name]`,
+        attr.attribute_name
+      );
+      formData.append(
+        `attributes[${index}][attribute_value]`,
+        attr.attribute_value
+      );
+    });
+
+    // Gửi dữ liệu biến thể
+    productData.variants.forEach((variant, index) => {
+      formData.append(`variants[${index}][quantity]`, variant.quantity);
+      formData.append(`variants[${index}][price]`, variant.price);
+      formData.append(`variants[${index}][status]`, variant.status);
+    });
+
+    createProduct(formData);
+  };
 
   return (
-    <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
-      <Sidebar />
-      <div className="hover:bg-blackPrimary bg-whiteSecondary w-full">
-        <div className="dark:bg-blackPrimary bg-whiteSecondary py-10">
-          <div className="px-4 sm:px-6 lg:px-8 pb-8 border-b border-gray-800 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
-            <div className="flex flex-col gap-3">
-              <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                Add New Product
-              </h2>
-            </div>
-          </div>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 grid grid-cols-2 gap-x-10 max-xl:grid-cols-1 max-xl:gap-y-10">
-              <div>
-                <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                  Basic information
-                </h3>
+    <form onSubmit={handleSubmit}>
+      {/* Thông tin chung của sản phẩm */}
+      <label htmlFor="name">Product Name</label>
+      <input
+        type="text"
+        name="name"
+        value={productData.name}
+        onChange={handleChange}
+        placeholder="Enter product name"
+        required
+      />
 
-                <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Tên sản phẩm">
-                    <SimpleInput
-                      {...register("name")}
-                      type="text"
-                      placeholder="Nhập tên sản phẩm..."
-                    />
-                  </InputWithLabel>
+      <label htmlFor="category">Category</label>
+      <select
+        name="category_id"
+        value={productData.category_id}
+        onChange={handleChange}
+        required
+      >
+        <option value="">Select a category</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </select>
 
-                  <InputWithLabel label="Mô tả">
-                    <TextAreaInput
-                      {...register("description")}
-                      placeholder="Nhập mô tả sản phẩm..."
-                      rows={4}
-                      cols={50}
-                    />
-                  </InputWithLabel>
+      <label htmlFor="description">Description</label>
+      <textarea
+        name="description"
+        value={productData.description}
+        onChange={handleChange}
+        placeholder="Enter product description"
+      />
 
-                  <InputWithLabel label="Danh mục">
-                    <SelectInput
-                      selectList={categories.map((cat) => ({
-                        value: cat.id,
-                        label: cat.name,
-                      }))}
-                      {...register("category_id")}
-                      multiple
-                    />
-                  </InputWithLabel>
-                </div>
-                <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mt-16">
-                  Giá & Tồn kho
-                </h3>
+      <label htmlFor="price">Price</label>
+      <input
+        type="number"
+        name="price"
+        value={productData.price}
+        onChange={handleChange}
+        placeholder="Enter price"
+        required
+      />
 
-                <div className="mt-4 flex flex-col gap-5">
-                  <div className="grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5">
-                    <InputWithLabel label="Giá cơ bản">
-                      <SimpleInput
-                        type="number"
-                        placeholder="Nhập giá cơ bản sản phẩm..."
-                        {...register("price")}
-                      />
-                    </InputWithLabel>
+      <label htmlFor="sale_price">Sale Price</label>
+      <input
+        type="number"
+        name="sale_price"
+        value={productData.sale_price}
+        onChange={handleChange}
+        placeholder="Enter sale price"
+      />
 
-                    <InputWithLabel label="Giá khuyến mãi">
-                      <SimpleInput
-                        type="number"
-                        placeholder="Nhập giá khuyến mãi..."
-                        {...register("saleprice")}
-                      />
-                    </InputWithLabel>
-                  </div>
+      <label htmlFor="image">Product Image</label>
+      <input type="file" name="image" onChange={handleImageChange} />
 
-                  <div className="grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5">
-                    <InputWithLabel label="Ngày bắt đầu khuyến mãi">
-                      <SimpleInput type="date" {...register("salestart")} />
-                    </InputWithLabel>
+      <label htmlFor="sale_start">Sale Start</label>
+      <input
+        type="date"
+        name="sale_start"
+        value={productData.sale_start}
+        onChange={handleChange}
+      />
 
-                    <InputWithLabel label="Ngày kết thúc khuyến mãi">
-                      <SimpleInput type="date" {...register("saleend")} />
-                    </InputWithLabel>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                  Hình ảnh sản phẩm
-                </h3>
-                <div className="mt-4">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="mb-4"
-                  />
-                  {imagePreview && (
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full max-w-sm"
-                    />
-                  )}
-                </div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mt-16">
-                  Thuộc tính
-                </h3>
-                
-                  <div>
-                    {product.variants.map((variant, index) => (
-                      <div
-                        key={index}
-                        className="mt-4 grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5"
-                      >
-                        <InputWithLabel label="Tên thuộc tính">
-                          <SimpleInput
-                            type="text"
-                            name="type"
-                            placeholder="Tên thuộc tính"
-                            
-                          />
-                        </InputWithLabel>
-                        <InputWithLabel label="Giá trị">
-                          <SimpleInput
-                            type="text"
-                            name="type"
-                            placeholder="Giá trị"
-                            
-                            
-                          />
-                        </InputWithLabel>
-                        <InputWithLabel label="Số lượng">
-                          <SimpleInput
-                            type="text"
-                            name="type"
-                            placeholder="Số lượng"
-                            
-                            
-                          />
-                        </InputWithLabel>
-                      </div>
-                    ))}
-                    <button type="button" onClick={addVariant} className="focus:outline-none text-white bg-black focus:ring-1 focus:ring-white font-medium rounded-none text-sm px-5 py-2.5 me-2 mb-2 mt-4">
-                      Thêm thuộc tính
-                    </button>
-                  </div>
-                
-              </div>
-            </div>
+      <label htmlFor="sale_end">Sale End</label>
+      <input
+        type="date"
+        name="sale_end"
+        value={productData.sale_end}
+        onChange={handleChange}
+      />
 
-            <div className="px-4 sm:px-6 lg:px-8 pb-8">
-              <button
-                type="submit"
-                className="focus:outline-none text-white bg-black focus:ring-1 focus:ring-white font-medium rounded-none text-sm px-5 py-2.5 me-2 mb-2"
-              >
-                <span className="font-semibold">Thêm sản phẩm</span>
-              </button>
-            </div>
-            
-          </form>
+      <label>
+        <input
+          type="checkbox"
+          name="new_product"
+          checked={productData.new_product}
+          onChange={handleChange}
+        />
+        New Product
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          name="best_seller_product"
+          checked={productData.best_seller_product}
+          onChange={handleChange}
+        />
+        Best Seller
+      </label>
+      <label>
+        <input
+          type="checkbox"
+          name="featured_product"
+          checked={productData.featured_product}
+          onChange={handleChange}
+        />
+        Featured Product
+      </label>
+
+      {/* Thuộc tính sản phẩm */}
+      {/* Thuộc tính sản phẩm */}
+      <div className="attribute-section">
+        <h4>Attributes</h4>
+
+        {/* Mặc định thuộc tính Size */}
+        <div>
+          <label>Size</label>
+          <select
+            name="size"
+            value={productData.size}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Size</option>
+            {attributeValues
+              .filter((value) => value.attribute_id === sizeAttributeId)
+              .map((value) => (
+                <option key={value.id} value={value.id}>
+                  {value.value}
+                </option>
+              ))}
+          </select>
         </div>
+
+        {/* Mặc định thuộc tính Color */}
+        <div>
+          <label>Color</label>
+          <select
+            name="color"
+            value={productData.color}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Color</option>
+            {attributeValues
+              .filter((value) => value.attribute_id === colorAttributeId)
+              .map((value) => (
+                <option key={value.id} value={value.id}>
+                  {value.value}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        {/* Thuộc tính mới */}
+        {productData.attributes.map((attr, index) => (
+          <div key={index}>
+            <input
+              type="text"
+              name="attribute_name"
+              value={attr.attribute_name}
+              onChange={(e) => handleAttributeChange(index, e)}
+              placeholder="New Attribute Name"
+            />
+            <input
+              type="text"
+              name="attribute_value"
+              value={attr.attribute_value}
+              onChange={(e) => handleAttributeChange(index, e)}
+              placeholder="New Attribute Value"
+            />
+            <button type="button" onClick={() => handleRemoveAttribute(index)}>
+              Remove
+            </button>
+          </div>
+        ))}
+
+        <button type="button" className="add-btn" onClick={handleAddAttribute}>
+          Add Attribute
+        </button>
       </div>
-    </div>
+
+      {/* Biến thể sản phẩm */}
+      <div className="variant-section">
+        <h4>Variants</h4>
+        {productData.variants.map((variant, index) => (
+          <div key={index}>
+            <input
+              type="number"
+              name="quantity"
+              value={variant.quantity}
+              onChange={(e) => handleVariantChange(index, e)}
+              placeholder="Quantity"
+            />
+            <input
+              type="number"
+              name="price"
+              value={variant.price}
+              onChange={(e) => handleVariantChange(index, e)}
+              placeholder="Variant Price"
+            />
+            <input
+              type="number"
+              name="status"
+              value={variant.status}
+              onChange={(e) => handleVariantChange(index, e)}
+              placeholder="Status"
+            />
+            <button type="button" onClick={() => handleRemoveVariant(index)}>
+              Remove
+            </button>
+          </div>
+        ))}
+        <button type="button" className="add-btn" onClick={handleAddVariant}>
+          Add Variant
+        </button>
+      </div>
+
+      <button type="submit" className="submit-btn">
+        Create Product
+      </button>
+    </form>
   );
 };
 
