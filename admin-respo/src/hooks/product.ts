@@ -14,7 +14,7 @@ const useProduct = () => {
         try {
             setIsLoading(true);
             const respon = await axios.get("http://localhost:8000/api/products");
-            setProducts(respon.data[0]);
+            setProducts(respon.data);
         } catch (err) {
             setError("Failed to fetch permissions");
         } finally {
@@ -45,14 +45,16 @@ const useProduct = () => {
         formData.append("name", data.name);
         formData.append("price", data.price);
         formData.append("description", data.description);
-        formData.append("saleprice", data.saleprice);
-        formData.append("salestart", data.salestart);
-        formData.append("saleend", data.saleend);
+        formData.append("sale_price", data.sale_price);
+        formData.append("sale_start", data.sale_start);
+        formData.append("category_id", data.category_id.toString());
+        formData.append("new_product", String(Number(data.new_product)));
+        formData.append("best_seller_product", String(Number(data.best_seller_product)));
+        formData.append("featured_product", String(Number(data.featured_product)));
         // Nếu có file ảnh thì thêm vào FormData
         if (file) {
             formData.append("image", file);
         }
-        
 
         try {
             setIsLoading(true);
@@ -72,13 +74,13 @@ const useProduct = () => {
     const updateProduct = async (data: ProductInput, file?: File) => {
         const formData = new FormData();
         formData.append("name", data.name);
-        formData.append('_method', 'put');
+        formData.append("_method", "put");
         console.log(id);
 
         if (file) {
             formData.append("image", file);
         }
-        
+
         try {
             await axios.post("http://localhost:8000/api/products/" + id, formData, {
                 headers: {
