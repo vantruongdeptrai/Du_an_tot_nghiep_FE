@@ -58,12 +58,14 @@ const useProduct = () => {
 
         try {
             setIsLoading(true);
-            await axios.post("http://localhost:8000/api/products", formData, {
+            const response = await axios.post("http://localhost:8000/api/products", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
             toast.success("Product added successfully");
+            const productData = response.data;
+            return productData;
         } catch (err) {
             setError("Failed to create Product");
         } finally {

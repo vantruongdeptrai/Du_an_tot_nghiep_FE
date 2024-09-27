@@ -66,7 +66,7 @@ const ProductTable = () => {
                                 </div>
                             </td>
                             <td className="py-4 pl-0 pr-4">
-                                <div className="font-mono text-sm leading-6 dark:text-whiteSecondary text-blackPrimary truncate">
+                                <div className="font-mono text-sm leading-6 dark:text-whiteSecondary text-blackPrimary w-20 truncate">
                                     {item.description}
                                 </div>
                             </td>
