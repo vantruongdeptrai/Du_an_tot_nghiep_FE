@@ -95,40 +95,40 @@ const useProduct = () => {
         }
     };
 
-    const deleteProduct = async (id: string) => {
-        try {
-            if (window.confirm("Are you sure you want to delete")) {
-                setIsLoading(true);
-                await axios.delete("http://localhost:8000/api/products/" + id);
-                toast.success("Product delete successfully");
-                getProducts();
-            }
-        } catch (err) {
-            setError("Failed to fetch permissions");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
+  const deleteProduct = async (id: string) => {
+    try {
+      if (window.confirm("Are you sure you want to delete")) {
+        setIsLoading(true);
+        await axios.delete("http://localhost:8000/api/products/" + id);
+        toast.success("Product delete successfully");
         getProducts();
-    }, []);
-    useEffect(() => {
-        if (!id) return;
-        getProductById(id);
-    }, [id]);
+      }
+    } catch (err) {
+      setError("Failed to fetch permissions");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    return {
-        product,
-        products,
-        getProducts,
-        getProductById,
-        createProduct,
-        updateProduct,
-        deleteProduct,
-        error,
-        isLoading,
-    };
+  useEffect(() => {
+    getProducts();
+  }, []);
+  useEffect(() => {
+    if (!id) return;
+    getProductById(id);
+  }, [id]);
+
+  return {
+    product,
+    products,
+    getProducts,
+    getProductById,
+    createProduct,
+    updateProduct,
+    deleteProduct,
+    error,
+    isLoading,
+  };
 };
 
 export default useProduct;

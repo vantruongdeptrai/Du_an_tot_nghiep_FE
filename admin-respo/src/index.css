@@ -26,3 +26,90 @@ body{
   .ql-snow .ql-picker-label::before {
     color: #F0F0F0;
   }
+  form {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+form input, form textarea, form select, form button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+form label {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+form input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+form button {
+    width: auto;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+form .variant-section, form .attribute-section {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+}
+
+form .variant-section div, form .attribute-section div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+form .variant-section div input, form .attribute-section div input {
+    width: 48%;
+}
+
+form .variant-section div button, form .attribute-section div button {
+    width: auto;
+    background-color: #dc3545;
+    margin-left: 10px;
+}
+
+form .variant-section div button:hover, form .attribute-section div button:hover {
+    background-color: #c82333;
+}
+
+form .add-btn {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+}
+
+form .add-btn:hover {
+    background-color: #0056b3;
+}
+
+form .submit-btn {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #28a745;
+}
