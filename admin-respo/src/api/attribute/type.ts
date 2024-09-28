@@ -1,5 +1,5 @@
 export type Size = {
-    id?: string;
+    id?: string ;
     name: string;
 }
 
