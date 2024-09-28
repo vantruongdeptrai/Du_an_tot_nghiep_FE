@@ -33,13 +33,11 @@ export type ProductInput = {
 }
 
 export type ProductVariant = {
-    id?: string;
-    product_id?: string;
-    image: string;
-    size_id: string;
-    color_id: string;
-    price: string;
-    quantity: string;
-    status: string;
-    sku: string;
+    product_id: number; // Giả sử đây là kiểu số
+    colors: number[]; // Mảng chứa các màu
+    sizes: number[]; // Mảng chứa các kích thước
+    quantities: Record<string, number>; // Đối tượng chứa số lượng
+    prices: Record<string, number>; // Đối tượng chứa giá
+    status: string; // Trạng thái
+    images: Record<string, string>; // Đối tượng chứa hình ảnh
 }
