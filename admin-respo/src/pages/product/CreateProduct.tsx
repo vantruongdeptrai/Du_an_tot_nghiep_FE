@@ -8,8 +8,8 @@ import { ProductInput, ProductVariant } from "../../api/products/types";
 import { InputWithLabel, Sidebar } from "../../components";
 import { useColors, useSizes } from "../../hooks/attribute";
 import useProductVariant from "../../hooks/product_variants";
-import { zodResolver } from "@hookform/resolvers/zod";
-import productSchema from "../../api/products/productSchema";
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import productSchema from "../../api/products/productSchema";
 
 const CreateProduct: React.FC = () => {
     const { categories } = useCategory();
@@ -26,9 +26,7 @@ const CreateProduct: React.FC = () => {
         register: registerBasic,
         formState: { errors },
         handleSubmit: handleSubmitBasic,
-    } = useForm<ProductInput>({
-        resolver: zodResolver(productSchema),
-    });
+    } = useForm<ProductInput>();
 
     const { register: registerVariant, handleSubmit: handleSubmitVariant } = useForm();
 
@@ -62,28 +60,70 @@ const CreateProduct: React.FC = () => {
         }
     };
 
-    const onSubmitVariant: SubmitHandler<ProductVariant> = async (data) => {
-        const variantsData = {
-            product_id: `${productId}`, // ID sản phẩm từ form cơ bản
-            color_id: data.color_id, // ID màu bạn chọn
-            size_id: data.size_id, // ID kích cỡ bạn chọn
-            quantity: data.quantity, // số lượng bạn nhập
-            image: data.image, // URL hình ảnh bạn nhập
-            price: data.price, // giá biến thể
-            sku: data.sku,
-            status: "1", // Hoặc giá trị bạn muốn
+     // Hàm xử lý khi submit form biến thể sản phẩm
+     const onSubmitVariant: SubmitHandler<ProductVariant> = async () => {
+        const variantsData: ProductVariant = {
+            product_id: Number(productId), // ID sản phẩm
+            colors: selectedVariants.map(({ colorId }) => Number(colorId)), // Tạo mảng ID màu
+            sizes: selectedVariants.map(({ sizeId }) => Number(sizeId)), // Tạo mảng ID kích cỡ
+            quantities: {}, // Khởi tạo quantities
+            prices: {}, // Khởi tạo prices
+            images: {}, // Khởi tạo images
+            status: "1", // Trạng thái
         };
+        
+        // Duyệt qua từng variant để cập nhật quantities, prices, và images
+        selectedVariants.forEach(({ sizeId, colorId }) => {
+            const variantKey = `${colorId}-${sizeId}`;
+            const { price = 0, image = '', quantity = 0 } = variantDetails[variantKey] || {};
+            
+            variantsData.quantities[variantKey] = Number(quantity); // Thêm số lượng
+            variantsData.prices[variantKey] = Number(price); // Thêm giá
+            variantsData.images[variantKey] = image || ''; // Thêm URL hình ảnh
+        });
+
+        if (!productId) {
+            toast.error("Cần thêm sản phẩm trước khi thêm biến thể!");
+            return;
+        }
 
         // Tạo biến thể sản phẩm
         await createProductVariant(variantsData);
         console.log(variantsData);
-        if (!productId) {
-            toast.error("Need Add Product Before You Add Variant!");
-            return;
-        }
-        toast.success("Create Variants Success!");
-        nav("/products"); // Điều hướng về danh sách sản phẩm
+        
+        toast.success("Tạo biến thể thành công!");
+        // nav("/products");
     };
+
+    // State lưu trữ biến thể đã chọn và chi tiết biến thể
+    const [selectedVariants, setSelectedVariants] = useState<{ sizeId: string; colorId: string }[]>([]);
+    const [variantDetails, setVariantDetails] = useState<{
+        [key: string]: { price: string; image: string; quantity: string };
+    }>({});
+
+    // Hàm xử lý khi chọn hoặc bỏ chọn biến thể
+    const handleVariantChange = (sizeId: string, colorId: string) => {
+        const variantKey = `${sizeId}-${colorId}`;
+        setSelectedVariants((prevSelected) => {
+            if (prevSelected.some((variant) => variant.sizeId === sizeId && variant.colorId === colorId)) {
+                return prevSelected.filter((variant) => !(variant.sizeId === sizeId && variant.colorId === colorId));
+            } else {
+                return [...prevSelected, { sizeId, colorId }];
+            }
+        });
+    };
+
+    // Cập nhật thông tin của biến thể
+    const handleVariantDetailChange = (key: string, field: string, value: string) => {
+        setVariantDetails((prevDetails) => ({
+            ...prevDetails,
+            [key]: {
+                ...prevDetails[key],
+                [field]: value,
+            },
+        }));
+    };
+
 
     return (
         <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
@@ -280,78 +320,107 @@ const CreateProduct: React.FC = () => {
                     {/* Form cho biến thể sản phẩm */}
                     {hasVariants && (
                         <form onSubmit={handleSubmitVariant(onSubmitVariant)}>
-                            <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 grid grid-cols-2 gap-x-10 max-xl:grid-cols-1 max-xl:gap-y-10">
+                            <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 gap-x-10  max-xl:gap-y-10">
                                 <div>
                                     <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mt-16">
                                         Thêm Biến Thể Sản Phẩm
                                     </h3>
                                     <div className="mt-4 flex flex-col gap-5">
-                                        <InputWithLabel label="Màu sắc">
-                                            <select
-                                                {...registerVariant("color_id")}
-                                                className="w-full h-10 dark:bg-blackPrimary bg-white border border-gray-600 dark:text-whiteSecondary text-blackPrimary outline-0 pl-3 pr-8 cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                                            >
-                                                <option value="">Chọn màu sắc</option>
-                                                {colors.map((color) => (
-                                                    <option key={color.id} value={color.id}>
-                                                        {color.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </InputWithLabel>
+                                        {/* Tổ hợp Size-Color */}
+                                        <div className="">
+                                            <InputWithLabel label="Chọn size và màu sắc">
+                                                <div className="flex flex-wrap gap-28">
+                                                    {sizes.map((size) =>
+                                                        colors.map((color) => {
+                                                            const variantKey = `${color.id}-${size.id}`;
+                                                            return (
+                                                                <div key={variantKey} className="">
+                                                                    <label className="checkbox-label">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            value={variantKey}
+                                                                            checked={selectedVariants.some(
+                                                                                (variant) =>
+                                                                                    variant.sizeId === size.id &&
+                                                                                    variant.colorId === color.id
+                                                                            )}
+                                                                            onChange={() =>
+                                                                                handleVariantChange(size.id, color.id)
+                                                                            }
+                                                                        />
+                                                                        {`${size.name}-${color.name}`}
+                                                                    </label>
 
-                                        <InputWithLabel label="Kích cỡ">
-                                            <select
-                                                {...registerVariant("size_id")}
-                                                className="w-full h-10 dark:bg-blackPrimary bg-white border border-gray-600 dark:text-whiteSecondary text-blackPrimary outline-0 pl-3 pr-8 cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                                            >
-                                                <option value="">Chọn kích cỡ</option>
-                                                {sizes.map((size) => (
-                                                    <option key={size.id} value={size.id}>
-                                                        {size.name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </InputWithLabel>
-
-                                        <InputWithLabel label="Số lượng">
-                                            <input
-                                                type="number"
-                                                {...registerVariant("quantity")}
-                                                className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400`}
-                                                placeholder="Nhập số lượng..."
-                                            />
-                                        </InputWithLabel>
-
-                                        <InputWithLabel label="Hình ảnh">
-                                            <input
-                                                type="text"
-                                                {...registerVariant("image")}
-                                                className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400`}
-                                                placeholder="Nhập URL hình ảnh..."
-                                            />
-                                        </InputWithLabel>
-
-                                        <InputWithLabel label="Giá">
-                                            <input
-                                                type="number"
-                                                {...registerVariant("price")}
-                                                className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400`}
-                                                placeholder="Nhập giá biến thể..."
-                                            />
-                                        </InputWithLabel>
-                                        <InputWithLabel label="Sku">
-                                            <input
-                                                type="text"
-                                                {...registerVariant("sku")}
-                                                className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400`}
-                                                placeholder="Nhập sku..."
-                                            />
-                                        </InputWithLabel>
+                                                                    {selectedVariants.some(
+                                                                        (variant) =>
+                                                                            variant.sizeId === size.id &&
+                                                                            variant.colorId === color.id
+                                                                    ) && (
+                                                                        <div className="variant-details mt-2">
+                                                                            <h4>{`Chi tiết cho ${variantKey}`}</h4>
+                                                                            <InputWithLabel label="Giá">
+                                                                                <input
+                                                                                    type="number"
+                                                                                    placeholder="Nhập giá"
+                                                                                    value={
+                                                                                        variantDetails[variantKey]
+                                                                                            ?.price || ""
+                                                                                    }
+                                                                                    onChange={(e) =>
+                                                                                        handleVariantDetailChange(
+                                                                                            variantKey,
+                                                                                            "price",
+                                                                                            e.target.value
+                                                                                        )
+                                                                                    }
+                                                                                />
+                                                                            </InputWithLabel>
+                                                                            <InputWithLabel label="Hình ảnh">
+                                                                                <input
+                                                                                    type="text"
+                                                                                    placeholder="Nhập URL hình ảnh"
+                                                                                    value={
+                                                                                        variantDetails[variantKey]
+                                                                                            ?.image || ""
+                                                                                    }
+                                                                                    onChange={(e) =>
+                                                                                        handleVariantDetailChange(
+                                                                                            variantKey,
+                                                                                            "image",
+                                                                                            e.target.value
+                                                                                        )
+                                                                                    }
+                                                                                />
+                                                                            </InputWithLabel>
+                                                                            <InputWithLabel label="Số lượng">
+                                                                                <input
+                                                                                    type="number"
+                                                                                    placeholder="Nhập số lượng"
+                                                                                    value={
+                                                                                        variantDetails[variantKey]
+                                                                                            ?.quantity || ""
+                                                                                    }
+                                                                                    onChange={(e) =>
+                                                                                        handleVariantDetailChange(
+                                                                                            variantKey,
+                                                                                            "quantity",
+                                                                                            e.target.value
+                                                                                        )
+                                                                                    }
+                                                                                />
+                                                                            </InputWithLabel>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })
+                                                    )}
+                                                </div>
+                                            </InputWithLabel>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div className="flex justify-center mt-10">
                                 <button
                                     type="submit"
