@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -9,6 +8,8 @@ import { ProductInput, ProductVariant } from "../../api/products/types";
 import { InputWithLabel, Sidebar } from "../../components";
 import { useColors, useSizes } from "../../hooks/attribute";
 import useProductVariant from "../../hooks/product_variants";
+import { zodResolver } from "@hookform/resolvers/zod";
+import productSchema from "../../api/products/productSchema";
 // import { zodResolver } from "@hookform/resolvers/zod";
 // import productSchema from "../../api/products/productSchema";
 
@@ -27,29 +28,27 @@ const CreateProduct: React.FC = () => {
         register: registerBasic,
         formState: { errors },
         handleSubmit: handleSubmitBasic,
-    } = useForm<ProductInput>();
+        setValue,
+    } = useForm<ProductInput>({
+        resolver: zodResolver(productSchema)
+    });
 
     const { register: registerVariant, handleSubmit: handleSubmitVariant } = useForm();
+
+    // useEffect(() => {
+    //     if (hasVariants) {
+    //         setValue("price", ""); // Reset giá trị `price` khi chọn "Có biến thể"
+    //     }
+    // }, [hasVariants, setValue]);
 
     const onSubmitBasic: SubmitHandler<ProductInput> = async (data) => {
         const price = Number(data.price);
         const sale_price = Number(data.sale_price);
-        const startDate = new Date(data.sale_start);
-        const endDate = new Date(data.sale_end);
 
-        if (price < 0 || sale_price < 0) {
-            toast.error("Giá không được nhỏ hơn 0.");
+        if(price < sale_price) {
+            toast.error("Price must be greater than sale_price");
             return;
         }
-        if (price < sale_price) {
-            toast.error("Giá cơ bản phải lớn hơn giá khuyến mãi.");
-            return;
-        }
-        if (startDate > endDate) {
-            toast.error("Ngày bắt đầu phải trước ngày kết thúc.");
-            return;
-        }
-
         const product = await createProduct(data);
         setProductId(product.product.id);
 
@@ -61,8 +60,8 @@ const CreateProduct: React.FC = () => {
         }
     };
 
-     // Hàm xử lý khi submit form biến thể sản phẩm
-     const onSubmitVariant: SubmitHandler<ProductVariant> = async () => {
+    // Hàm xử lý khi submit form biến thể sản phẩm
+    const onSubmitVariant: SubmitHandler<ProductVariant> = async () => {
         const variantsData: ProductVariant = {
             product_id: Number(productId), // ID sản phẩm
             colors: selectedVariants.map(({ colorId }) => Number(colorId)), // Tạo mảng ID màu
@@ -72,15 +71,15 @@ const CreateProduct: React.FC = () => {
             images: {}, // Khởi tạo images
             status: "1", // Trạng thái
         };
-        
+
         // Duyệt qua từng variant để cập nhật quantities, prices, và images
         selectedVariants.forEach(({ sizeId, colorId }) => {
             const variantKey = `${colorId}-${sizeId}`;
-            const { price = 0, image = '', quantity = 0 } = variantDetails[variantKey] || {};
-            
+            const { price = 0, image = "", quantity = 0 } = variantDetails[variantKey] || {};
+
             variantsData.quantities[variantKey] = Number(quantity); // Thêm số lượng
             variantsData.prices[variantKey] = Number(price); // Thêm giá
-            variantsData.images[variantKey] = image || ''; // Thêm URL hình ảnh
+            variantsData.images[variantKey] = image || ""; // Thêm URL hình ảnh
         });
 
         if (!productId) {
@@ -91,9 +90,9 @@ const CreateProduct: React.FC = () => {
         // Tạo biến thể sản phẩm
         await createProductVariant(variantsData);
         console.log(variantsData);
-        
+
         toast.success("Tạo biến thể thành công!");
-        // nav("/products");
+        nav("/products");
     };
 
     // State lưu trữ biến thể đã chọn và chi tiết biến thể
@@ -104,7 +103,6 @@ const CreateProduct: React.FC = () => {
 
     // Hàm xử lý khi chọn hoặc bỏ chọn biến thể
     const handleVariantChange = (sizeId: string, colorId: string) => {
-        const variantKey = `${sizeId}-${colorId}`;
         setSelectedVariants((prevSelected) => {
             if (prevSelected.some((variant) => variant.sizeId === sizeId && variant.colorId === colorId)) {
                 return prevSelected.filter((variant) => !(variant.sizeId === sizeId && variant.colorId === colorId));
@@ -125,7 +123,6 @@ const CreateProduct: React.FC = () => {
         }));
     };
 
-
     return (
         <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
             <Sidebar />
@@ -138,8 +135,8 @@ const CreateProduct: React.FC = () => {
                     </div>
 
                     {/* Form thông tin cơ bản */}
-                    <form onSubmit={handleSubmitBasic(onSubmitBasic)}>
-                        <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 grid grid-cols-2 gap-x-10 max-xl:grid-cols-1 max-xl:gap-y-10">
+                    <form className="mt-5" onSubmit={handleSubmitBasic(onSubmitBasic)}>
+                        <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 gap-x-10 max-xl:grid-cols-1 max-xl:gap-y-10">
                             <div>
                                 <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
                                     Basic information
@@ -190,12 +187,21 @@ const CreateProduct: React.FC = () => {
                                     <div className="grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5">
                                         <div>
                                             <InputWithLabel label="Giá cơ bản">
-                                                <input
-                                                    className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
-                                                    type="number"
-                                                    placeholder="Nhập giá cơ bản sản phẩm..."
-                                                    {...registerBasic("price")}
-                                                />
+                                                {!hasVariants ? (
+                                                    <input
+                                                        className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                                                        type="number"
+                                                        placeholder="Nhập giá cơ bản sản phẩm..."
+                                                        {...registerBasic("price")}
+                                                    />
+                                                ) : (
+                                                    <input
+                                                        disabled
+                                                        className={`dark:bg-blackPrimary bg-[#ccc] dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                                                        type="number"
+                                                        placeholder="Nhập giá cơ bản sản phẩm..."
+                                                    />
+                                                )}
                                             </InputWithLabel>
                                             {errors.price && (
                                                 <span className="text-sm text-red-500">{errors.price.message}</span>
@@ -294,6 +300,7 @@ const CreateProduct: React.FC = () => {
                                                 className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
                                                 type="checkbox"
                                                 checked={hasVariants}
+                                                {...registerBasic("is_variants")}
                                                 onChange={() => setHasVariants(!hasVariants)} // Thay đổi state khi nhấn checkbox
                                             />
                                             <label
@@ -320,7 +327,7 @@ const CreateProduct: React.FC = () => {
 
                     {/* Form cho biến thể sản phẩm */}
                     {hasVariants && (
-                        <form onSubmit={handleSubmitVariant(onSubmitVariant)}>
+                        <form className="mt-5" onSubmit={handleSubmitVariant(onSubmitVariant)}>
                             <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 gap-x-10  max-xl:gap-y-10">
                                 <div>
                                     <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mt-16">
@@ -439,4 +446,3 @@ const CreateProduct: React.FC = () => {
 };
 
 export default CreateProduct;
-

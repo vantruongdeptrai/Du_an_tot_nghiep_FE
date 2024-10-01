@@ -47,7 +47,7 @@ const useProduct = () => {
         formData.append("description", data.description);
         formData.append("sale_price", data.sale_price);
         formData.append("sale_start", data.sale_start);
-        formData.append("category_id", data.category_id.toString());
+        formData.append("category_id", data.category_id);
         formData.append("new_product", String(Number(data.new_product)));
         formData.append("best_seller_product", String(Number(data.best_seller_product)));
         formData.append("featured_product", String(Number(data.featured_product)));
