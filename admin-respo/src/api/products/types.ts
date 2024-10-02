@@ -1,7 +1,7 @@
 
 
 export type Product = {
-    id: string;
+    id?: string;
     name: string;
     image: string;
     price: string;
@@ -17,23 +17,23 @@ export type Product = {
 }
 
 export type ProductInput = {
-    id: string;
+    id?: string;
     name: string;
     image: string;
     price: string;
     description: string;
-    category_id: number;
+    category_id: string;
     sale_price:string;
     sale_start:string;
     sale_end:string;
-    new_product:number;
-    best_seller_product:number;
-    featured_product:number;
-    is_variants: number;
+    new_product:string;
+    best_seller_product:string;
+    featured_product:string;
+    is_variants: string;
 }
 
 export type ProductVariant = {
-    product_id: number; // Giả sử đây là kiểu số
+    product_id?: number; // Giả sử đây là kiểu số
     colors: number[]; // Mảng chứa các màu
     sizes: number[]; // Mảng chứa các kích thước
     quantities: Record<string, number>; // Đối tượng chứa số lượng
