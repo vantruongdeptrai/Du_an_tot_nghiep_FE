@@ -33,6 +33,7 @@ import EditCoupon from "./pages/coupon/EditCoupon";
 import OperatingCost from "./pages/operating_costs/OperatingCost";
 import CreateOperatingCost from "./pages/operating_costs/CreateOperatingCost";
 import EditOperatingCost from "./pages/operating_costs/EditOperatingCost";
+import DetailProduct from "./pages/product/DetailProduct";
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -63,8 +64,12 @@ const router = createBrowserRouter([
         element: <CreateProduct />,
       },
       {
-        path: "/products/:id",
+        path: "/product/edit/:id",
         element: <EditProduct />,
+      },
+      {
+        path: "/product/detail/:id",
+        element: <DetailProduct />,
       },
       {
         path: "/permissions",
