@@ -50,6 +50,24 @@ const useProductVariant = () => {
             setIsLoading(false);
         }
     };
+    // api/productApi.ts
+
+  const getProductVariantById = async (product_id: string) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/product-variants/${product_id}`);
+      
+      if (!response.ok) {
+        throw new Error(`Error fetching product variant with ID ${product_id}: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Failed to fetch product variant:', error);
+      throw error;
+    }
+  };
+  
 
     // const updateProduct = async (data: ProductVariant, file?: File) => {
     //     const formData = new FormData();
@@ -97,6 +115,7 @@ const useProductVariant = () => {
     // }, [id]);
 
     return {
+        getProductVariantById,
         // product_varient,
         // product_varients,
         // getproduct_varients,
