@@ -4,7 +4,7 @@ import useProduct from "../../hooks/product";
 import useCategory from "../../hooks/category";
 
 const ProductTable = () => {
-  const { products } = useProduct();
+  const { products, deleteProduct } = useProduct();
   const { categories } = useCategory();
 
   const getCategoryName = (categoryId: string) => {
@@ -111,12 +111,12 @@ const ProductTable = () => {
                   <Link to={`/product/detail/${item.id}`}>
                     <HiOutlineEye className="text-lg" />
                   </Link>
-                  <Link
-                    to="#"
-                    className="bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 flex justify-center items-center cursor-pointer hover:border-gray-400"
+                  <button
+                    onClick={() => deleteProduct(`${item.id}`)}
+                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
                   >
                     <HiOutlineTrash className="text-lg" />
-                  </Link>
+                  </button>
                 </div>
               </td>
             </tr>
