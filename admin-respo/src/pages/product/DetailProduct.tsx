@@ -6,7 +6,9 @@ const DetailProduct: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<any>(null);
   const [category, setCategory] = useState<any>(null);
-  const [variants, setVariants] = useState<any[]>([]); // Thêm state để lưu biến thể sản phẩm
+  const [variants, setVariants] = useState<any[]>([]); // Biến thể sản phẩm
+  const [sizes, setSizes] = useState<any[]>([]); // Danh sách size
+  const [colors, setColors] = useState<any[]>([]); // Danh sách màu sắc
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,9 +25,9 @@ const DetailProduct: React.FC = () => {
       if (foundProduct) {
         setProduct(foundProduct);
         await getCategoryById(foundProduct.category_id);
-        if (foundProduct.status === "biến thể") {
-          await getProductVariantById(foundProduct.id); // Gọi hàm lấy biến thể sản phẩm nếu là biến thể
-        }
+        await getProductVariantById(foundProduct.id); // Luôn gọi hàm lấy biến thể sản phẩm
+        await getSizes(); // Lấy danh sách kích thước
+        await getColors(); // Lấy danh sách màu sắc
       } else {
         setError("Sản phẩm không tìm thấy");
       }
@@ -54,22 +56,38 @@ const DetailProduct: React.FC = () => {
   // Hàm để lấy dữ liệu biến thể sản phẩm
   const getProductVariantById = async (product_id: string) => {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         `http://localhost:8000/api/product-variants`
       );
-
-      if (!response.ok) {
-        throw new Error(
-          `Error fetching product variant with ID ${product_id}: ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      console.log(data);
-      setVariants(data); // Lưu dữ liệu biến thể vào state
+      const variantsData = response.data.filter(
+        (variant: any) => variant.product_id === parseInt(product_id)
+      );
+      setVariants(variantsData); // Lưu dữ liệu biến thể vào state
     } catch (error) {
       console.error("Failed to fetch product variant:", error);
       setError("Lỗi khi lấy biến thể sản phẩm");
+    }
+  };
+
+  // Hàm lấy danh sách size
+  const getSizes = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/sizes`);
+      setSizes(response.data); // Lưu danh sách kích thước
+    } catch (error) {
+      console.error("Failed to fetch sizes:", error);
+      setError("Lỗi khi lấy kích thước sản phẩm");
+    }
+  };
+
+  // Hàm lấy danh sách màu sắc
+  const getColors = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/colors`);
+      setColors(response.data); // Lưu danh sách màu sắc
+    } catch (error) {
+      console.error("Failed to fetch colors:", error);
+      setError("Lỗi khi lấy màu sắc sản phẩm");
     }
   };
 
@@ -141,18 +159,18 @@ const DetailProduct: React.FC = () => {
             <strong>Trạng thái:</strong>{" "}
             <span
               style={{
-                color: product.status === "biến thể" ? "green" : "red",
+                color: product.status === 1 ? "red" : "green",
                 fontWeight: "bold",
               }}
             >
-              {product.status === "biến thể" ? "biến thể" : "đơn thể"}
+              {product.status === 1 ? "hết hàng" : "còn hàng"}
             </span>
           </p>
         </div>
       </div>
 
-      {/* Hiển thị biến thể sản phẩm chỉ khi sản phẩm là biến thể */}
-      {product.status === "biến thể" && (
+      {/* Hiển thị biến thể sản phẩm nếu có biến thể */}
+      {variants.length > 0 && (
         <div style={{ marginTop: "20px" }}>
           <h3
             style={{
@@ -165,8 +183,10 @@ const DetailProduct: React.FC = () => {
           >
             Biến thể sản phẩm:
           </h3>
-          {variants.length > 0 ? (
-            variants.map((variant) => (
+          {variants.map((variant) => {
+            const size = sizes.find((s) => s.id === variant.size_id);
+            const color = colors.find((c) => c.id === variant.color_id);
+            return (
               <div
                 key={variant.id}
                 style={{
@@ -177,10 +197,12 @@ const DetailProduct: React.FC = () => {
                 }}
               >
                 <p>
-                  <strong>Màu sắc:</strong> {variant.color_id}
+                  <strong>Màu sắc:</strong>{" "}
+                  {color ? color.name : "Không xác định"}
                 </p>
                 <p>
-                  <strong>Kích thước:</strong> {variant.size_id}
+                  <strong>Kích thước:</strong>{" "}
+                  {size ? size.name : "Không xác định"}
                 </p>
                 <p>
                   <strong>Số lượng:</strong> {variant.quantity}
@@ -192,10 +214,8 @@ const DetailProduct: React.FC = () => {
                   <strong>Giá:</strong> {variant.price} $
                 </p>
               </div>
-            ))
-          ) : (
-            <p>Không có biến thể cho sản phẩm này.</p>
-          )}
+            );
+          })}
         </div>
       )}
 

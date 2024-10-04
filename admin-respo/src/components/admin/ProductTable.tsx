@@ -105,10 +105,16 @@ const ProductTable = () => {
               </td>
               <td className="py-4 pl-0 pr-4 text-right text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
                 <div className="flex gap-x-1 justify-end">
-                  <Link to={`/product/edit/${item.id}`}>
+                  <Link
+                    to={`/product/edit/${item.id}`}
+                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
+                  >
                     <HiOutlinePencil className="text-lg" />
                   </Link>
-                  <Link to={`/product/detail/${item.id}`}>
+                  <Link
+                    to={`/product/detail/${item.id}`}
+                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
+                  >
                     <HiOutlineEye className="text-lg" />
                   </Link>
                   <button
