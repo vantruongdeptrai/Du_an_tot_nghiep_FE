@@ -1,15 +1,25 @@
-import React, { useState } from "react";
-import useLogin from "../hooks/Account";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Thêm useNavigate
+import useLogin from "./../hooks/account";
 
 const Login: React.FC = () => {
-  const { handleLogin, loading, error } = useLogin();
+  const { handleLogin, loading, error, isLoggedIn } = useLogin();
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const navigate = useNavigate(); // Khởi tạo navigate
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     handleLogin(identifier, password);
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setTimeout(() => {
+        navigate("/");
+      }, 0);
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <div className="login-container">
@@ -32,6 +42,7 @@ const Login: React.FC = () => {
         </button>
       </form>
       {error && <p className="error-message">{error}</p>}
+      {isLoggedIn && <p>Đăng nhập thành công! Đang chuyển hướng...</p>}
     </div>
   );
 };

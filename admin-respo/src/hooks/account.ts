@@ -1,10 +1,10 @@
-// src/hooks/account.ts
+import axios from "axios";
 import { useState } from "react";
-import axios from "axios"; // Thực hiện API call trực tiếp ở đây
 
 const useLogin = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // Thêm trạng thái này
 
   const handleLogin = async (identifier: string, password: string) => {
     setLoading(true);
@@ -18,18 +18,19 @@ const useLogin = () => {
         loginInfo = { phone: identifier, password };
       }
 
-      // Gọi API trực tiếp ở đây
       const response = await axios.post('http://127.0.0.1:8000/api/login', loginInfo);
       console.log("Đăng nhập thành công:", response.data);
-      // Thực hiện các bước tiếp theo nếu đăng nhập thành công
+
+      // Lưu token và đặt trạng thái đăng nhập thành công
+      localStorage.setItem("token", response.data.token);
+      setIsLoggedIn(true);  // Đăng nhập thành công
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response?.data?.message || "Đã xảy ra lỗi.");
     } finally {
       setLoading(false);
     }
   };
 
-  return { handleLogin, loading, error };
+  return { handleLogin, loading, error, isLoggedIn }; // Trả về isLoggedIn
 };
-
 export default useLogin;
