@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FormElement, Input } from "../../styles/form";
-import { PropTypes } from "prop-types";
+import PropTypes from "prop-types";
 import { useState } from "react";
 
 const PasswordToggleButton = styled.button`
@@ -13,7 +13,7 @@ const PasswordToggleButton = styled.button`
   }
 `;
 
-const PasswordInput = ({ fieldName, name, errorMsg = "" }) => {
+const PasswordInput = ({ fieldName, name, errorMsg = "", register}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePassword = () => {
@@ -29,7 +29,7 @@ const PasswordInput = ({ fieldName, name, errorMsg = "" }) => {
         <Input
           type={showPassword ? "text" : "password"}
           placeholder=""
-          name={name}
+          {...register(name)}
           className="form-elem-control"
         />
 
@@ -51,7 +51,7 @@ const PasswordInput = ({ fieldName, name, errorMsg = "" }) => {
           )}
         </PasswordToggleButton>
       </div>
-      <span className="form-elem-error text-end font-medium">{errorMsg}</span>
+      <span className="form-elem-error font-medium">{errorMsg}</span>
     </FormElement>
   );
 };
@@ -62,4 +62,5 @@ PasswordInput.propTypes = {
   fieldName: PropTypes.string,
   name: PropTypes.string,
   errorMsg: PropTypes.string,
+  register: PropTypes.func.isRequired, // Khai báo thêm prop register
 };
