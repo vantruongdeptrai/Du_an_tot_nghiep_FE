@@ -184,7 +184,7 @@ const Header = () => {
               <img src={staticImages.heart} alt="" />
             </Link>
             <Link
-              to="/account"
+              to="/sign_in"
               className={`icon-link ${
                 location.pathname === "/account" ||
                 location.pathname === "/account/add"
