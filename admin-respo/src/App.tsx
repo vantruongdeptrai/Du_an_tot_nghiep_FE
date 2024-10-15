@@ -1,4 +1,7 @@
+// src/App.tsx
+
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
 import {
   Categories,
   CreateCategory,
@@ -23,7 +26,8 @@ import {
   Register,
   Reviews,
   Users,
-} from "./pages";
+} from "./pages"; // Import các page từ src/pages
+
 import Permissions from "./pages/permission/Permissions";
 import CreatePermission from "./pages/permission/CreatePermission";
 import EditPermission from "./pages/permission/EditPermission";
@@ -34,10 +38,11 @@ import OperatingCost from "./pages/operating_costs/OperatingCost";
 import CreateOperatingCost from "./pages/operating_costs/CreateOperatingCost";
 import EditOperatingCost from "./pages/operating_costs/EditOperatingCost";
 import DetailProduct from "./pages/product/DetailProduct";
+
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />,
+    element: <Login />, // Đảm bảo Login được import chính xác
   },
   {
     path: "/register",
