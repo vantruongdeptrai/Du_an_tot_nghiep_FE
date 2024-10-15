@@ -1,5 +1,5 @@
 // components/SignInScreen.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import useLogin from "./../../../hooks/account";
