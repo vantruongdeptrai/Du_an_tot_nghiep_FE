@@ -1,51 +1,42 @@
-// src/services/account.ts
+import axios from "axios";
+import { useState } from "react";
 
-import axios from 'axios';
-import { toast } from 'react-toastify';
+const useLogin = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false); // Thêm trạng thái này
 
-// Định nghĩa interface cho thông tin đăng nhập
-interface LoginInfo {
-  email?: string;
-  phone?: string;
-  password: string;
-}
+  const handleLogin = async (identifier: string, password: string) => {
+    setLoading(true);
+    setError(null);
 
-// interface RegisterInput {
-//   name: string;
-//   email: string;
-//   password: string;
-//   password_confirmation: string;
-// }
-
-const useAuth = () => {
-  const loginUser = async (loginInfo: LoginInfo) => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login', {
-        email: loginInfo.email,
-        phone: loginInfo.phone,
-        password: loginInfo.password
-      });
-      
-      // Trả về dữ liệu phản hồi từ server nếu đăng nhập thành công
-      return response.data;
-    } catch (error) {
-      // Xử lý lỗi nếu đăng nhập không thành công
-      throw new Error(error.response?.data?.message || 'Đăng nhập thất bại');
+      let loginInfo = {};
+      if (identifier.includes('@')) {
+        loginInfo = { email: identifier, password };
+      } else {
+        loginInfo = { phone: identifier, password };
+      }
+
+      console.log("Login Info: ", loginInfo); // Log thông tin đăng nhập
+
+      const response = await axios.post('http://localhost:8000/api/login', loginInfo);
+      console.log("Đăng nhập thành công:", response.data);
+
+      // Lưu token và đặt trạng thái đăng nhập thành công
+      localStorage.setItem("token", response.data.token);
+      setIsLoggedIn(true);  // Đăng nhập thành công
+      return true; // Trả về true nếu đăng nhập thành công
+    } catch (err: any) {
+      // In ra thông tin lỗi
+      console.error("Error response:", err.response);
+      setError(err.response?.data?.message || "Đã xảy ra lỗi.");
+      return false; // Trả về false nếu có lỗi
+    } finally {
+      setLoading(false);
     }
   };
-  
-  
-  const registerUser = async (data) => {
-      try {
-         const response = await axios.post('http://127.0.0.1:8000/api/register', data);
-         toast.success("Register successfully!");
-         console.log(response.data);
-      } catch (error) {
-        console.error(error.response.data);
-      }
-  }
-  return {loginUser, registerUser}
-}
 
-
-export default useAuth;
+  return { handleLogin, loading, error, isLoggedIn }; // Trả về isLoggedIn
+};
+export default useLogin;
