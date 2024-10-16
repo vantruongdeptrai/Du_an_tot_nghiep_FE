@@ -69,10 +69,13 @@ const UserMenu = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // Xóa thông tin người dùng khỏi localStorage
     localStorage.removeItem("userInfo");
 
-    
+    // Thông báo đăng xuất thành công
     toast.success("Đã đăng xuất thành công!");
+
+    // Điều hướng về trang đăng nhập
     navigate("/sign_in");
   };
 
