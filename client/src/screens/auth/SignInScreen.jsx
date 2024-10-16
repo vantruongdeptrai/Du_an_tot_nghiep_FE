@@ -1,9 +1,10 @@
 // components/SignInScreen.tsx
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import useLogin from "./../../../hooks/account";
 import { BaseButtonBlack } from "../../styles/button";
+
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom"; 
 
@@ -17,11 +18,11 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  
+  // Kiểm tra nếu đã đăng nhập trước đó thì chuyển hướng
   useEffect(() => {
     const storedUser = localStorage.getItem("userInfo");
     if (storedUser) {
-      navigate("/account"); 
+      navigate("/account"); // Chuyển hướng nếu đã có thông tin người dùng
     }
   }, [navigate]);
 
