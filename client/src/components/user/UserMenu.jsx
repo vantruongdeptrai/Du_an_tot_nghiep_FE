@@ -1,7 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import styled from "styled-components";
 import Title from "../common/Title";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { toast } from "react-toastify";
 
 const NavMenuWrapper = styled.nav`
   margin-top: 32px;
@@ -65,6 +66,16 @@ const NavMenuWrapper = styled.nav`
 
 const UserMenu = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+
+    
+    toast.success("Đã đăng xuất thành công!");
+    navigate("/sign_in");
+  };
+
   return (
     <div>
       <Title titleText={"Hello Richard"} />
@@ -127,14 +138,18 @@ const UserMenu = () => {
             </Link>
           </li>
           <li className="nav-menu-item">
-            <Link to="/" className={`nav-menu-link flex items-center`}>
+            {/* Nút đăng xuất */}
+            <button
+              onClick={handleLogout}
+              className="nav-menu-link flex items-center"
+            >
               <span className="nav-link-icon flex items-center justify-center">
                 <img src="./assets/icons/ac_sign_out.svg" alt="" />
               </span>
               <span className="text-base font-semibold nav-link-text no-wrap">
                 Sign out
               </span>
-            </Link>
+            </button>
           </li>
         </ul>
       </NavMenuWrapper>

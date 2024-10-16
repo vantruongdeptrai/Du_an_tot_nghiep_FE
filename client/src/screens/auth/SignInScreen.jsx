@@ -1,5 +1,5 @@
 // components/SignInScreen.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import useLogin from "./../../../hooks/account";
@@ -17,16 +17,27 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userInfo");
+    if (storedUser) {
+      navigate("/account"); 
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const success = await handleLogin(identifier, password);
 
-    if (success) {
+    const userData = await handleLogin(identifier, password);
+
+    if (userData) {
       toast.success("Đăng nhập thành công!"); 
+
+      localStorage.setItem("userInfo", JSON.stringify(userData));
+
       setTimeout(() => {
-        navigate("/"); 
-      }, 500); 
+        navigate("/account"); 
+      }, 500);
     } else if (error) {
       toast.error(error); 
     }
