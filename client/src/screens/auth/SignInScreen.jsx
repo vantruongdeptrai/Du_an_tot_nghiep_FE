@@ -1,10 +1,9 @@
 // components/SignInScreen.tsx
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import useLogin from "./../../../hooks/account";
 import { BaseButtonBlack } from "../../styles/button";
-
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom"; 
 
@@ -18,16 +17,28 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  // Kiểm tra nếu đã đăng nhập trước đó thì chuyển hướng
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userInfo");
+    if (storedUser) {
+      navigate("/account"); // Chuyển hướng nếu đã có thông tin người dùng
+    }
+  }, [navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const success = await handleLogin(identifier, password);
 
-    if (success) {
+    const userData = await handleLogin(identifier, password);
+
+    if (userData) {
       toast.success("Đăng nhập thành công!"); 
+
+      // Lưu thông tin người dùng vào localStorage
+      localStorage.setItem("userInfo", JSON.stringify(userData));
+
       setTimeout(() => {
-        navigate("/"); 
-      }, 500); 
+        navigate("/account"); // Chuyển đến trang tài khoản hoặc trang khác
+      }, 500);
     } else if (error) {
       toast.error(error); 
     }
