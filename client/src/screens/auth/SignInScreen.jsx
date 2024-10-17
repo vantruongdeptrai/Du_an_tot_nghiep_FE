@@ -5,7 +5,7 @@ import { Container } from "../../styles/styles";
 import useLogin from "./../../../hooks/account";
 import { BaseButtonBlack } from "../../styles/button";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
 const SignInScreenWrapper = styled.section`
   /* Thêm các style tùy chỉnh tại đây */
@@ -17,11 +17,16 @@ const SignInScreen = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // Kiểm tra nếu đã đăng nhập trước đó thì chuyển hướng
   useEffect(() => {
     const storedUser = localStorage.getItem("userInfo");
     if (storedUser) {
-      navigate("/account"); // Chuyển hướng nếu đã có thông tin người dùng
+      const userData = JSON.parse(storedUser);
+      if (userData.role_id === 1) {
+        localStorage.removeItem("userInfo");
+        toast.error("đăng nhập không thành công");
+      } else {
+        navigate("/account");
+      }
     }
   }, [navigate]);
 
@@ -29,18 +34,22 @@ const SignInScreen = () => {
     e.preventDefault();
 
     const userData = await handleLogin(identifier, password);
+    console.log(userData);
 
     if (userData) {
-      toast.success("Đăng nhập thành công!"); 
+      if (userData.role_id === 1) {
+        toast.error("đăng nhập không thành công");
+        return;
+      }
 
-      // Lưu thông tin người dùng vào localStorage
       localStorage.setItem("userInfo", JSON.stringify(userData));
+      toast.success("Đăng nhập thành công!");
 
       setTimeout(() => {
-        navigate("/account"); // Chuyển đến trang tài khoản hoặc trang khác
+        navigate("/account");
       }, 500);
     } else if (error) {
-      toast.error(error); 
+      toast.error(error);
     }
   };
 
@@ -51,7 +60,9 @@ const SignInScreen = () => {
         {error && <p className="text-red-500">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="identifier">Tên người dùng hoặc địa chỉ email</label>
+            <label htmlFor="identifier">
+              Tên người dùng hoặc địa chỉ email
+            </label>
             <input
               type="text"
               placeholder="Nhập email hoặc số điện thoại"
