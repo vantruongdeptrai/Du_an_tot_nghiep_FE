@@ -1,13 +1,3 @@
-// *********************
-// Role of the component: The header component
-// Name of the component: Header.tsx
-// Developer: Aleksandar Kuzmanovic
-// Version: 1.0
-// Component call: <Header />
-// Input parameters: No input parameters
-// Output: The header component
-// *********************
-
 import { FaReact } from "react-icons/fa6";
 import { HiOutlineMoon, HiOutlineSun } from "react-icons/hi";
 import { HiOutlineBell } from "react-icons/hi";
@@ -17,10 +7,20 @@ import { setSidebar } from "../features/dashboard/dashboardSlice";
 import { Link } from "react-router-dom";
 import SearchInput from "./SearchInput";
 import { toggleDarkMode } from "../features/darkMode/darkModeSlice";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const dispatch = useAppDispatch();
   const { darkMode } = useAppSelector((state) => state.darkMode);
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    if (user) {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   return (
     <header className="dark:bg-blackPrimary bg-whiteSecondary relative">
@@ -49,7 +49,7 @@ const Header = () => {
           <Link to="/notifications">
             <HiOutlineBell className="text-xl dark:text-whiteSecondary text-blackPrimary" />
           </Link>
-          <Link to="/profile">
+          <Link to={isLoggedIn ? "/profile" : "/login"}>
             <div className="flex gap-2 items-center">
               <img
                 src="/src/assets/profile.jpg"
@@ -71,4 +71,5 @@ const Header = () => {
     </header>
   );
 };
+
 export default Header;
