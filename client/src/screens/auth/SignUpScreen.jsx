@@ -10,7 +10,7 @@ import PasswordInput from "../../components/auth/PasswordInput";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "../../validations/Auth";
-import useAuth from "../../hooks/account";
+import useAuth from "../../hooks/useRegister";
 
 const SignUpScreenWrapper = styled.section`
     form {
