@@ -8,6 +8,7 @@ import { Input, InputGroupWrapper } from "../../styles/form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useDispatch } from "react-redux";
 import { toggleSidebar } from "../../redux/slices/sidebarSlice";
+import { useEffect, useState } from "react";
 
 const NavigationAndSearchWrapper = styled.div`
   column-gap: 20px;
@@ -120,6 +121,17 @@ const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
+  // State để lưu thông tin người dùng đăng nhập
+  const [user, setUser] = useState(null);
+
+  // Kiểm tra trạng thái đăng nhập khi component được mount
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("user"));
+    if (loggedInUser) {
+      setUser(loggedInUser);
+    }
+  }, []);
+
   return (
     <HeaderMainWrapper className="header flex items-center">
       <Container className="container">
@@ -195,9 +207,12 @@ const Header = () => {
               <img src={staticImages.user} alt="" />
             </Link>
             <Link
-              to="/cart"
+              to={user ? `/cart/${user.id}` : "/cart"}
               className={`icon-link ${
-                location.pathname === "/cart" ? "active" : ""
+                location.pathname === "/cart" ||
+                location.pathname === `/cart/${user?.id}`
+                  ? "active"
+                  : ""
               } inline-flex items-center justify-center`}
             >
               <img src={staticImages.cart} alt="" />

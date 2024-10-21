@@ -1,14 +1,10 @@
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Container, ContentStylings, Section } from "../../styles/styles";
-import Breadcrumb from "../../components/common/Breadcrumb";
-import { Link } from "react-router-dom";
-import ProductList from "../../components/product/ProductList";
-import { products } from "../../data/data";
-import Title from "../../components/common/Title";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
 
 const ProductsContent = styled.div`
+  display: grid;
   grid-template-columns: 320px auto;
   margin: 20px 0;
 
@@ -48,116 +44,198 @@ const ProductsContentRight = styled.div`
     }
   }
 
-  .products-right-nav {
-    column-gap: 16px;
-    li {
-      a.active {
-        color: ${defaultTheme.color_purple};
-      }
+  .product-card-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 24px;
+  }
+
+  .product-card {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.05);
+    padding: 16px;
+    transition: box-shadow 0.3s ease-in-out;
+    &:hover {
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.15);
     }
   }
 
-  @media (max-width: ${breakpoints.lg}) {
-    padding-left: 12px;
-    padding-right: 12px;
+  .product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .product-info {
+    padding: 16px;
+  }
+
+  .product-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+
+  .product-price {
+    font-size: 16px;
+    color: ${defaultTheme.color_black};
+  }
+
+  .new-product {
+    background-color: green;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .category-info {
+    font-size: 14px;
+    color: #888;
+    margin-top: 8px;
+  }
+
+  .add-to-cart {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: ${defaultTheme.color_sea_green};
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    &:hover {
+      background-color: darken(${defaultTheme.color_sea_green}, 10%);
+    }
   }
 
   @media (max-width: ${breakpoints.sm}) {
     padding-left: 0;
     padding-right: 0;
   }
-
-  .product-card-list {
-    grid-template-columns: repeat(auto-fill, repeat(290px, auto));
-  }
-
-  .product-card {
-    padding-left: 0;
-    padding-right: 0;
-  }
 `;
 
-const DescriptionContent = styled.div`
-  .content-stylings {
-    margin-left: 32px;
-    @media (max-width: ${breakpoints.sm}) {
-      margin-left: 0;
+const ProductListPage = () => {
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchProductsAndCategories = async () => {
+      const productsResponse = await fetch(
+        "http://127.0.0.1:8000/api/products"
+      );
+      const productsData = await productsResponse.json();
+      setProducts(productsData);
+
+      const categoriesResponse = await fetch(
+        "http://127.0.0.1:8000/api/categories"
+      );
+      const categoriesData = await categoriesResponse.json();
+      setCategories(categoriesData);
+    };
+
+    fetchProductsAndCategories();
+  }, []);
+
+  const getCategoryById = (categoryId) => {
+    return categories.find((category) => category.id === categoryId);
+  };
+
+  const handleAddToCart = async (productId) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    const existingProduct = cart.find((item) => item.product_id === productId);
+
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      const productToAdd = products.find((product) => product.id === productId);
+      if (productToAdd) {
+        cart.push({
+          product_id: productToAdd.id,
+          name: productToAdd.name,
+          price: productToAdd.price,
+          quantity: 1,
+        });
+      }
     }
-  }
-`;
 
-const ProductListScreen = () => {
-  const breadcrumbItems = [
-    { label: "Home", link: "/" },
-    { label: "Products", link: "" },
-  ];
+    if (!user) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("Sản phẩm đã được thêm vào giỏ hàng (local storage)!");
+    } else {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify({
+            user_id: user.id,
+            product_id: productId,
+            quantity: existingProduct ? existingProduct.quantity : 1,
+            price: products.find((product) => product.id === productId).price,
+          }),
+        });
+
+        if (response.ok) {
+          alert("Sản phẩm đã được thêm vào giỏ hàng (database)!");
+        } else {
+          alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+        }
+      } catch (error) {
+        console.error("Lỗi khi gửi giỏ hàng lên server:", error);
+        alert("Lỗi kết nối đến server.");
+      }
+    }
+  };
+
   return (
-    <main className="page-py-spacing">
-      <Container>
-        <Breadcrumb items={breadcrumbItems} />
-        <ProductsContent className="grid items-start">
-          <ProductsContentLeft>
-            <ProductFilter />
-          </ProductsContentLeft>
-          <ProductsContentRight>
-            <div className="products-right-top flex items-center justify-between">
-              <h4 className="text-xxl">Women&apos;s Clothing</h4>
-              <ul className="products-right-nav flex items-center justify-end flex-wrap">
-                <li>
-                  <Link to="/" className="active text-lg font-semibold">
-                    New
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/" className="text-lg font-semibold">
-                    Recommended
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <ProductList products={products.slice(0, 12)} />
-          </ProductsContentRight>
-        </ProductsContent>
-      </Container>
-      <Section>
-        <Container>
-          <DescriptionContent>
-            <Title titleText={"Clothing for Everyone Online"} />
-            <ContentStylings className="text-base content-stylings">
-              <h4>Reexplore Clothing Collection Online at Achats.</h4>
-              <p>
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sed,
-                molestiae ex atque similique consequuntur ipsum sapiente
-                inventore magni ducimus sequi nemo id, numquam officiis fugit
-                pariatur esse, totam facere ullam?
-              </p>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Consequatur nam magnam placeat nesciunt ipsa amet, vel illo
-                veritatis eligendi voluptatem!
-              </p>
-              <h4>
-                One-stop Destination to Shop Every Clothing for Everyone:
-                Achats.
-              </h4>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo
-                iure doloribus optio aliquid id. Quos quod delectus, dolor est
-                ab exercitationem odio quae quas qui doloremque. Esse natus
-                minima ratione reiciendis nostrum, quam, quisquam modi aut,
-                neque hic provident dolorem.
-              </p>
-              <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quasi
-                laborum dolorem deserunt aperiam voluptate mollitia.
-              </p>
-              <Link to="/">See More</Link>
-            </ContentStylings>
-          </DescriptionContent>
-        </Container>
-      </Section>
-    </main>
+    <ProductsContent>
+      <ProductsContentLeft>
+        <ProductFilter />
+      </ProductsContentLeft>
+
+      <ProductsContentRight>
+        <div className="products-right-top">
+          <h2>Danh sách sản phẩm</h2>
+        </div>
+        <div className="product-card-list">
+          {products.map((product) => {
+            const category = getCategoryById(product.category_id);
+            return (
+              <div key={product.id} className="product-card">
+                <img
+                  src={product.image || "https://picsum.photos/200/300"}
+                  alt={product.name}
+                  className="product-image"
+                />
+                <div className="product-info">
+                  <h3 className="product-name">{product.name}</h3>
+                  <p className="product-price">${product.price}</p>
+                  {product.new_product && (
+                    <span className="new-product">New</span>
+                  )}
+                  {category && (
+                    <p className="category-info">Danh mục: {category.name}</p>
+                  )}
+                  <button
+                    className="add-to-cart"
+                    onClick={() => handleAddToCart(product.id)}
+                  >
+                    Thêm vào giỏ hàng
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </ProductsContentRight>
+    </ProductsContent>
   );
 };
 
-export default ProductListScreen;
+export default ProductListPage;
