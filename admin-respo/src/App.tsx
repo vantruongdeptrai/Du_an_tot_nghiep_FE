@@ -42,7 +42,7 @@ import DetailProduct from "./pages/product/DetailProduct";
 const router = createBrowserRouter([
   {
     path: "/login",
-    element: <Login />, // Đảm bảo Login được import chính xác
+    element: <Login />,
   },
   {
     path: "/register",

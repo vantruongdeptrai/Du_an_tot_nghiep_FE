@@ -1,101 +1,154 @@
+import React from "react";
 import styled from "styled-components";
-import CartItem from "./CartItem";
-import { PropTypes } from "prop-types";
-import { breakpoints } from "../../styles/themes/default";
 
-const ScrollbarXWrapper = styled.div`
-  overflow-x: scroll;
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    background-color: grey;
-  }
-`;
-
-const CartTableWrapper = styled.table`
+const Table = styled.table`
+  width: 100%;
   border-collapse: collapse;
-  min-width: 680px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
 
-  thead {
-    th {
-      height: 48px;
-      padding-left: 16px;
-      padding-right: 16px;
-      letter-spacing: 0.03em;
+  th,
+  td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
 
-      @media (max-width: ${breakpoints.lg}) {
-        padding: 16px 12px;
-      }
+  th {
+    background-color: #f4f4f4;
+  }
 
-      @media (max-width: ${breakpoints.xs}) {
-        padding: 10px;
-      }
+  .delete-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: darkred;
     }
   }
 
-  tbody {
-    td {
-      padding: 24px 16px;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  .quantity-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
 
-      @media (max-width: ${breakpoints.lg}) {
-        padding: 16px 12px;
-      }
-
-      @media (max-width: ${breakpoints.xs}) {
-        padding: 10px 6px;
-      }
+    &:hover {
+      background-color: #0056b3;
     }
+
+    margin: 0 4px;
   }
 `;
 
-const CartTable = ({ cartItems }) => {
-  const CART_TABLE_HEADS = [
-    "Product details",
-    "Price",
-    "Quantity",
-    "Shipping",
-    "Subtotal",
-    "Action",
-  ];
+const CartTable = ({ cartItems, setCartItems }) => {
+  const handleDelete = async (productId) => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    let updatedCart = cartItems.filter((item) => item.product_id !== productId);
+
+    if (!user) {
+      setCartItems(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    } else {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/cart/${user.id}/remove`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ product_id: productId }),
+          }
+        );
+
+        if (response.ok) {
+          setCartItems(updatedCart);
+        } else {
+          console.error("Failed to delete item from server cart.");
+        }
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
+    }
+  };
+
+  const handleIncreaseQuantity = (productId) => {
+    const updatedCart = cartItems.map((item) => {
+      if (item.product_id === productId) {
+        return { ...item, quantity: item.quantity + 1 };
+      }
+      return item;
+    });
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
+  const handleDecreaseQuantity = (productId) => {
+    const updatedCart = cartItems.map((item) => {
+      if (item.product_id === productId && item.quantity > 1) {
+        return { ...item, quantity: item.quantity - 1 };
+      }
+      return item;
+    });
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
 
   return (
-    <ScrollbarXWrapper>
-      <CartTableWrapper className="w-full">
-        <thead>
-          <tr className="text-start">
-            {CART_TABLE_HEADS?.map((column, index) => (
-              <th
-                key={index}
-                className={`bg-outerspace text-white font-semibold capitalize text-base ${
-                  index === CART_TABLE_HEADS.length - 1 ? " text-center" : ""
-                }`}
-              >
-                {column}
-              </th>
-            ))}
+    <Table>
+      <thead>
+        <tr>
+          <th>Tên sản phẩm</th>
+          <th>Số lượng</th>
+          <th>Giá</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        {cartItems.length > 0 ? (
+          cartItems.map((item) => (
+            <tr key={item.product_id}>
+              <td>{item.name}</td>
+              <td>
+                <button
+                  className="quantity-button"
+                  onClick={() => handleDecreaseQuantity(item.product_id)}
+                >
+                  -
+                </button>
+                {item.quantity}
+                <button
+                  className="quantity-button"
+                  onClick={() => handleIncreaseQuantity(item.product_id)}
+                >
+                  +
+                </button>
+              </td>
+              <td>${(item.price * item.quantity).toFixed(2)}</td>
+              <td>
+                <button
+                  className="delete-button"
+                  onClick={() => handleDelete(item.product_id)}
+                >
+                  Xóa
+                </button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="4">Giỏ hàng của bạn hiện đang trống.</td>
           </tr>
-        </thead>
-        <tbody>
-          {cartItems.map((cartItem) => {
-            return <CartItem key={cartItem.id} cartItem={cartItem} />;
-          })}
-        </tbody>
-      </CartTableWrapper>
-    </ScrollbarXWrapper>
+        )}
+      </tbody>
+    </Table>
   );
 };
 
 export default CartTable;
-
-CartTable.propTypes = {
-  cartItems: PropTypes.array,
-};
