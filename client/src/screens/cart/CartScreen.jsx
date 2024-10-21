@@ -1,10 +1,9 @@
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import { Link } from "react-router-dom";
-import { cartItems } from "../../data/data";
-import CartTable from "../../components/cart/CartTable";
 import { breakpoints } from "../../styles/themes/default";
+import CartTable from "../../components/cart/CartTable";
 import CartDiscount from "../../components/cart/CartDiscount";
 import CartSummary from "../../components/cart/CartSummary";
 
@@ -18,6 +17,7 @@ const CartPageWrapper = styled.main`
 
 const CartContent = styled.div`
   margin-top: 40px;
+  display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 40px;
 
@@ -50,28 +50,53 @@ const CartContent = styled.div`
 
 const CartScreen = () => {
   const breadcrumbItems = [
-    { label: "Home", link: "/cart" },
-    { label: "Add To Cart", link: "" },
+    { label: "Home", link: "/" },
+    { label: "Cart", link: "" },
   ];
+
+  const [cartItems, setCartItems] = useState([]);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) {
+        // Nếu chưa đăng nhập, lấy giỏ hàng từ localStorage
+        const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+        setCartItems(storedCart);
+      } else {
+        // Nếu đã đăng nhập, gọi API để lấy giỏ hàng theo user_id
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:8000/api/cart/${user.id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${user.token}`,
+              },
+            }
+          );
+          if (response.ok) {
+            const cartData = await response.json();
+            setCartItems(cartData);
+          } else {
+            console.error("Failed to fetch cart from server.");
+          }
+        } catch (error) {
+          console.error("Error fetching cart:", error);
+        }
+      }
+    };
+
+    fetchCartItems();
+  }, []);
+
   return (
     <CartPageWrapper>
       <Container>
         <Breadcrumb items={breadcrumbItems} />
-        <div className="cart-head">
-          <p className="text-base text-gray">
-            Please fill in the fields below and click place order to complete
-            your purchase!
-          </p>
-          <p className="text-gray text-base">
-            Already registered?
-            <Link to="/sign_in" className="text-sea-green font-medium">
-              &nbsp;Please login here.
-            </Link>
-          </p>
-        </div>
         <CartContent className="grid items-start">
           <div className="cart-content-left">
-            <CartTable cartItems={cartItems} />
+            <CartTable cartItems={cartItems} setCartItems={setCartItems} />
           </div>
           <div className="grid cart-content-right">
             <CartDiscount />

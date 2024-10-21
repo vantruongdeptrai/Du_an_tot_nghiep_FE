@@ -17,8 +17,13 @@ const Header = () => {
 
   useEffect(() => {
     const user = localStorage.getItem("user");
+    console.log("User in localStorage:", user); // Log giá trị của user
+
     if (user) {
       setIsLoggedIn(true);
+      console.log("User is logged in.");
+    } else {
+      console.log("User is not logged in.");
     }
   }, []);
 
