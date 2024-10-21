@@ -9,7 +9,7 @@ const useLogin = () => {
   const handleLogin = async (identifier: string, password: string) => {
     setLoading(true);
     setError(null);
-
+  
     try {
       let loginInfo = {};
       if (identifier.includes('@')) {
@@ -17,26 +17,29 @@ const useLogin = () => {
       } else {
         loginInfo = { phone: identifier, password };
       }
-
-      console.log("Login Info: ", loginInfo); // Log thông tin đăng nhập
-
+  
+      console.log("Login Info: ", loginInfo); 
+  
       const response = await axios.post('http://localhost:8000/api/login', loginInfo);
       console.log("Đăng nhập thành công:", response.data);
-
-      // Lưu token và đặt trạng thái đăng nhập thành công
+  
+     
       localStorage.setItem("token", response.data.token);
-      setIsLoggedIn(true);  // Đăng nhập thành công
-      return true; // Trả về true nếu đăng nhập thành công
+  
+      
+      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+  
+      setIsLoggedIn(true);  
+      return true;
     } catch (err: any) {
-      // In ra thông tin lỗi
+      
       console.error("Error response:", err.response);
       setError(err.response?.data?.message || "Đã xảy ra lỗi.");
-      return false; // Trả về false nếu có lỗi
+      return false; 
     } finally {
       setLoading(false);
     }
   };
-
-  return { handleLogin, loading, error, isLoggedIn }; // Trả về isLoggedIn
+  return { handleLogin, loading, error, isLoggedIn }; 
 };
 export default useLogin;

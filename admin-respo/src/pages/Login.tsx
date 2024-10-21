@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Thêm useNavigate
+import { useNavigate } from "react-router-dom";
 import useLogin from "./../hooks/account";
 
 const Login: React.FC = () => {
-  const { handleLogin, loading, error, isLoggedIn } = useLogin();
+  const { handleLogin, loading, error, isLoggedIn, user } = useLogin();
   const [identifier, setIdentifier] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const navigate = useNavigate(); // Khởi tạo navigate
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,16 +14,14 @@ const Login: React.FC = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      setTimeout(() => {
-        navigate("/");
-      }, 0);
+    if (isLoggedIn && user?.role_id === 1) {
+      navigate("/profile");
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, user, navigate]);
 
   return (
     <div className="login-container">
-      <h2>Đăng nhập</h2>
+      <h2>Đăng nhập Admin</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -41,8 +39,10 @@ const Login: React.FC = () => {
           {loading ? "Đang đăng nhập..." : "Đăng nhập"}
         </button>
       </form>
-      {error && <p className="error-message">{error}</p>}
-      {isLoggedIn && <p>Đăng nhập thành công! Đang chuyển hướng...</p>}
+      {error && <p className="error-message">{error}</p>} {}
+      {isLoggedIn && user?.role_id === 1 && (
+        <p>Đăng nhập thành công! Đang chuyển hướng...</p>
+      )}
     </div>
   );
 };
