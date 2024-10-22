@@ -3,7 +3,7 @@ import { staticImages } from "../utils/images";
 const navMenuData = [
   {
     id: "nav-menu-1",
-    menuLink: "/",
+    menuLink: "/product",
     menuText: "Shop",
   },
   {
