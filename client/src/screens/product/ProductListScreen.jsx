@@ -119,24 +119,91 @@ const ProductsContentRight = styled.div`
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  // State để lưu các bộ lọc
+  const [minRange, setMinRange] = useState(0);
+  const [maxRange, setMaxRange] = useState(10000);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [isPriceFilterOpen, setIsPriceFilterOpen] = useState(false);
+  const [isColorFilterOpen, setIsColorFilterOpen] = useState(false);
+  const [isSizeFilterOpen, setIsSizeFilterOpen] = useState(false);
+
+  // Hàm để toggle các filter
+  const toggleFilter = (filter) => {
+    if (filter === "price") setIsPriceFilterOpen(!isPriceFilterOpen);
+    if (filter === "color") setIsColorFilterOpen(!isColorFilterOpen);
+    if (filter === "size") setIsSizeFilterOpen(!isSizeFilterOpen);
+  };
+
+  // Hàm xử lý thay đổi input cho bộ lọc giá
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === "min") {
+      setMinRange(Number(value));
+    } else if (name === "max") {
+      setMaxRange(Number(value));
+    }
+  };
+
+  // Hàm xử lý khi người dùng chọn màu sắc
+  const handleColorChange = (color) => {
+    setSelectedColors((prevColors) => {
+      if (prevColors.includes(color)) {
+        return prevColors.filter((c) => c !== color);
+      } else {
+        return [...prevColors, color];
+      }
+    });
+  };
+
+  // Hàm xử lý khi người dùng chọn kích thước
+  const handleSizeChange = (size) => {
+    setSelectedSizes((prevSizes) => {
+      if (prevSizes.includes(size)) {
+        return prevSizes.filter((s) => s !== size);
+      } else {
+        return [...prevSizes, size];
+      }
+    });
+  };
+
+  // Hàm lấy dữ liệu sản phẩm từ API
+  const fetchFilteredProducts = async () => {
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/products/filter?min_price=${minRange}&max_price=${maxRange}&color_ids=${selectedColors.join(",")}&size_ids=${selectedSizes.join(",")}`
+      );
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching filtered products:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchProductsAndCategories = async () => {
-      const productsResponse = await fetch(
-        "http://127.0.0.1:8000/api/products"
-      );
-      const productsData = await productsResponse.json();
-      setProducts(productsData);
+      try {
+        const productsResponse = await fetch("http://127.0.0.1:8000/api/products");
+        const productsData = await productsResponse.json();
+        setProducts(productsData);
 
-      const categoriesResponse = await fetch(
-        "http://127.0.0.1:8000/api/categories"
-      );
-      const categoriesData = await categoriesResponse.json();
-      setCategories(categoriesData);
+        const categoriesResponse = await fetch("http://127.0.0.1:8000/api/categories");
+        const categoriesData = await categoriesResponse.json();
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error('Error fetching products and categories:', error);
+      }
     };
 
     fetchProductsAndCategories();
   }, []);
+
+  useEffect(() => {
+    fetchFilteredProducts(); // Gọi hàm lọc sản phẩm mỗi khi bộ lọc thay đổi
+  }, [minRange, maxRange, selectedColors, selectedSizes]);
 
   const getCategoryById = (categoryId) => {
     return categories.find((category) => category.id === categoryId);
@@ -145,7 +212,6 @@ const ProductListPage = () => {
   const handleAddToCart = async (productId) => {
     const user = JSON.parse(localStorage.getItem("user"));
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
     const existingProduct = cart.find((item) => item.product_id === productId);
 
     if (existingProduct) {
@@ -196,7 +262,16 @@ const ProductListPage = () => {
   return (
     <ProductsContent>
       <ProductsContentLeft>
-        <ProductFilter />
+        <ProductFilter 
+          minRange={minRange} 
+          setMinRange={setMinRange} 
+          maxRange={maxRange} 
+          setMaxRange={setMaxRange} 
+          selectedColors={selectedColors} 
+          setSelectedColors={setSelectedColors} 
+          selectedSizes={selectedSizes} 
+          setSelectedSizes={setSelectedSizes} 
+        />
       </ProductsContentLeft>
 
       <ProductsContentRight>

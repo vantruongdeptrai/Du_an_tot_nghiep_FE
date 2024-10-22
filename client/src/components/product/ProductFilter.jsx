@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ColorsFilter,
   FilterTitle,
@@ -9,31 +9,62 @@ import {
   StyleFilter,
 } from "../../styles/filter";
 import { ProductFilterList, StyleFilterList } from "../../data/data";
-import { staticImages } from "../../utils/images";
 
-const ProductFilter = () => {
+const ProductFilter = ({
+  minRange,
+  setMinRange,
+  maxRange,
+  setMaxRange,
+  selectedColors,
+  setSelectedColors,
+  selectedSizes,
+  setSelectedSizes,
+}) => {
   const [isProductFilterOpen, setProductFilterOpen] = useState(true);
   const [isPriceFilterOpen, setPriceFilterOpen] = useState(true);
   const [isColorFilterOpen, setColorFilterOpen] = useState(true);
   const [isSizeFilterOpen, setSizeFilterOpen] = useState(true);
   const [isStyleFilterOpen, setStyleFilterOpen] = useState(true);
 
+  const [sizes, setSizes] = useState([]);
+  const [colors, setColors] = useState([]);
+
+  useEffect(() => {
+    const fetchSizeAndColor = async () => {
+      try {
+        // Lấy màu sắc từ API
+        const colorsResponse = await fetch("http://127.0.0.1:8000/api/colors");
+        const colorsData = await colorsResponse.json();
+        setColors(colorsData);
+
+        // Lấy kích thước từ API
+        const sizesResponse = await fetch("http://127.0.0.1:8000/api/sizes");
+        const sizesData = await sizesResponse.json();
+        setSizes(sizesData);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      }
+    };
+
+    fetchSizeAndColor();
+  }, []);
+
   const toggleFilter = (filter) => {
     switch (filter) {
       case "product":
-        setProductFilterOpen(!isProductFilterOpen);
+        setProductFilterOpen((prev) => !prev);
         break;
       case "price":
-        setPriceFilterOpen(!isPriceFilterOpen);
+        setPriceFilterOpen((prev) => !prev);
         break;
       case "color":
-        setColorFilterOpen(!isColorFilterOpen);
+        setColorFilterOpen((prev) => !prev);
         break;
       case "size":
-        setSizeFilterOpen(!isSizeFilterOpen);
+        setSizeFilterOpen((prev) => !prev);
         break;
       case "style":
-        setStyleFilterOpen(!isStyleFilterOpen);
+        setStyleFilterOpen((prev) => !prev);
         break;
       default:
         break;
@@ -41,19 +72,26 @@ const ProductFilter = () => {
   };
 
   const rangeMin = 100;
-  const [minRange, setMinRange] = useState(300);
-  const [maxRange, setMaxRange] = useState(700);
+
+  // Đảm bảo min và max nằm trong khoảng hợp lệ
+  useEffect(() => {
+    if (minRange < 0) setMinRange(0);
+    if (maxRange > 1000) setMaxRange(1000);
+    if (maxRange - minRange < rangeMin) {
+      setMaxRange(minRange + rangeMin);
+    }
+  }, [minRange, maxRange, setMinRange, setMaxRange]);
 
   const handleInputChange = (e) => {
-    const inputName = e.target.name;
-    const inputValue = parseInt(e.target.value);
+    const { name, value } = e.target;
+    const inputValue = Math.min(Math.max(parseInt(value), 0), 1000);
 
-    if (inputName === "min") {
+    if (name === "min") {
       setMinRange(inputValue);
       if (maxRange - inputValue < rangeMin) {
         setMaxRange(inputValue + rangeMin);
       }
-    } else if (inputName === "max") {
+    } else if (name === "max") {
       setMaxRange(inputValue);
       if (inputValue - minRange < rangeMin) {
         setMinRange(inputValue - rangeMin);
@@ -65,6 +103,22 @@ const ProductFilter = () => {
     return (value / max) * 100 + "%";
   };
 
+  const handleColorChange = (colorId) => {
+    setSelectedColors((prevColors) => {
+      return prevColors.includes(colorId)
+        ? prevColors.filter((c) => c !== colorId)
+        : [...prevColors, colorId];
+    });
+  };
+
+  const handleSizeChange = (sizeId) => {
+    setSelectedSizes((prevSizes) => {
+      return prevSizes.includes(sizeId)
+        ? prevSizes.filter((s) => s !== sizeId)
+        : [...prevSizes, sizeId];
+    });
+  };
+
   return (
     <>
       <ProductCategoryFilter>
@@ -72,35 +126,22 @@ const ProductFilter = () => {
           className="filter-title flex items-center justify-between"
           onClick={() => toggleFilter("product")}
         >
-          <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Filter
-          </p>
-          <span
-            className={`text-gray text-xxl filter-title-icon ${
-              !isProductFilterOpen ? "rotate" : ""
-            }`}
-          >
+          <p className="filter-title-text text-gray text-base font-semibold text-lg">Bộ lọc</p>
+          <span className={`text-gray text-xxl filter-title-icon ${!isProductFilterOpen ? "rotate" : ""}`}>
             <i className="bi bi-filter"></i>
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isProductFilterOpen ? "hide" : "show"}`}>
-          {ProductFilterList?.map((productFilter) => {
-            return (
-              <div className="product-filter-item" key={productFilter.id}>
-                <button
-                  type="button"
-                  className="filter-item-head w-full flex items-center justify-between"
-                >
-                  <span className="filter-head-title text-base text-gray font-semibold">
-                    {productFilter.title}
-                  </span>
-                  <span className="filter-head-icon text-gray">
-                    <i className="bi bi-chevron-right"></i>
-                  </span>
-                </button>
-              </div>
-            );
-          })}
+          {ProductFilterList?.map((productFilter) => (
+            <div className="product-filter-item" key={productFilter.id}>
+              <button type="button" className="filter-item-head w-full flex items-center justify-between">
+                <span className="filter-head-title text-base text-gray font-semibold">{productFilter.title}</span>
+                <span className="filter-head-icon text-gray">
+                  <i className="bi bi-chevron-right"></i>
+                </span>
+              </button>
+            </div>
+          ))}
         </FilterWrap>
       </ProductCategoryFilter>
 
@@ -109,22 +150,12 @@ const ProductFilter = () => {
           className="filter-title flex items-center justify-between"
           onClick={() => toggleFilter("price")}
         >
-          <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Price
-          </p>
-          <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isPriceFilterOpen ? "rotate" : ""
-            }`}
-          >
+          <p className="filter-title-text text-gray text-base font-semibold text-lg">Giá</p>
+          <span className={`text-gray text-xl filter-title-icon ${!isPriceFilterOpen ? "rotate" : ""}`}>
             <i className="bi bi-chevron-up"></i>
           </span>
         </FilterTitle>
-        <FilterWrap
-          className={`range filter-wrap ${
-            !isPriceFilterOpen ? "hide" : "show"
-          }`}
-        >
+        <FilterWrap className={`range filter-wrap ${!isPriceFilterOpen ? "hide" : "show"}`}>
           <div className="range-slider">
             <span
               className="range-selected h-full bg-sea-green"
@@ -147,7 +178,7 @@ const ProductFilter = () => {
             />
             <input
               type="range"
-              className="min w-full"
+              className="max w-full"
               min="0"
               max="1000"
               value={maxRange}
@@ -180,170 +211,83 @@ const ProductFilter = () => {
           className="flex items-center justify-between"
           onClick={() => toggleFilter("color")}
         >
-          <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Colors
-          </p>
-          <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isColorFilterOpen ? "rotate" : ""
-            }`}
-          >
+          <p className="filter-title-text text-gray text-base font-semibold text-lg">Màu sắc</p>
+          <span className={`text-gray text-xl filter-title-icon ${!isColorFilterOpen ? "rotate" : ""}`}>
             <i className="bi bi-chevron-up"></i>
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isColorFilterOpen ? "hide" : "show"}`}>
           <div className="colors-list grid">
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color1} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color2} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color3} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color4} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color5} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color6} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color7} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color8} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color9} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color10} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color11} alt="" />
-            </div>
-            <div className="colors-item text-center flex flex-col justify-center items-center">
-              <input type="checkbox" />
-              <img src={staticImages.color12} alt="" />
-            </div>
+            {colors.map((color) => (
+              <div className="colors-item text-center flex flex-col justify-center items-center" key={color.id}>
+                <input
+                  type="checkbox"
+                  id={`color-${color.id}`}
+                  onChange={() => handleColorChange(color.id)}
+                  aria-label={`Bộ lọc theo màu ${color.name}`}
+                />
+                <label htmlFor={`color-${color.id}`}>
+                  <img src={color.src} alt={color.name} />
+                </label>
+              </div>
+            ))}
           </div>
         </FilterWrap>
       </ColorsFilter>
+
       <SizesFilter>
         <FilterTitle
           className="flex items-center justify-between"
           onClick={() => toggleFilter("size")}
         >
-          <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Size
-          </p>
-          <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isSizeFilterOpen ? "rotate" : ""
-            }`}
-          >
+          <p className="filter-title-text text-gray text-base font-semibold text-lg">Kích thước</p>
+          <span className={`text-gray text-xl filter-title-icon ${!isSizeFilterOpen ? "rotate" : ""}`}>
             <i className="bi bi-chevron-up"></i>
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isSizeFilterOpen ? "hide" : "show"}`}>
           <div className="sizes-list grid text-center justify-center">
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                xxs
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                xs
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                s
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                m
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                l
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                xxl
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                3xl
-              </span>
-            </div>
-            <div className="sizes-item text-sm font-semibold text-outerspace w-full">
-              <input type="checkbox" />
-              <span className="flex items-center justify-center uppercase">
-                4xl
-              </span>
-            </div>
+            {sizes.map((size) => (
+              <div className="sizes-item text-sm font-semibold text-outerspace w-full" key={size.id}>
+                <input
+                  type="checkbox"
+                  id={`size-${size.id}`}
+                  onChange={() => handleSizeChange(size.id)}
+                  aria-label={`Bộ lọc theo kích thước ${size.name}`}
+                />
+                <label htmlFor={`size-${size.id}`}>
+                  <span className="flex items-center justify-center uppercase">{size.name}</span>
+                </label>
+              </div>
+            ))}
           </div>
         </FilterWrap>
       </SizesFilter>
-      <StyleFilter onClick={() => toggleFilter("style")}>
-        <FilterTitle className="flex items-center justify-between">
-          <p className="filter-title-text text-gray text-base font-semibold text-lg">
-            Dress Style
-          </p>
-          <span
-            className={`text-gray text-xl filter-title-icon ${
-              !isStyleFilterOpen ? "rotate" : ""
-            }`}
-          >
+
+      <StyleFilter>
+        <FilterTitle
+          className="flex items-center justify-between"
+          onClick={() => toggleFilter("style")}
+        >
+          <p className="filter-title-text text-gray text-base font-semibold text-lg">Phong cách váy</p>
+          <span className={`text-gray text-xl filter-title-icon ${!isStyleFilterOpen ? "rotate" : ""}`}>
             <i className="bi bi-chevron-up"></i>
           </span>
         </FilterTitle>
         <FilterWrap className={`${!isStyleFilterOpen ? "hide" : "show"}`}>
-          {StyleFilterList?.map((styleFilter) => {
-            return (
-              <div className="style-filter-item" key={styleFilter.id}>
-                <button
-                  type="button"
-                  className="filter-item-head w-full flex items-center justify-between"
-                >
-                  <span className="filter-head-title text-base text-gray font-semibold">
-                    {styleFilter.title}
-                  </span>
-                  <span className="filter-head-icon text-gray">
-                    <i className="bi bi-chevron-right"></i>
-                  </span>
-                </button>
-              </div>
-            );
-          })}
+          {StyleFilterList?.map((styleFilter) => (
+            <div className="style-filter-item" key={styleFilter.id}>
+              <button
+                type="button"
+                className="filter-item-head w-full flex items-center justify-between"
+              >
+                <span className="filter-head-title text-base text-gray font-semibold">{styleFilter.title}</span>
+                <span className="filter-head-icon text-gray">
+                  <i className="bi bi-chevron-right"></i>
+                </span>
+              </button>
+            </div>
+          ))}
         </FilterWrap>
       </StyleFilter>
     </>

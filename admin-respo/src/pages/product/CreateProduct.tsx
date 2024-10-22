@@ -93,6 +93,7 @@ const CreateProduct: React.FC = () => {
 
         toast.success("Tạo biến thể thành công!");
         nav("/products");
+        
     };
 
     // State lưu trữ biến thể đã chọn và chi tiết biến thể
@@ -122,7 +123,19 @@ const CreateProduct: React.FC = () => {
             },
         }));
     };
-
+    const uploadImage = async (file: File): Promise<string> => {
+        const formData = new FormData();
+        formData.append("file", file);
+    
+        // Gửi file lên server của bạn
+        const res = await fetch("http://localhost:3000/upload", {
+            method: "POST",
+            body: formData,
+        });
+    
+        const data = await res.json();
+        return data.imageUrl; // Trả về URL của ảnh đã được tải lên
+    };
     return (
         <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
             <Sidebar />
@@ -385,7 +398,7 @@ const CreateProduct: React.FC = () => {
                                                                             </InputWithLabel>
                                                                             <InputWithLabel label="Hình ảnh">
                                                                                 <input
-                                                                                    type="text"
+                                                                                    type="file"
                                                                                     placeholder="Nhập URL hình ảnh"
                                                                                     value={
                                                                                         variantDetails[variantKey]
