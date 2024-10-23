@@ -1,4 +1,3 @@
-
 import styled from "styled-components";
 import { FormGridWrapper, FormTitle } from "../../styles/form_grid";
 import { Container } from "../../styles/styles";
@@ -7,13 +6,11 @@ import AuthOptions from "../../components/auth/AuthOptions";
 import { FormElement } from "../../styles/form";
 import { Form, Link } from "react-router-dom";
 import { BaseButtonBlack } from "../../styles/button";
-
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useLogin from "./../../../hooks/account";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-
 
 const SignInScreenWrapper = styled.section`
     .form-separator {
@@ -50,7 +47,6 @@ const SignInScreen = () => {
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const storedUser = localStorage.getItem("userInfo");

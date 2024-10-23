@@ -58,8 +58,7 @@ const CartScreen = () => {
 
   useEffect(() => {
     const fetchCartItems = async () => {
-      const user = JSON.parse(localStorage.getItem("user"));
-
+      const user = JSON.parse(localStorage.getItem("userInfo"));
       if (!user) {
         // Nếu chưa đăng nhập, lấy giỏ hàng từ localStorage
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -68,7 +67,7 @@ const CartScreen = () => {
         // Nếu đã đăng nhập, gọi API để lấy giỏ hàng theo user_id
         try {
           const response = await fetch(
-            `http://127.0.0.1:8000/api/cart/${user.id}`,
+            `http://127.0.0.1:8000/api/cart/auth?user_id=${user.id}`,
             {
               headers: {
                 Authorization: `Bearer ${user.token}`,
@@ -77,7 +76,9 @@ const CartScreen = () => {
           );
           if (response.ok) {
             const cartData = await response.json();
-            setCartItems(cartData);
+            console.log(cartData.cart);
+            
+            setCartItems(cartData.cart || []); // Giả định API trả về một mảng `items`
           } else {
             console.error("Failed to fetch cart from server.");
           }
