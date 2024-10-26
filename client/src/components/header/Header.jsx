@@ -120,10 +120,26 @@ const IconLinksWrapper = styled.div`
 const Header = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-
+  // State lưu trữ từ khóa tìm kiếm và kết quả từ API
+  const [searchTerm, setSearchTerm] = useState('');
+  const [results, setResults] = useState([]);
   // State để lưu thông tin người dùng đăng nhập
   const [user, setUser] = useState(null);
+  // Xử lý sự kiện khi người dùng nhập từ khóa
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
 
+  // Hàm gửi request tìm kiếm đến API
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get('/api/search', { params: { name: searchTerm } });
+      setResults(response.data.products); // Lưu kết quả trả về từ API
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    }
+  };
   // Kiểm tra trạng thái đăng nhập khi component được mount
   useEffect(() => {
     const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -172,7 +188,7 @@ const Header = () => {
                 })}
               </ul>
             </NavigationMenuWrapper>
-            <form className="search-form">
+            <form className="search-form" onSubmit={handleSearch}>
               <InputGroupWrapper className="input-group">
                 <span className="input-icon flex items-center justify-center text-xl text-gray">
                   <i className="bi bi-search"></i>
@@ -181,6 +197,8 @@ const Header = () => {
                   type="text"
                   className="input-control w-full"
                   placeholder="Search"
+                  value={searchTerm}
+                  onChange={handleInputChange}
                 />
               </InputGroupWrapper>
             </form>
