@@ -47,7 +47,7 @@ const Table = styled.table`
 
 const CartTable = ({ cartItems, setCartItems }) => {
   const handleDelete = async (productId) => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("userInfo"));
     let updatedCart = cartItems.filter((item) => item.product_id !== productId);
 
     if (!user) {
@@ -114,7 +114,7 @@ const CartTable = ({ cartItems, setCartItems }) => {
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
             <tr key={item.product_id}>
-              <td>{item.name}</td>
+              <td>{item.product_name}</td>
               <td>
                 <button
                   className="quantity-button"
