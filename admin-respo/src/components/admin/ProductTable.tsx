@@ -8,8 +8,9 @@ const ProductTable = () => {
   const { categories } = useCategory();
 
   const getCategoryName = (categoryId: string) => {
-    const category = categories.find((cat) => cat.id == categoryId);
-    return category ? category.name : "unknown";
+      // Kiểm tra nếu categories là một mảng
+      const category = categories.find((cat) => cat.id == categoryId);
+      return category ? category.name : "unknown";
   };
 
   return (
@@ -60,7 +61,7 @@ const ProductTable = () => {
               <td className="py-4 pl-4 pr-8">
                 <div className="flex items-center gap-x-4">
                   <img
-                    src={item.image}
+                    src={item.image_url}
                     alt=""
                     className="h-8 w-8 rounded-full bg-gray-800"
                   />

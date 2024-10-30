@@ -14,7 +14,7 @@ const useCategory = () => {
         try {
             setIsLoading(true);
             const respon = await axios.get("http://localhost:8000/api/categories");
-            setCategories(respon.data);
+            setCategories(respon.data.categories); 
         } catch (err) {
             setError("Failed to fetch permissions");
         } finally {

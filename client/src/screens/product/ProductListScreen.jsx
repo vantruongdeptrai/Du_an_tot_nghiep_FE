@@ -192,7 +192,8 @@ const ProductListPage = () => {
 
         const categoriesResponse = await fetch("http://127.0.0.1:8000/api/categories");
         const categoriesData = await categoriesResponse.json();
-        setCategories(categoriesData);
+        setCategories(categoriesData.categories);
+        
       } catch (error) {
         console.error('Error fetching products and categories:', error);
       }
@@ -206,7 +207,7 @@ const ProductListPage = () => {
   }, [minRange, maxRange, selectedColors, selectedSizes]);
 
   const getCategoryById = (categoryId) => {
-    return categories.find((category) => category.id === categoryId);
+    return categories.find((category) => category.id == categoryId);
   };
 
   const handleAddToCart = async (productId) => {

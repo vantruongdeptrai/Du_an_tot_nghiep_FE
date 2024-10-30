@@ -13,6 +13,7 @@ export type Product = {
     new_product:number;
     best_seller_product:number;
     featured_product:number;
+    image_url:string;
     is_variants: number;
 }
 
@@ -29,6 +30,7 @@ export type ProductInput = {
     new_product:string;
     best_seller_product:string;
     featured_product:string;
+    image_url:string;
     is_variants: string;
 }
 
@@ -39,5 +41,5 @@ export type ProductVariant = {
     quantities: Record<string, number>; // Đối tượng chứa số lượng
     prices: Record<string, number>; // Đối tượng chứa giá
     status: string; // Trạng thái
-    images: Record<string, string>; // Đối tượng chứa hình ảnh
+    images: Record<string, File>;
 }
