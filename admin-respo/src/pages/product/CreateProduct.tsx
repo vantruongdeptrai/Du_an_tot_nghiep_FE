@@ -30,7 +30,7 @@ const CreateProduct: React.FC = () => {
         handleSubmit: handleSubmitBasic,
         setValue,
     } = useForm<ProductInput>({
-        resolver: zodResolver(productSchema)
+        resolver: zodResolver(productSchema),
     });
 
     const { register: registerVariant, handleSubmit: handleSubmitVariant } = useForm();
@@ -45,11 +45,11 @@ const CreateProduct: React.FC = () => {
         const price = Number(data.price);
         const sale_price = Number(data.sale_price);
 
-        if(price < sale_price) {
+        if (price < sale_price) {
             toast.error("Price must be greater than sale_price");
             return;
         }
-        const product = await createProduct(data);
+        const product = await createProduct(data, selectedFile || undefined);
         setProductId(product.product.id);
 
         if (hasVariants) {
@@ -62,24 +62,34 @@ const CreateProduct: React.FC = () => {
 
     // Hàm xử lý khi submit form biến thể sản phẩm
     const onSubmitVariant: SubmitHandler<ProductVariant> = async () => {
+        const files: File[] = []; // Mảng chứa tất cả các file ảnh
         const variantsData: ProductVariant = {
             product_id: Number(productId), // ID sản phẩm
             colors: selectedVariants.map(({ colorId }) => Number(colorId)), // Tạo mảng ID màu
             sizes: selectedVariants.map(({ sizeId }) => Number(sizeId)), // Tạo mảng ID kích cỡ
             quantities: {}, // Khởi tạo quantities
             prices: {}, // Khởi tạo prices
-            images: {}, // Khởi tạo images
+            images: {},
             status: "1", // Trạng thái
         };
 
         // Duyệt qua từng variant để cập nhật quantities, prices, và images
         selectedVariants.forEach(({ sizeId, colorId }) => {
             const variantKey = `${colorId}-${sizeId}`;
-            const { price = 0, image = "", quantity = 0 } = variantDetails[variantKey] || {};
+            const { price = 0, quantity = 0 } = variantDetails[variantKey] || {};
 
             variantsData.quantities[variantKey] = Number(quantity); // Thêm số lượng
             variantsData.prices[variantKey] = Number(price); // Thêm giá
-            variantsData.images[variantKey] = image || ""; // Thêm URL hình ảnh
+            const file = selectedFileVariants[variantKey]; // Lấy file tương ứng với biến thể
+
+            if (file) {
+                files.push(file); // Thêm file vào mảng files
+                // Thêm URL tạm thời cho từng file vào trường images
+                variantsData.images[variantKey] = file; // Thêm file vào images
+            } else {
+                toast.error("Vui lòng chọn ảnh cho biến thể!");
+                return;
+            }
         });
 
         if (!productId) {
@@ -88,18 +98,20 @@ const CreateProduct: React.FC = () => {
         }
 
         // Tạo biến thể sản phẩm
-        await createProductVariant(variantsData);
-        console.log(variantsData);
+        // Tạo biến thể sản phẩm
+
+        // Kiểm tra nếu có file ảnh được chọn
+        await createProductVariant(variantsData, files);
+        console.log("Variant Data:", variantsData);
+        console.log(files);
 
         toast.success("Tạo biến thể thành công!");
-        nav("/products");
-        
     };
 
     // State lưu trữ biến thể đã chọn và chi tiết biến thể
     const [selectedVariants, setSelectedVariants] = useState<{ sizeId: string; colorId: string }[]>([]);
     const [variantDetails, setVariantDetails] = useState<{
-        [key: string]: { price: string; image: string; quantity: string };
+        [key: string]: { price: string; quantity: string };
     }>({});
 
     // Hàm xử lý khi chọn hoặc bỏ chọn biến thể
@@ -123,18 +135,34 @@ const CreateProduct: React.FC = () => {
             },
         }));
     };
-    const uploadImage = async (file: File): Promise<string> => {
-        const formData = new FormData();
-        formData.append("file", file);
-    
-        // Gửi file lên server của bạn
-        const res = await fetch("http://localhost:3000/upload", {
-            method: "POST",
-            body: formData,
-        });
-    
-        const data = await res.json();
-        return data.imageUrl; // Trả về URL của ảnh đã được tải lên
+
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [selectedFileVariants, setSelectedFileVariants] = useState<{ [key: string]: File | null }>({});
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+    // Hàm xử lý khi người dùng chọn file
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, variantKey: string) => {
+        const file = event.target.files?.[0] || null;
+        setSelectedFile(file);
+        setSelectedFileVariants((prevFiles) => ({
+            ...prevFiles,
+            [variantKey]: file, // Lưu file ảnh vào đối tượng với variantKey
+        })); // Lưu file ảnh được chọn
+        // Lưu ảnh vào `variantDetails` dựa trên `variantKey`
+        // Cập nhật hình ảnh vào `variantDetails` dựa trên `variantKey`
+        setVariantDetails((prevDetails) => ({
+            ...prevDetails,
+            [variantKey]: {
+                ...prevDetails[variantKey],
+                image: file ? URL.createObjectURL(file) : "", // Lưu URL tạm thời cho ảnh
+            },
+        }));
+
+        // Tạo URL tạm thời cho ảnh để hiển thị
+        if (file) {
+            const objectUrl = URL.createObjectURL(file);
+            setImagePreview(objectUrl);
+        }
     };
     return (
         <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
@@ -177,6 +205,54 @@ const CreateProduct: React.FC = () => {
                                     {errors.description && (
                                         <span className="text-sm text-red-500">{errors.description.message}</span>
                                     )}
+
+                                    <InputWithLabel label="Image">
+                                        <label
+                                            htmlFor="category-image"
+                                            className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer dark:bg-blackPrimary bg-whiteSecondary dark:hover:border-gray-600 hover:border-gray-500"
+                                        >
+                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <svg
+                                                    className="w-8 h-8 mb-4 text-blackPrimary dark:text-whiteSecondary"
+                                                    aria-hidden="true"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 20 16"
+                                                >
+                                                    <path
+                                                        stroke="currentColor"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                                    />
+                                                </svg>
+                                                <p className="mb-2 text-sm text-blackPrimary dark:text-whiteSecondary">
+                                                    <span className="font-semibold">Click to upload</span> or drag and
+                                                    drop
+                                                </p>
+                                                <p className="text-xs dark:text-whiteSecondary text-blackPrimary">
+                                                    SVG, PNG, JPG or GIF (MAX. 800x400px)
+                                                </p>
+                                            </div>
+                                            <input
+                                                id="category-image"
+                                                type="file"
+                                                className="hidden"
+                                                onChange={handleFileChange}
+                                                accept="image/*"
+                                            />
+                                        </label>
+
+                                        {/* Hiển thị ảnh nếu đã chọn */}
+                                        {imagePreview && (
+                                            <img
+                                                src={imagePreview}
+                                                alt="Preview"
+                                                className="mt-4 w-full h-64 object-cover rounded-lg"
+                                            />
+                                        )}
+                                    </InputWithLabel>
 
                                     <InputWithLabel label="Danh mục">
                                         <select
@@ -399,18 +475,10 @@ const CreateProduct: React.FC = () => {
                                                                             <InputWithLabel label="Hình ảnh">
                                                                                 <input
                                                                                     type="file"
-                                                                                    placeholder="Nhập URL hình ảnh"
-                                                                                    value={
-                                                                                        variantDetails[variantKey]
-                                                                                            ?.image || ""
-                                                                                    }
                                                                                     onChange={(e) =>
-                                                                                        handleVariantDetailChange(
-                                                                                            variantKey,
-                                                                                            "image",
-                                                                                            e.target.value
-                                                                                        )
+                                                                                        handleFileChange(e, variantKey)
                                                                                     }
+                                                                                    accept="image/*"
                                                                                 />
                                                                             </InputWithLabel>
                                                                             <InputWithLabel label="Số lượng">

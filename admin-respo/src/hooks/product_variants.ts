@@ -36,38 +36,77 @@ const useProductVariant = () => {
     // };
 
     // Hàm tạo danh mục với ảnh
-    const createProductVariant = async (data: ProductVariant) => {
-
+    const createProductVariant = async (data: ProductVariant, files: File[]) => {
         try {
             setIsLoading(true);
-            const response = await axios.post("http://localhost:8000/api/product-variants", data);
+
+            // Tạo một đối tượng FormData để gửi dữ liệu
+            const formData = new FormData();
+
+            // Thêm dữ liệu từ ProductVariant vào formData
+            formData.append("product_id", data.product_id ? data.product_id.toString() : ""); // Chuyển đổi số thành chuỗi
+            data.colors.forEach((color) => formData.append("colors[]", color)); // Gửi mảng màu
+            data.sizes.forEach((size) => formData.append("sizes[]", size)); // Gửi mảng kích thước
+
+            // Thêm số lượng vào formData
+            for (const [key, value] of Object.entries(data.quantities)) {
+                formData.append(`quantities[${key}]`, value.toString());
+            }
+
+            // Thêm giá vào formData
+            for (const [key, value] of Object.entries(data.prices)) {
+                formData.append(`prices[${key}]`, value.toString());
+            }
+
+            // Thêm đường dẫn hình ảnh vào formData
+            for (const [key, file] of Object.entries(data.images)) {
+                formData.append(`images[${key}]`, file); // Gửi file ảnh
+            }
+
+            formData.append("status", data.status); // Thêm trạng thái
+
+            // Thêm các file tương ứng vào formData
+            // if (files.length > 0) {
+            //     // Kiểm tra nếu có file
+            //     files.forEach((file, index) => {
+            //         formData.append(`image[${index}]`, file); // Gửi file ảnh
+            //     });
+            // }
+
+            const response = await axios.post("http://localhost:8000/api/product-variants", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
             toast.success("Product Variant added successfully");
             const productData = response.data;
             return productData;
         } catch (err) {
-            setError("Failed to create Product");
+            setError("Failed to create Product Variant");
+            console.error(err); // In ra lỗi để dễ dàng theo dõi
         } finally {
             setIsLoading(false);
         }
     };
+
     // api/productApi.ts
 
-  const getProductVariantById = async (product_id: string) => {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/product-variants/${product_id}`);
-      
-      if (!response.ok) {
-        throw new Error(`Error fetching product variant with ID ${product_id}: ${response.statusText}`);
-      }
-      
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Failed to fetch product variant:', error);
-      throw error;
-    }
-  };
-  
+    const getProductVariantById = async (product_id: string) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/product-variants/${product_id}`);
+
+            if (!response.ok) {
+                throw new Error(`Error fetching product variant with ID ${product_id}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch product variant:", error);
+            throw error;
+        }
+    };
 
     // const updateProduct = async (data: ProductVariant, file?: File) => {
     //     const formData = new FormData();

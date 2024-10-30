@@ -36,7 +36,7 @@ const CreateCategory = () => {
     // Hàm xử lý khi form được submit
     const onSubmit: SubmitHandler<categoryInput> = (data) => {
         createCategory(data, selectedFile || undefined);
-        nav("/categories");
+        // nav("/categories");
     };
 
     return (
