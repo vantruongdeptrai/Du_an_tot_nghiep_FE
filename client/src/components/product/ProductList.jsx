@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { products } from "../../data/data";
 import ProductItem from "./ProductItem";
 import { PropTypes } from "prop-types";
 import { breakpoints } from "../../styles/themes/default";
+import useProduct from "../../hooks/useProduct";
 
 const ProductListWrapper = styled.div`
   column-gap: 20px;
@@ -16,6 +16,7 @@ const ProductListWrapper = styled.div`
 `;
 
 const ProductList = () => {
+  const {products} = useProduct()
   return (
     <ProductListWrapper className="grid">
       {products?.map((product) => {

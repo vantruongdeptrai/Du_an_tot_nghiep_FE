@@ -8,9 +8,11 @@ import { limelightCatalog, mensCatalog, womensCatalog } from "../../data/data";
 import Brands from "../../components/home/Brands";
 import Feedback from "../../components/home/Feedback";
 
+
 const HomeScreenWrapper = styled.main``;
 
 const HomeScreen = () => {
+  
   return (
     <HomeScreenWrapper>
       <Hero />
