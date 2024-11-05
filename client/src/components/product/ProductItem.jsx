@@ -39,7 +39,7 @@ const ProductItem = ({ product }) => {
   return (
     <ProductCardWrapper key={product.id} to="/product/details">
       <div className="product-img">
-        <img className="object-fit-cover" src={product.imgSource} />
+        <img className="object-fit-cover" src={product.image_url} />
         <button
           type="button"
           className="product-wishlist-icon flex items-center justify-center bg-white"
@@ -48,9 +48,9 @@ const ProductItem = ({ product }) => {
         </button>
       </div>
       <div className="product-info">
-        <p className="font-bold">{product.title}</p>
+        <p className="font-bold">{product.name}</p>
         <div className="flex items-center justify-between text-sm font-medium">
-          <span className="text-gray">{product.brand}</span>
+          <span className="text-gray">{product.category_name}</span>
           <span className="text-outerspace font-bold">${product.price}</span>
         </div>
       </div>
