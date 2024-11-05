@@ -114,7 +114,7 @@ const CartTable = ({ cartItems, setCartItems }) => {
         {cartItems.length > 0 ? (
           cartItems.map((item) => (
             <tr key={item.product_id}>
-              <td>{item.product_name}</td>
+              <td>{item.name}</td>
               <td>
                 <button
                   className="quantity-button"
