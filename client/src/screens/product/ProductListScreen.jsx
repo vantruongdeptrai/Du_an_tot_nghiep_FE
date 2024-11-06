@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
+import { Link } from "react-router-dom";
 
 const ProductsContent = styled.div`
   display: grid;
@@ -122,7 +123,7 @@ const ProductListPage = () => {
   const [categories, setCategories] = useState([]);
   // State để lưu các bộ lọc
   const [minRange, setMinRange] = useState(0);
-  const [maxRange, setMaxRange] = useState(10000);
+  const [maxRange, setMaxRange] = useState(1000);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [isPriceFilterOpen, setIsPriceFilterOpen] = useState(false);
@@ -294,11 +295,10 @@ const ProductListPage = () => {
           {products.map((product) => {
             const category = getCategoryById(product.category_id);
             return (
-              <div
-                key={product.id}
-                className="product-card"
-                onClick={() => handleProductClick(product.id)} // Gọi hàm khi bấm vào sản phẩm
-              >
+
+              <Link to={`/product/details/${product.id}`} key={product.id}>
+              <div className="product-card">
+
                 <img
                   src={product.image || "https://picsum.photos/200/300"}
                   alt={product.name}
@@ -316,7 +316,9 @@ const ProductListPage = () => {
                   {/* <button
                     className="add-to-cart"
                     onClick={(e) => {
-                      e.stopPropagation(); // Ngăn chặn sự kiện khi bấm vào nút giỏ hàng
+
+                      e.stopPropagation(); // Ngăn không cho sự kiện click của nút ảnh hưởng đến Link
+
                       handleAddToCart(product.id);
                     }}
                   >
@@ -324,6 +326,7 @@ const ProductListPage = () => {
                   </button> */}
                 </div>
               </div>
+            </Link>
             );
           })}
         </div>

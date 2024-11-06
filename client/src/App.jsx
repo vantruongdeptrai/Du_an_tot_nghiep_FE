@@ -24,6 +24,7 @@ import WishListEmpty from "./screens/user/WishListEmptyScreen";
 import Confirm from "./screens/user/ConfirmScreen";
 import Account from "./screens/user/AccountScreen";
 import Address from "./screens/user/AddressScreen";
+import SearchResult from "./screens/search/SearchResult";
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
           <Route path="/" element={<BaseLayout />}>
             <Route index element={<Home />} />
             <Route path="/product" element={<ProductList />} />
+            <Route path="/search" element={<SearchResult />} />
             <Route path="/product/details/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/empty_cart" element={<CartEmpty />} />
