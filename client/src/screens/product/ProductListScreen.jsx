@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
+import { Link } from "react-router-dom";
 
 const ProductsContent = styled.div`
   display: grid;
@@ -121,7 +122,7 @@ const ProductListPage = () => {
   const [categories, setCategories] = useState([]);
   // State để lưu các bộ lọc
   const [minRange, setMinRange] = useState(0);
-  const [maxRange, setMaxRange] = useState(10000);
+  const [maxRange, setMaxRange] = useState(1000);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [isPriceFilterOpen, setIsPriceFilterOpen] = useState(false);
@@ -171,7 +172,7 @@ const ProductListPage = () => {
   const fetchFilteredProducts = async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/products/filter?min_price=${minRange}&max_price=${maxRange}&color_ids=${selectedColors.join(",")}&size_ids=${selectedSizes.join(",")}`
+        `http://127.0.0.1:8000/api/products/filter?min_price=${minRange}&max_price=${maxRange}}`
       );
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -284,7 +285,8 @@ const ProductListPage = () => {
           {products.map((product) => {
             const category = getCategoryById(product.category_id);
             return (
-              <div key={product.id} className="product-card">
+              <Link to={`/product/details/${product.id}`} key={product.id}>
+              <div className="product-card">
                 <img
                   src={product.image || "https://picsum.photos/200/300"}
                   alt={product.name}
@@ -301,12 +303,16 @@ const ProductListPage = () => {
                   )}
                   <button
                     className="add-to-cart"
-                    onClick={() => handleAddToCart(product.id)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Ngăn không cho sự kiện click của nút ảnh hưởng đến Link
+                      handleAddToCart(product.id);
+                    }}
                   >
                     Thêm vào giỏ hàng
                   </button>
                 </div>
               </div>
+            </Link>
             );
           })}
         </div>
