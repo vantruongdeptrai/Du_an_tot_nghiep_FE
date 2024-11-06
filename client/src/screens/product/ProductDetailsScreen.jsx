@@ -1,16 +1,17 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
-import { product_one } from "../../data/data";
 import ProductPreview from "../../components/product/ProductPreview";
 import { Link } from "react-router-dom";
-import { BaseLinkGreen } from "../../styles/button";
 import { currencyFormat } from "../../utils/helper";
-import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductDescriptionTab from "../../components/product/ProductDescriptionTab";
 import ProductSimilar from "../../components/product/ProductSimilar";
 import ProductServices from "../../components/product/ProductServices";
-
+import { breakpoints } from "../../styles/themes/default";
+import { defaultTheme } from "../../styles/themes/default";
 const DetailsScreenWrapper = styled.main`
   margin: 40px 0;
 `;
@@ -182,13 +183,128 @@ const ProductColorWrapper = styled.div`
 `;
 
 const ProductDetailsScreen = () => {
+  const { id } = useParams();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [sizes, setSizes] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [variants, setVariants] = useState([]);
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        // Lấy thông tin sản phẩm
+        const productResponse = await axios.get(
+          "http://127.0.0.1:8000/api/products"
+        );
+        const productData = productResponse.data.find(
+          (prod) => prod.id === parseInt(id)
+        );
+        setProduct(productData);
+
+        // Lấy thông tin biến thể của sản phẩm
+        const variantsResponse = await axios.get(
+          "http://127.0.0.1:8000/api/product-variants"
+        );
+        const productVariants = variantsResponse.data.filter(
+          (variant) => variant.product_id === parseInt(id)
+        );
+
+        // Nếu sản phẩm có biến thể, lưu lại các màu và kích thước
+        if (productVariants.length > 0) {
+          const sizeIds = [...new Set(productVariants.map((v) => v.size_id))];
+          const colorIds = [...new Set(productVariants.map((v) => v.color_id))];
+
+          // Gọi API để lấy thông tin size và color
+          const sizesResponse = await axios.get(
+            "http://127.0.0.1:8000/api/sizes"
+          );
+          const colorsResponse = await axios.get(
+            "http://127.0.0.1:8000/api/colors"
+          );
+
+          setSizes(
+            sizesResponse.data.filter((size) => sizeIds.includes(size.id))
+          );
+          setColors(
+            colorsResponse.data.filter((color) => colorIds.includes(color.id))
+          );
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchProductData();
+  }, [id]);
+
+  if (loading) return <p>Loading...</p>;
+  if (!product) return <p>Product not found</p>;
+
+  const handleAddToCart = async (productId) => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingProduct = cart.find((item) => item.product_id === productId);
+
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      if (product && product.id === productId) {
+        cart.push({
+          product_id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: 1,
+          size: selectedSize || null, // Nếu không chọn size thì để null
+          color: selectedColor || null, // Nếu không chọn màu thì để null
+        });
+      }
+    }
+
+    if (!user) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("Sản phẩm đã được thêm vào giỏ hàng (local storage)!");
+    } else {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: JSON.stringify({
+            user_id: user.id,
+            product_id: productId,
+            quantity: existingProduct ? existingProduct.quantity : 1,
+            price: product.price,
+            size: selectedSize || null, // Nếu không chọn size thì để null
+            color: selectedColor || null, // Nếu không chọn màu thì để null
+          }),
+        });
+
+        if (response.ok) {
+          alert("Sản phẩm đã được thêm vào giỏ hàng (database)!");
+        } else {
+          alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+        }
+      } catch (error) {
+        console.error("Lỗi khi gửi giỏ hàng lên server:", error);
+        alert("Lỗi kết nối đến server.");
+      }
+    }
+  };
+
   const stars = Array.from({ length: 5 }, (_, index) => (
     <span
       key={index}
       className={`text-yellow ${
-        index < Math.floor(product_one.rating)
+        index < Math.floor(product.rating)
           ? "bi bi-star-fill"
-          : index + 0.5 === product_one.rating
+          : index + 0.5 === product.rating
           ? "bi bi-star-half"
           : "bi bi-star"
       }`}
@@ -206,75 +322,88 @@ const ProductDetailsScreen = () => {
       <Container>
         <Breadcrumb items={breadcrumbItems} />
         <DetailsContent className="grid">
-          <ProductPreview previewImages={product_one.previewImages} />
+          <ProductPreview previewImages={product.previewImages || []} />
           <ProductDetailsWrapper>
-            <h2 className="prod-title">{product_one.title}</h2>
+            <h2 className="prod-title">{product.name}</h2>
             <div className="flex items-center rating-and-comments flex-wrap">
               <div className="prod-rating flex items-center">
                 {stars}
-                <span className="text-gray text-xs">{product_one.rating}</span>
+                <span className="text-gray text-xs">{product.rating}</span>
               </div>
               <div className="prod-comments flex items-start">
                 <span className="prod-comment-icon text-gray">
                   <i className="bi bi-chat-left-text"></i>
                 </span>
                 <span className="prod-comment-text text-sm text-gray">
-                  {product_one.comments_count} comment(s)
+                  {product.comments_count} comment(s)
                 </span>
               </div>
             </div>
 
-            <ProductSizeWrapper>
-              <div className="prod-size-top flex items-center flex-wrap">
-                <p className="text-lg font-semibold text-outerspace">
-                  Select size
-                </p>
-                <Link to="/" className="text-lg text-gray font-medium">
-                  Size Guide &nbsp; <i className="bi bi-arrow-right"></i>
-                </Link>
-              </div>
-              <div className="prod-size-list flex items-center">
-                {product_one.sizes.map((size, index) => (
-                  <div className="prod-size-item" key={index}>
-                    <input type="radio" name="size" />
-                    <span className="flex items-center justify-center font-medium text-outerspace text-sm">
-                      {size}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </ProductSizeWrapper>
-            <ProductColorWrapper>
-              <div className="prod-colors-top flex items-center flex-wrap">
-                <p className="text-lg font-semibold text-outerspace">
-                  Colours Available
-                </p>
-              </div>
-              <div className="prod-colors-list flex items-center">
-                {product_one?.colors?.map((color, index) => (
-                  <div className="prod-colors-item" key={index}>
-                    <input type="radio" name="colors" />
-                    <span
-                      className="prod-colorbox"
-                      style={{ background: `${color}` }}
-                    ></span>
-                  </div>
-                ))}
-              </div>
-            </ProductColorWrapper>
+            {/* Hiển thị size và màu */}
+            {sizes.length > 0 && (
+              <ProductSizeWrapper>
+                <div className="prod-size-top flex items-center flex-wrap">
+                  <p className="text-lg font-semibold text-outerspace">
+                    Select size
+                  </p>
+                </div>
+                <div className="prod-size-list flex items-center">
+                  {sizes.map((size, index) => (
+                    <div className="prod-size-item" key={index}>
+                      <input
+                        type="radio"
+                        name="size"
+                        checked={selectedSize === size.id}
+                        onChange={() => setSelectedSize(size.id)}
+                      />
+                      <span className="flex items-center justify-center font-medium text-outerspace text-sm">
+                        {size.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </ProductSizeWrapper>
+            )}
+
+            {colors.length > 0 && (
+              <ProductColorWrapper>
+                <div className="prod-colors-top flex items-center flex-wrap">
+                  <p className="text-lg font-semibold text-outerspace">
+                    Colours Available
+                  </p>
+                </div>
+                <div className="prod-colors-list flex items-center">
+                  {variants.map((variant) => (
+                    <div className="prod-colors-item" key={variant.id}>
+                      <input
+                        type="radio"
+                        name="colors"
+                        checked={selectedColor === variant.color_id}
+                        onChange={() => setSelectedColor(variant.color_id)}
+                      />
+                      <span
+                        className="prod-colorbox"
+                        style={{ background: variant.colorName }} // Sử dụng tên màu từ biến thể
+                      ></span>
+                    </div>
+                  ))}
+                </div>
+              </ProductColorWrapper>
+            )}
+
             <div className="btn-and-price flex items-center flex-wrap">
-              <BaseLinkGreen
-                to="/cart"
-                as={BaseLinkGreen}
+              <button
                 className="prod-add-btn"
+                onClick={() => handleAddToCart(product.id)}
               >
                 <span className="prod-add-btn-icon">
                   <i className="bi bi-cart2"></i>
                 </span>
                 <span className="prod-add-btn-text">Add to cart</span>
-              </BaseLinkGreen>
+              </button>
               <span className="prod-price text-xl font-bold text-outerspace">
-                {currencyFormat(product_one.price)}
+                {currencyFormat(product.price)}
               </span>
             </div>
             <ProductServices />

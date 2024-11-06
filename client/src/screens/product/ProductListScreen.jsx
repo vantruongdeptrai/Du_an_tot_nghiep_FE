@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
 import { Link } from "react-router-dom";
@@ -128,6 +129,7 @@ const ProductListPage = () => {
   const [isPriceFilterOpen, setIsPriceFilterOpen] = useState(false);
   const [isColorFilterOpen, setIsColorFilterOpen] = useState(false);
   const [isSizeFilterOpen, setIsSizeFilterOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Hàm để toggle các filter
   const toggleFilter = (filter) => {
@@ -172,31 +174,36 @@ const ProductListPage = () => {
   const fetchFilteredProducts = async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/products/filter?min_price=${minRange}&max_price=${maxRange}}`
+        `http://127.0.0.1:8000/api/products/filter?min_price=${minRange}&max_price=${maxRange}&color_ids=${selectedColors.join(
+          ","
+        )}&size_ids=${selectedSizes.join(",")}`
       );
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
       const data = await response.json();
       setProducts(data);
     } catch (error) {
-      console.error('Error fetching filtered products:', error);
+      console.error("Error fetching filtered products:", error);
     }
   };
 
   useEffect(() => {
     const fetchProductsAndCategories = async () => {
       try {
-        const productsResponse = await fetch("http://127.0.0.1:8000/api/products");
+        const productsResponse = await fetch(
+          "http://127.0.0.1:8000/api/products"
+        );
         const productsData = await productsResponse.json();
         setProducts(productsData);
 
-        const categoriesResponse = await fetch("http://127.0.0.1:8000/api/categories");
+        const categoriesResponse = await fetch(
+          "http://127.0.0.1:8000/api/categories"
+        );
         const categoriesData = await categoriesResponse.json();
         setCategories(categoriesData.categories);
-        
       } catch (error) {
-        console.error('Error fetching products and categories:', error);
+        console.error("Error fetching products and categories:", error);
       }
     };
 
@@ -211,69 +218,72 @@ const ProductListPage = () => {
     return categories.find((category) => category.id == categoryId);
   };
 
-  const handleAddToCart = async (productId) => {
-    const user = JSON.parse(localStorage.getItem("userInfo")); // Parse userInfo từ localStorage
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existingProduct = cart.find((item) => item.product_id === productId);
-  
-    if (existingProduct) {
-      existingProduct.quantity += 1; // Tăng số lượng sản phẩm trong localStorage
-    } else {
-      const productToAdd = products.find((product) => product.id === productId);
-      if (productToAdd) {
-        cart.push({
-          product_id: productToAdd.id,
-          name: productToAdd.name,
-          price: productToAdd.price,
-          quantity: 1,
-        });
-      }
-    }
-  
-    if (!user) {
-      localStorage.setItem("cart", JSON.stringify(cart));
-      alert("Sản phẩm đã được thêm vào giỏ hàng (local storage)!");
-    } else {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: JSON.stringify({
-            user_id: user.id,
-            product_id: productId,
-            quantity: existingProduct ? existingProduct.quantity : 1, // Không cộng thêm lần nữa
-            price: products.find((product) => product.id === productId).price,
-          }),
-        });
-  
-        if (response.ok) {
-          alert("Sản phẩm đã được thêm vào giỏ hàng (database)!");
-        } else {
-          alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-        }
-      } catch (error) {
-        console.error("Lỗi khi gửi giỏ hàng lên server:", error);
-        alert("Lỗi kết nối đến server.");
-      }
-    }
+  // const handleAddToCart = async (productId) => {
+  //   const user = JSON.parse(localStorage.getItem("userInfo")); // Parse userInfo từ localStorage
+  //   const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  //   const existingProduct = cart.find((item) => item.product_id === productId);
+
+  //   if (existingProduct) {
+  //     existingProduct.quantity += 1; // Tăng số lượng sản phẩm trong localStorage
+  //   } else {
+  //     const productToAdd = products.find((product) => product.id === productId);
+  //     if (productToAdd) {
+  //       cart.push({
+  //         product_id: productToAdd.id,
+  //         name: productToAdd.name,
+  //         price: productToAdd.price,
+  //         quantity: 1,
+  //       });
+  //     }
+  //   }
+
+  //   if (!user) {
+  //     localStorage.setItem("cart", JSON.stringify(cart));
+  //     alert("Sản phẩm đã được thêm vào giỏ hàng (local storage)!");
+  //   } else {
+  //     try {
+  //       const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${user.token}`,
+  //         },
+  //         body: JSON.stringify({
+  //           user_id: user.id,
+  //           product_id: productId,
+  //           quantity: existingProduct ? existingProduct.quantity : 1, // Không cộng thêm lần nữa
+  //           price: products.find((product) => product.id === productId).price,
+  //         }),
+  //       });
+
+  //       if (response.ok) {
+  //         alert("Sản phẩm đã được thêm vào giỏ hàng (database)!");
+  //       } else {
+  //         alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+  //       }
+  //     } catch (error) {
+  //       console.error("Lỗi khi gửi giỏ hàng lên server:", error);
+  //       alert("Lỗi kết nối đến server.");
+  //     }
+  //   }
+  // };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/details/${productId}`); // Chuyển hướng tới trang chi tiết sản phẩm
   };
-  
 
   return (
     <ProductsContent>
       <ProductsContentLeft>
-        <ProductFilter 
-          minRange={minRange} 
-          setMinRange={setMinRange} 
-          maxRange={maxRange} 
-          setMaxRange={setMaxRange} 
-          selectedColors={selectedColors} 
-          setSelectedColors={setSelectedColors} 
-          selectedSizes={selectedSizes} 
-          setSelectedSizes={setSelectedSizes} 
+        <ProductFilter
+          minRange={minRange}
+          setMinRange={setMinRange}
+          maxRange={maxRange}
+          setMaxRange={setMaxRange}
+          selectedColors={selectedColors}
+          setSelectedColors={setSelectedColors}
+          selectedSizes={selectedSizes}
+          setSelectedSizes={setSelectedSizes}
         />
       </ProductsContentLeft>
 
@@ -285,8 +295,10 @@ const ProductListPage = () => {
           {products.map((product) => {
             const category = getCategoryById(product.category_id);
             return (
+
               <Link to={`/product/details/${product.id}`} key={product.id}>
               <div className="product-card">
+
                 <img
                   src={product.image || "https://picsum.photos/200/300"}
                   alt={product.name}
@@ -301,15 +313,17 @@ const ProductListPage = () => {
                   {category && (
                     <p className="category-info">Danh mục: {category.name}</p>
                   )}
-                  <button
+                  {/* <button
                     className="add-to-cart"
                     onClick={(e) => {
+
                       e.stopPropagation(); // Ngăn không cho sự kiện click của nút ảnh hưởng đến Link
+
                       handleAddToCart(product.id);
                     }}
                   >
                     Thêm vào giỏ hàng
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </Link>

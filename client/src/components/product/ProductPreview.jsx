@@ -82,7 +82,7 @@ const ProductPreviewWrapper = styled.div`
 
 const ProductPreview = ({ previewImages }) => {
   const [activePreviewImage, setActivePreviewImage] = useState(
-    previewImages[0].imgSource
+    previewImages[0]?.imgSource // Sử dụng optional chaining để tránh lỗi
   );
 
   const handlePreviewImageChange = (previewImage) => {
@@ -100,25 +100,42 @@ const ProductPreview = ({ previewImages }) => {
               onClick={() => handlePreviewImageChange(previewImage.imgSource)}
             >
               <div className="preview-item">
-                <img
+                {/* Comment lại dòng này để không hiển thị ảnh */}
+                {/* <img
                   src={previewImage.imgSource}
                   alt=""
                   className="object-fit-cover"
-                />
+                /> */}
+                <div
+                  className="placeholder"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "#f0f0f0",
+                    borderRadius: "8px",
+                  }}
+                ></div>{" "}
+                {/* Thay thế bằng div placeholder */}
               </div>
             </div>
           );
         })}
       </div>
       <div className="preview-display">
-        <img src={activePreviewImage} className="object-fit-cover" alt="" />
+        {/* Comment lại dòng này để không hiển thị ảnh */}
+        {/* <img src={activePreviewImage} className="object-fit-cover" alt="" /> */}
+        <div
+          className="placeholder"
+          style={{ width: "100%", height: "100%", backgroundColor: "#f0f0f0" }}
+        ></div>{" "}
+        {/* Thay thế bằng div placeholder */}
       </div>
     </ProductPreviewWrapper>
   );
 };
 
-export default ProductPreview;
-
 ProductPreview.propTypes = {
   previewImages: PropTypes.array,
 };
+
+export default ProductPreview;
