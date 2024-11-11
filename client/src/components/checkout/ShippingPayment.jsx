@@ -150,50 +150,7 @@ const ShippingPaymentWrapper = styled.div`
 const ShippingPayment = () => {
   return (
     <ShippingPaymentWrapper>
-      <div className="shipping-addr">
-        <h3 className="text-xxl shipping-addr-title">Shipping Address</h3>
-        <p className="text-base text-outerspace">
-          Select the address that matches your card or payment method.
-        </p>
-        <div className="list-group">
-          <div className="list-group-item flex items-center">
-            <Input type="radio" name="shipping_addr" />
-            <span className="font-semibold text-lg">
-              Same as Billing address
-            </span>
-          </div>
-          <div className="horiz-line-separator"></div>
-          <div className="list-group-item flex items-center">
-            <Input type="radio" name="shipping_addr" />
-            <span className="font-semibold text-lg">
-              Use a different shipping address
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="shipping-method">
-        <h3 className="text-xxl shipping-method-title">Shipping Address</h3>
-        <p className="text-base text-outerspace">
-          Select the address that matches your card or payment method.
-        </p>
-        <div className="list-group">
-          <div className="list-group-item flex items-center">
-            <span className="font-semibold text-lg">
-              Arrives by Monday, June 7
-            </span>
-          </div>
-          <div className="horiz-line-separator"></div>
-          <div className="list-group-item flex items-start justify-between">
-            <p className="font-semibold text-lg">
-              Delivery Charges &nbsp;
-              <span className="flex text-base font-medium text-gray">
-                Additional fees may apply
-              </span>
-            </p>
-            <span className="font-semibold text-lg">$5.00</span>
-          </div>
-        </div>
-      </div>
+
 
       <div className="payment-method">
         <h3 className="text-xxl payment-method-title">Payment Method</h3>

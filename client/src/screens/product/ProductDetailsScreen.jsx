@@ -342,12 +342,13 @@ const ProductDetailsScreen = () => {
       }
     }
   };
+  
   return (
     <DetailsScreenWrapper>
       <Container>
         <Breadcrumb items={breadcrumbItems} />
         <DetailsContent className="grid">
-          <ProductPreview previewImages={product.previewImages || []} />
+          <ProductPreview previewImagesVariant={variants} previewImages={product.image_url || []} />
           <ProductDetailsWrapper>
             <h2 className="prod-title">{product.name}</h2>
             <div className="flex items-center rating-and-comments flex-wrap">

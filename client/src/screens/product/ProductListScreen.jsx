@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
 const ProductsContent = styled.div`
   display: grid;
@@ -174,17 +175,16 @@ const ProductListPage = () => {
   const fetchFilteredProducts = async () => {
     try {
       const response = await fetch(
-        `http://127.0.0.1:8000/api/products/filter?min_price=${minRange}&max_price=${maxRange}&color_ids=${selectedColors.join(
-          ","
-        )}&size_ids=${selectedSizes.join(",")}`
+        `http://127.0.0.1:8000/api/filter?min_price=${minRange}&max_price=${maxRange}&color_id=${selectedColors}&size_id=${selectedSizes}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      setProducts(data);
+      return data; // Trả về dữ liệu nếu thành công
     } catch (error) {
       console.error("Error fetching filtered products:", error);
+      return []; // Trả về array rỗng khi có lỗi
     }
   };
 
@@ -210,9 +210,14 @@ const ProductListPage = () => {
     fetchProductsAndCategories();
   }, []);
 
-  useEffect(() => {
-    fetchFilteredProducts(); // Gọi hàm lọc sản phẩm mỗi khi bộ lọc thay đổi
-  }, [minRange, maxRange, selectedColors, selectedSizes]);
+  const { data = [], isError, error } = useQuery(
+    ["filteredProducts", minRange, maxRange, selectedColors, selectedSizes],
+    fetchFilteredProducts,
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const getCategoryById = (categoryId) => {
     return categories.find((category) => category.id == categoryId);
@@ -268,10 +273,6 @@ const ProductListPage = () => {
   //   }
   // };
 
-  const handleProductClick = (productId) => {
-    navigate(`/product/details/${productId}`); // Chuyển hướng tới trang chi tiết sản phẩm
-  };
-
   return (
     <ProductsContent>
       <ProductsContentLeft>
@@ -292,7 +293,7 @@ const ProductListPage = () => {
           <h2>Danh sách sản phẩm</h2>
         </div>
         <div className="product-card-list">
-          {products.map((product) => {
+          {data.map((product) => {
             const category = getCategoryById(product.category_id);
             return (
 

@@ -3,6 +3,7 @@ import { Input } from "../../styles/form";
 import { BaseButtonGreen } from "../../styles/button";
 import CheckoutSummary from "./CheckoutSummary";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { useForm } from "react-hook-form"
 
 const BillingOrderWrapper = styled.div`
   gap: 60px;
@@ -95,120 +96,63 @@ const BillingDetailsWrapper = styled.div`
 `;
 
 const Billing = () => {
+  const {
+    register,
+    handleSubmit,
+  } = useForm()
+
+  const onSubmit = (data) => console.log(data)
   return (
     <BillingOrderWrapper className="billing-and-order grid items-start">
       <BillingDetailsWrapper>
         <h4 className="text-xxl font-bold text-outerspace">Billing Details</h4>
-        <form className="checkout-form">
-          <div className="input-elem-group elem-col-2">
+        <form  onSubmit={handleSubmit(onSubmit)} className="checkout-form">
+          
             <div className="input-elem">
               <label
                 htmlFor=""
                 className="text-base text-outerspace font-semibold"
               >
-                First Name*
+                Full name *
               </label>
-              <Input type="text" placeholder="First Name" />
+              <Input {...register("name_order")} type="text" placeholder="First Name" />
             </div>
             <div className="input-elem">
               <label
                 htmlFor=""
                 className="text-base text-outerspace font-semibold"
               >
-                Last Name*
+                Email *
               </label>
-              <Input type="text" placeholder="Last Name" />
-            </div>
-          </div>
-          <div className="input-elem-group elem-col-2">
-            <div className="input-elem">
-              <label
-                htmlFor=""
-                className="text-base text-outerspace font-semibold"
-              >
-                Country / Region*
-              </label>
-              <Input type="text" placeholder="Country / Region" />
+              <Input {...register("email_order")} type="text" placeholder="Last Name" />
             </div>
             <div className="input-elem">
               <label
                 htmlFor=""
                 className="text-base text-outerspace font-semibold"
               >
-                Company Name
+                Shipping address *
               </label>
-              <Input type="text" placeholder="Company (optional)" />
-            </div>
-          </div>
-          <div className="input-elem-group elem-col-2">
-            <div className="input-elem">
-              <label
-                htmlFor=""
-                className="text-base text-outerspace font-semibold"
-              >
-                Street Address*
-              </label>
-              <Input type="text" placeholder="House number and street name" />
+              <Input {...register("shipping_address")} type="text" placeholder="Last Name" />
             </div>
             <div className="input-elem">
               <label
                 htmlFor=""
                 className="text-base text-outerspace font-semibold"
               >
-                Apt, suite, unit
+                Phone number *
               </label>
-              <Input
-                type="text"
-                placeholder="apartment, suite, unit, etc. (optional)"
-              />
-            </div>
-          </div>
-          <div className="input-elem-group elem-col-3">
-            <div className="input-elem">
-              <label
-                htmlFor=""
-                className="text-base text-outerspace font-semibold"
-              >
-                City*
-              </label>
-              <Input type="text" placeholder="Town / City" />
+              <Input {...register("phone_order")} type="text" placeholder="Last Name" />
             </div>
             <div className="input-elem">
               <label
                 htmlFor=""
                 className="text-base text-outerspace font-semibold"
               >
-                State*
+                Note *
               </label>
-              <select name="">
-                <option value="" disabled>
-                  State
-                </option>
-                <option value="">State 1</option>
-                <option value="">State 1</option>
-              </select>
+              <textarea {...register("user_note")} style={{width: "100%", height: "200px", padding: "10px"}} type="text" placeholder="Last Name" />
             </div>
-            <div className="input-elem">
-              <label
-                htmlFor=""
-                className="text-base text-outerspace font-semibold"
-              >
-                Postal Code*
-              </label>
-              <Input type="text" placeholder="Postal Code" />
-            </div>
-          </div>
-          <div className="input-elem-group elem-col-2">
-            <div className="input-elem">
-              <label
-                htmlFor=""
-                className="text-base text-outerspace font-semibold"
-              >
-                Phone*
-              </label>
-              <Input type="text" placeholder="Phone" />
-            </div>
-          </div>
           <BaseButtonGreen type="submit" className="contd-delivery-btn">
             Continue to delivery
           </BaseButtonGreen>
