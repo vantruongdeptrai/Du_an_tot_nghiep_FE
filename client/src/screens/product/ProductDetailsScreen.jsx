@@ -191,6 +191,12 @@ const ProductDetailsScreen = () => {
   const [sizes, setSizes] = useState([]);
   const [colors, setColors] = useState([]);
   const [variants, setVariants] = useState([]);
+  const [variantPrice, setVariantPrice] = useState(null);
+  const breadcrumbItems = [
+    { label: "Shop", link: "" },
+    { label: "Women", link: "" },
+    { label: "Top", link: "" },
+  ];
   useEffect(() => {
     const fetchProductData = async () => {
       try {
@@ -202,6 +208,7 @@ const ProductDetailsScreen = () => {
           (prod) => prod.id === parseInt(id)
         );
         setProduct(productData);
+        setVariantPrice(productData ? productData.price : null);
 
         // Lấy thông tin biến thể của sản phẩm
         const variantsResponse = await axios.get(
@@ -210,8 +217,9 @@ const ProductDetailsScreen = () => {
         const productVariants = variantsResponse.data.filter(
           (variant) => variant.product_id === parseInt(id)
         );
+        setVariants(productVariants);
 
-        // Nếu sản phẩm có biến thể, lưu lại các màu và kích thước
+        // Nếu sản phẩm có biến thể, lấy màu và kích thước
         if (productVariants.length > 0) {
           const sizeIds = [...new Set(productVariants.map((v) => v.size_id))];
           const colorIds = [...new Set(productVariants.map((v) => v.color_id))];
@@ -242,13 +250,50 @@ const ProductDetailsScreen = () => {
     fetchProductData();
   }, [id]);
 
+  useEffect(() => {
+    if (selectedSize && selectedColor) {
+      const selectedVariant = variants.find(
+        (variant) =>
+          variant.size_id === selectedSize && variant.color_id === selectedColor
+      );
+      if (selectedVariant) {
+        setVariantPrice(selectedVariant.price);
+      } else if (product) {
+        setVariantPrice(product.price); // Giá gốc nếu không có biến thể phù hợp
+      }
+    }
+  }, [selectedSize, selectedColor, variants, product]);
+
   if (loading) return <p>Loading...</p>;
   if (!product) return <p>Product not found</p>;
-
+  const stars = Array.from({ length: 5 }, (_, index) => (
+    <span
+      key={index}
+      className={`text-yellow ${
+        index < Math.floor(product.rating)
+          ? "bi bi-star-fill"
+          : index + 0.5 === product.rating
+          ? "bi bi-star-half"
+          : "bi bi-star"
+      }`}
+    ></span>
+  ));
   const handleAddToCart = async (productId) => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingProduct = cart.find((item) => item.product_id === productId);
+
+    let finalPrice = product.price; // Mặc định là giá gốc
+
+    if (selectedSize && selectedColor) {
+      const selectedVariant = variants.find(
+        (variant) =>
+          variant.size_id === selectedSize && variant.color_id === selectedColor
+      );
+      if (selectedVariant) {
+        finalPrice = selectedVariant.price; // Nếu có biến thể, dùng giá của biến thể
+      }
+    }
 
     if (existingProduct) {
       existingProduct.quantity += 1;
@@ -257,10 +302,10 @@ const ProductDetailsScreen = () => {
         cart.push({
           product_id: product.id,
           name: product.name,
-          price: product.price,
+          price: finalPrice, // Gán giá cuối (biến thể hoặc giá gốc)
           quantity: 1,
-          size: selectedSize || null, // Nếu không chọn size thì để null
-          color: selectedColor || null, // Nếu không chọn màu thì để null
+          size: selectedSize || null,
+          color: selectedColor || null,
         });
       }
     }
@@ -280,9 +325,9 @@ const ProductDetailsScreen = () => {
             user_id: user.id,
             product_id: productId,
             quantity: existingProduct ? existingProduct.quantity : 1,
-            price: product.price,
-            size: selectedSize || null, // Nếu không chọn size thì để null
-            color: selectedColor || null, // Nếu không chọn màu thì để null
+            price: finalPrice,
+            size: selectedSize || null,
+            color: selectedColor || null,
           }),
         });
 
@@ -297,26 +342,6 @@ const ProductDetailsScreen = () => {
       }
     }
   };
-
-  const stars = Array.from({ length: 5 }, (_, index) => (
-    <span
-      key={index}
-      className={`text-yellow ${
-        index < Math.floor(product.rating)
-          ? "bi bi-star-fill"
-          : index + 0.5 === product.rating
-          ? "bi bi-star-half"
-          : "bi bi-star"
-      }`}
-    ></span>
-  ));
-
-  const breadcrumbItems = [
-    { label: "Shop", link: "" },
-    { label: "Women", link: "" },
-    { label: "Top", link: "" },
-  ];
-
   return (
     <DetailsScreenWrapper>
       <Container>
@@ -355,7 +380,12 @@ const ProductDetailsScreen = () => {
                         type="radio"
                         name="size"
                         checked={selectedSize === size.id}
-                        onChange={() => setSelectedSize(size.id)}
+                        onChange={
+                          () =>
+                            setSelectedSize((prev) =>
+                              prev === size.id ? null : size.id
+                            ) // Chọn hoặc hủy chọn
+                        }
                       />
                       <span className="flex items-center justify-center font-medium text-outerspace text-sm">
                         {size.name}
@@ -374,18 +404,27 @@ const ProductDetailsScreen = () => {
                   </p>
                 </div>
                 <div className="prod-colors-list flex items-center">
-                  {variants.map((variant) => (
-                    <div className="prod-colors-item" key={variant.id}>
+                  {colors.map((color, index) => (
+                    <div className="prod-colors-item" key={index}>
                       <input
                         type="radio"
                         name="colors"
-                        checked={selectedColor === variant.color_id}
-                        onChange={() => setSelectedColor(variant.color_id)}
+                        checked={selectedColor === color.id}
+                        onChange={
+                          () =>
+                            setSelectedColor((prev) =>
+                              prev === color.id ? null : color.id
+                            ) // Chọn hoặc hủy chọn
+                        }
                       />
                       <span
                         className="prod-colorbox"
-                        style={{ background: variant.colorName }} // Sử dụng tên màu từ biến thể
-                      ></span>
+                        style={{
+                          backgroundColor: color.name, // Sử dụng màu từ biến thể
+                        }}
+                      >
+                        {color.name}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -403,7 +442,7 @@ const ProductDetailsScreen = () => {
                 <span className="prod-add-btn-text">Add to cart</span>
               </button>
               <span className="prod-price text-xl font-bold text-outerspace">
-                {currencyFormat(product.price)}
+                {currencyFormat(variantPrice)}
               </span>
             </div>
             <ProductServices />
