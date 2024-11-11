@@ -295,8 +295,10 @@ const ProductListPage = () => {
           {products.map((product) => {
             const category = getCategoryById(product.category_id);
             return (
+
               <Link to={`/product/details/${product.id}`} key={product.id}>
               <div className="product-card">
+
                 <img
                   src={product.image || "https://picsum.photos/200/300"}
                   alt={product.name}
@@ -314,7 +316,9 @@ const ProductListPage = () => {
                   {/* <button
                     className="add-to-cart"
                     onClick={(e) => {
+
                       e.stopPropagation(); // Ngăn không cho sự kiện click của nút ảnh hưởng đến Link
+
                       handleAddToCart(product.id);
                     }}
                   >
