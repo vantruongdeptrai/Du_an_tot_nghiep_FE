@@ -46,9 +46,15 @@ const Table = styled.table`
 `;
 
 const CartTable = ({ cartItems, setCartItems }) => {
-  const handleDelete = async (productId) => {
+  // Xử lý khi xóa sản phẩm khỏi giỏ hàng
+  const handleDelete = async (productId, size, color) => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
-    let updatedCart = cartItems.filter((item) => item.product_id !== productId);
+    let updatedCart = cartItems.filter(
+      (item) =>
+        item.product_id !== productId ||
+        item.size !== size ||
+        item.color !== color
+    );
 
     if (!user) {
       setCartItems(updatedCart);
@@ -63,7 +69,7 @@ const CartTable = ({ cartItems, setCartItems }) => {
               Authorization: `Bearer ${user.token}`,
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ product_id: productId }),
+            body: JSON.stringify({ product_id: productId, size, color }),
           }
         );
 
@@ -78,9 +84,14 @@ const CartTable = ({ cartItems, setCartItems }) => {
     }
   };
 
-  const handleIncreaseQuantity = (productId) => {
+  // Xử lý khi tăng số lượng sản phẩm
+  const handleIncreaseQuantity = (productId, size, color) => {
     const updatedCart = cartItems.map((item) => {
-      if (item.product_id === productId) {
+      if (
+        item.product_id === productId &&
+        item.size === size &&
+        item.color === color
+      ) {
         return { ...item, quantity: item.quantity + 1 };
       }
       return item;
@@ -89,9 +100,15 @@ const CartTable = ({ cartItems, setCartItems }) => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const handleDecreaseQuantity = (productId) => {
+  // Xử lý khi giảm số lượng sản phẩm
+  const handleDecreaseQuantity = (productId, size, color) => {
     const updatedCart = cartItems.map((item) => {
-      if (item.product_id === productId && item.quantity > 1) {
+      if (
+        item.product_id === productId &&
+        item.size === size &&
+        item.color === color &&
+        item.quantity > 1
+      ) {
         return { ...item, quantity: item.quantity - 1 };
       }
       return item;
@@ -100,11 +117,55 @@ const CartTable = ({ cartItems, setCartItems }) => {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
+  // Xử lý khi thêm sản phẩm vào giỏ hàng
+  const handleAddToCart = (product) => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    const { product_id, price, name, selectedSize, selectedColor } = product;
+
+    // Kiểm tra nếu sự kết hợp size và color đã có trong giỏ hàng
+    const existingItem = cartItems.find(
+      (item) =>
+        item.product_id === product_id &&
+        item.size === selectedSize &&
+        item.color === selectedColor
+    );
+
+    if (existingItem) {
+      // Nếu đã có, tăng số lượng
+      const updatedCart = cartItems.map((item) => {
+        if (
+          item.product_id === product_id &&
+          item.size === selectedSize &&
+          item.color === selectedColor
+        ) {
+          return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      });
+      setCartItems(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    } else {
+      // Nếu chưa có, thêm mới vào giỏ hàng
+      const newItem = {
+        product_id,
+        product_name: name,
+        price: selectedSize && selectedColor ? price : product.basePrice, // Dùng giá biến thể nếu có, không có thì dùng giá gốc
+        size: selectedSize,
+        color: selectedColor,
+        quantity: 1,
+      };
+      const updatedCart = [...cartItems, newItem];
+      setCartItems(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    }
+  };
+
   return (
     <Table>
       <thead>
         <tr>
           <th>Tên sản phẩm</th>
+          <th>Thể loại</th>
           <th>Số lượng</th>
           <th>Giá</th>
           <th>Hành động</th>
@@ -112,29 +173,52 @@ const CartTable = ({ cartItems, setCartItems }) => {
       </thead>
       <tbody>
         {cartItems.length > 0 ? (
-          cartItems.map((item) => (
-            <tr key={item.product_id}>
-              <td>{item.name}</td>
+          cartItems.map((item, index) => (
+            <tr key={index}>
+              <td>{item.product_name}</td>
+              <td>
+                {item.size && item.color ? (
+                  <>
+                    Size: {item.size}, Màu: {item.color}
+                  </>
+                ) : (
+                  <span>Không có biến thể</span>
+                )}
+              </td>
               <td>
                 <button
                   className="quantity-button"
-                  onClick={() => handleDecreaseQuantity(item.product_id)}
+                  onClick={() =>
+                    handleDecreaseQuantity(
+                      item.product_id,
+                      item.size,
+                      item.color
+                    )
+                  }
                 >
                   -
                 </button>
                 {item.quantity}
                 <button
                   className="quantity-button"
-                  onClick={() => handleIncreaseQuantity(item.product_id)}
+                  onClick={() =>
+                    handleIncreaseQuantity(
+                      item.product_id,
+                      item.size,
+                      item.color
+                    )
+                  }
                 >
                   +
                 </button>
               </td>
-              <td>${(item.price * item.quantity).toFixed(2)}</td>
+              <td>${((item.price || 0) * item.quantity).toFixed(2)}</td>
               <td>
                 <button
                   className="delete-button"
-                  onClick={() => handleDelete(item.product_id)}
+                  onClick={() =>
+                    handleDelete(item.product_id, item.size, item.color)
+                  }
                 >
                   Xóa
                 </button>
@@ -143,7 +227,7 @@ const CartTable = ({ cartItems, setCartItems }) => {
           ))
         ) : (
           <tr>
-            <td colSpan="4">Giỏ hàng của bạn hiện đang trống.</td>
+            <td colSpan="5">Giỏ hàng của bạn hiện đang trống.</td>
           </tr>
         )}
       </tbody>
