@@ -31,27 +31,42 @@ const CartSummaryWrapper = styled.div`
   }
 `;
 
-const CartSummary = () => {
+// Phí vận chuyển cố định
+const SHIPPING_FEE = 5.0;
+
+const CartSummary = ({ selectedItems }) => {
+  // Tính tổng tiền cho các sản phẩm đã chọn
+  const subtotal = selectedItems.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0);
+
+  // Tính tổng cuối cùng
+  const grandTotal = subtotal + SHIPPING_FEE;
+
   return (
     <CartSummaryWrapper>
       <ul className="summary-list">
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Sub Total</span>
-          <span className="font-medium text-outerspace">$513.00</span>
+          <span className="font-medium text-outerspace">
+            ${subtotal.toFixed(2)}
+          </span>
         </li>
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Shipping</span>
-          <span className="font-medium text-outerspace">$5.00</span>
+          <span className="font-medium text-outerspace">
+            ${SHIPPING_FEE.toFixed(2)}
+          </span>
         </li>
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Grand Total</span>
           <span className="summary-item-value font-bold text-outerspace">
-            $518.00
+            ${grandTotal.toFixed(2)}
           </span>
         </li>
       </ul>
       <BaseButtonGreen type="submit" className="checkout-btn">
-        Proceed To Checkout
+        Proceed To CheckOut
       </BaseButtonGreen>
     </CartSummaryWrapper>
   );
