@@ -55,16 +55,15 @@ const CartScreen = () => {
   ];
 
   const [cartItems, setCartItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]); // State để lưu các sản phẩm đã chọn
 
   useEffect(() => {
     const fetchCartItems = async () => {
       const user = JSON.parse(localStorage.getItem("userInfo"));
       if (!user) {
-        // Nếu chưa đăng nhập, lấy giỏ hàng từ localStorage
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
         setCartItems(storedCart);
       } else {
-        // Nếu đã đăng nhập, gọi API để lấy giỏ hàng theo user_id
         try {
           const response = await fetch(
             `http://127.0.0.1:8000/api/cart/auth?user_id=${user.id}`,
@@ -76,9 +75,7 @@ const CartScreen = () => {
           );
           if (response.ok) {
             const cartData = await response.json();
-            console.log(cartData.cart);
-            
-            setCartItems(cartData.cart || []); // Giả định API trả về một mảng `items`
+            setCartItems(cartData.cart || []);
           } else {
             console.error("Failed to fetch cart from server.");
           }
@@ -91,17 +88,45 @@ const CartScreen = () => {
     fetchCartItems();
   }, []);
 
+  // Hàm xử lý chọn hoặc bỏ chọn từng sản phẩm
+  const handleSelectItem = (item) => {
+    setSelectedItems((prev) => {
+      const isSelected = prev.find(
+        (i) =>
+          i.product_id === item.product_id &&
+          i.size === item.size &&
+          i.color === item.color
+      );
+
+      if (isSelected) {
+        return prev.filter(
+          (i) =>
+            i.product_id !== item.product_id ||
+            i.size !== item.size ||
+            i.color !== item.color
+        );
+      } else {
+        return [...prev, item];
+      }
+    });
+  };
+
   return (
     <CartPageWrapper>
       <Container>
         <Breadcrumb items={breadcrumbItems} />
         <CartContent className="grid items-start">
           <div className="cart-content-left">
-            <CartTable cartItems={cartItems} setCartItems={setCartItems} />
+            <CartTable
+              cartItems={cartItems}
+              setCartItems={setCartItems}
+              selectedItems={selectedItems}
+              onSelectItem={handleSelectItem}
+            />
           </div>
           <div className="grid cart-content-right">
             <CartDiscount />
-            <CartSummary />
+            <CartSummary selectedItems={selectedItems} cartItems={cartItems} />
           </div>
         </CartContent>
       </Container>

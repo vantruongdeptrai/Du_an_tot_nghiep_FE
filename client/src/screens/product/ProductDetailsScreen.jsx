@@ -258,9 +258,9 @@ const ProductDetailsScreen = () => {
       );
       if (selectedVariant) {
         setVariantPrice(selectedVariant.price);
-      } else if (product) {
-        setVariantPrice(product.price); // Giá gốc nếu không có biến thể phù hợp
       }
+    } else if (product) {
+      setVariantPrice(product.price);
     }
   }, [selectedSize, selectedColor, variants, product]);
 
@@ -283,7 +283,8 @@ const ProductDetailsScreen = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingProduct = cart.find((item) => item.product_id === productId);
 
-    let finalPrice = product.price; // Mặc định là giá gốc
+    let finalPrice = product.price; // Default to base price
+    let productVariantId = null;
 
     if (selectedSize && selectedColor) {
       const selectedVariant = variants.find(
@@ -291,7 +292,8 @@ const ProductDetailsScreen = () => {
           variant.size_id === selectedSize && variant.color_id === selectedColor
       );
       if (selectedVariant) {
-        finalPrice = selectedVariant.price; // Nếu có biến thể, dùng giá của biến thể
+        finalPrice = selectedVariant.price;
+        productVariantId = selectedVariant.id; // Capture product_variant_id
       }
     }
 
@@ -302,10 +304,11 @@ const ProductDetailsScreen = () => {
         cart.push({
           product_id: product.id,
           name: product.name,
-          price: finalPrice, // Gán giá cuối (biến thể hoặc giá gốc)
+          price: finalPrice,
           quantity: 1,
           size: selectedSize || null,
           color: selectedColor || null,
+          product_variant_id: productVariantId, // Add variant ID to local cart
         });
       }
     }
@@ -328,6 +331,7 @@ const ProductDetailsScreen = () => {
             price: finalPrice,
             size: selectedSize || null,
             color: selectedColor || null,
+            product_variant_id: productVariantId, // Send variant ID to server
           }),
         });
 
@@ -380,11 +384,10 @@ const ProductDetailsScreen = () => {
                         type="radio"
                         name="size"
                         checked={selectedSize === size.id}
-                        onChange={
-                          () =>
-                            setSelectedSize((prev) =>
-                              prev === size.id ? null : size.id
-                            ) // Chọn hoặc hủy chọn
+                        onChange={() =>
+                          setSelectedSize((prev) =>
+                            prev === size.id ? null : size.id
+                          )
                         }
                       />
                       <span className="flex items-center justify-center font-medium text-outerspace text-sm">
@@ -410,11 +413,10 @@ const ProductDetailsScreen = () => {
                         type="radio"
                         name="colors"
                         checked={selectedColor === color.id}
-                        onChange={
-                          () =>
-                            setSelectedColor((prev) =>
-                              prev === color.id ? null : color.id
-                            ) // Chọn hoặc hủy chọn
+                        onChange={() =>
+                          setSelectedColor((prev) =>
+                            prev === color.id ? null : color.id
+                          )
                         }
                       />
                       <span
