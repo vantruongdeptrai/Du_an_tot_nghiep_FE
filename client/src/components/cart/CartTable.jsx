@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 import styled from "styled-components";
 
 const Table = styled.table`
@@ -45,7 +46,7 @@ const Table = styled.table`
   }
 `;
 
-const CartTable = ({ cartItems, selectedItems, onSelectItem }) => {
+const CartTable = ({ cartItems, selectedItems, onSelectItem, handleIncreaseQuantity, handleDecreaseQuantity }) => {
   return (
     <Table>
       <thead>
@@ -102,6 +103,7 @@ const CartTable = ({ cartItems, selectedItems, onSelectItem }) => {
                         item.color
                       )
                     }
+                    disabled={isSelected}
                   >
                     -
                   </button>
@@ -115,6 +117,7 @@ const CartTable = ({ cartItems, selectedItems, onSelectItem }) => {
                         item.color
                       )
                     }
+                    disabled={isSelected}
                   >
                     +
                   </button>
@@ -141,6 +144,30 @@ const CartTable = ({ cartItems, selectedItems, onSelectItem }) => {
       </tbody>
     </Table>
   );
+};
+
+CartTable.propTypes = {
+  cartItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      product_id: PropTypes.string.isRequired,
+      product_name: PropTypes.string.isRequired,
+      product_image: PropTypes.string.isRequired,
+      size: PropTypes.string,
+      color: PropTypes.string,
+      quantity: PropTypes.number.isRequired,
+      price: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  selectedItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      product_id: PropTypes.string.isRequired,
+      size: PropTypes.string,
+      color: PropTypes.string,
+    })
+  ).isRequired,
+  onSelectItem: PropTypes.func.isRequired,
+  handleIncreaseQuantity: PropTypes.func.isRequired,
+  handleDecreaseQuantity: PropTypes.func.isRequired,
 };
 
 export default CartTable;

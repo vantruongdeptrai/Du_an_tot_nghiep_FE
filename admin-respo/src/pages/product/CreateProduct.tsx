@@ -42,21 +42,26 @@ const CreateProduct: React.FC = () => {
     // }, [hasVariants, setValue]);
 
     const onSubmitBasic: SubmitHandler<ProductInput> = async (data) => {
-        const price = Number(data.price);
-        const sale_price = Number(data.sale_price);
+        try {
+            const price = Number(data.price);
+            const sale_price = Number(data.sale_price);
 
-        if (price < sale_price) {
-            toast.error("Price must be greater than sale_price");
-            return;
-        }
-        const product = await createProduct(data, selectedFile || undefined);
-        setProductId(product.product.id);
+            if (price < sale_price) {
+                toast.error("Price must be greater than sale_price");
+                return;
+            }
+            const product = await createProduct(data, selectedFile || undefined);
 
-        if (hasVariants) {
-            // Sau khi tạo sản phẩm, sẽ chuyển đến form tạo biến thể
-            setHasVariants(true);
-        } else {
-            nav("/products");
+            setProductId(product.product.id);
+
+            if (hasVariants) {
+                // Sau khi tạo sản phẩm, sẽ chuyển đến form tạo biến thể
+                setHasVariants(true);
+            } else {
+                nav("/products");
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -192,6 +197,18 @@ const CreateProduct: React.FC = () => {
                                         />
                                     </InputWithLabel>
                                     {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
+
+                                    <InputWithLabel label="Số lượng">
+                                        <input
+                                            className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                                            {...registerBasic("quantity")}
+                                            type="number"
+                                            placeholder="Nhập số lượng..."
+                                        />
+                                    </InputWithLabel>
+                                    {errors.quantity && (
+                                        <span className="text-sm text-red-500">{errors.quantity.message}</span>
+                                    )}
 
                                     <InputWithLabel label="Mô tả">
                                         <textarea
