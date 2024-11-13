@@ -79,7 +79,9 @@ const CartTable = ({ cartItems, selectedItems, onSelectItem }) => {
                   />
                 </td>
                 <td>{item.product_name}</td>
-                <td>{item.product_image}</td>
+                <td>
+                  <img src={item.product_image} alt="" style={{width: "50px", height: "50px"}} />
+                </td>
                 <td>
                   {item.size && item.color ? (
                     <>

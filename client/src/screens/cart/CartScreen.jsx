@@ -75,6 +75,7 @@ const CartScreen = () => {
           );
           if (response.ok) {
             const cartData = await response.json();
+                
             setCartItems(cartData.cart || []);
           } else {
             console.error("Failed to fetch cart from server.");

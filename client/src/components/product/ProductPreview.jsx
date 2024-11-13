@@ -80,11 +80,7 @@ const ProductPreviewWrapper = styled.div`
     }
 `;
 const ProductPreview = ({ previewImages, previewImagesVariant }) => {
-    const [selectedImage, setSelectedImage] = useState(previewImages);
-
-    console.log(previewImagesVariant);
-    
-
+    const [selectedImage, setSelectedImage] = useState(previewImages); 
     const handleImageClick = (image_variant) => {
         setSelectedImage(image_variant);
     };
