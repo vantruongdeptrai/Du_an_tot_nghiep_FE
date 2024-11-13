@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { Input } from "../../styles/form";
-import { BaseButtonGreen } from "../../styles/button";
 import CheckoutSummary from "./CheckoutSummary";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import { useForm } from "react-hook-form"
+import { useFormContext } from 'react-hook-form';
+
 
 const BillingOrderWrapper = styled.div`
   gap: 60px;
@@ -96,17 +96,12 @@ const BillingDetailsWrapper = styled.div`
 `;
 
 const Billing = () => {
-  const {
-    register,
-    handleSubmit,
-  } = useForm()
-
-  const onSubmit = (data) => console.log(data)
+  const { register } = useFormContext();
   return (
     <BillingOrderWrapper className="billing-and-order grid items-start">
       <BillingDetailsWrapper>
         <h4 className="text-xxl font-bold text-outerspace">Billing Details</h4>
-        <form  onSubmit={handleSubmit(onSubmit)} className="checkout-form">
+        <form className="checkout-form">
           
             <div className="input-elem">
               <label
@@ -153,15 +148,6 @@ const Billing = () => {
               </label>
               <textarea {...register("user_note")} style={{width: "100%", height: "200px", padding: "10px"}} type="text" placeholder="Last Name" />
             </div>
-          <BaseButtonGreen type="submit" className="contd-delivery-btn">
-            Continue to delivery
-          </BaseButtonGreen>
-          <div className="input-check-group flex items-center flex-wrap">
-            <Input type="checkbox" />
-            <p className="text-base">
-              Save my information for a faster checkout
-            </p>
-          </div>
         </form>
       </BillingDetailsWrapper>
       <CheckoutSummary />

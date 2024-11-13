@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { BaseButtonGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const CartSummaryWrapper = styled.div`
   background-color: ${defaultTheme.color_flash_white};
@@ -35,11 +37,25 @@ const CartSummaryWrapper = styled.div`
 const SHIPPING_FEE = 5.0;
 
 const CartSummary = ({ selectedItems }) => {
+  const navigate = useNavigate();
   // Tính tổng tiền cho các sản phẩm đã chọn
   const subtotal = selectedItems.reduce((total, item) => {
     return total + item.price * item.quantity;
   }, 0);
-
+  // Hàm xử lý khi người dùng nhấn nút "Proceed To CheckOut"
+  const handleProceedToCheckout = () => {
+    const orderItems = selectedItems.map((item) => ({
+      product_id: item.product_id,
+      product_variant_id: item.product_variant_id,
+      price: item.price,
+      quantity: item.quantity,
+    }));
+    console.log(orderItems);
+    
+    localStorage.setItem("orderItems", JSON.stringify(orderItems));
+    navigate("/checkout");
+  };
+  
   // Tính tổng cuối cùng
   const grandTotal = subtotal + SHIPPING_FEE;
 
@@ -65,11 +81,22 @@ const CartSummary = ({ selectedItems }) => {
           </span>
         </li>
       </ul>
-      <BaseButtonGreen type="submit" className="checkout-btn">
+      <BaseButtonGreen type="submit" className="checkout-btn" onClick={handleProceedToCheckout}>
         Proceed To CheckOut
       </BaseButtonGreen>
     </CartSummaryWrapper>
   );
+};
+
+CartSummary.propTypes = {
+  selectedItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      product_id: PropTypes.number.isRequired,
+      product_variants_id: PropTypes.number.isRequired,
+      quantity: PropTypes.number.isRequired,
+      price: PropTypes.number.isRequired,
+    })
+  ).isRequired,
 };
 
 export default CartSummary;

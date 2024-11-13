@@ -9,17 +9,13 @@ const apiClient = axios.create({
 // Thêm interceptor để thêm token vào header cho mỗi request
 apiClient.interceptors.request.use(
   (config) => {
-    // Lấy token từ localStorage (hoặc từ nguồn khác mà bạn lưu token)
     const token = localStorage.getItem('token');
-    
-    // Nếu token tồn tại, thêm vào header Authorization
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => {
-    // Xử lý lỗi nếu có
     return Promise.reject(error);
   }
 );
