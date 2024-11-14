@@ -1,8 +1,10 @@
 import styled from "styled-components";
+import { useState, useEffect } from "react"
 import { BaseButtonGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import { toast } from "react-toastify";
 
 const CartSummaryWrapper = styled.div`
   background-color: ${defaultTheme.color_flash_white};
@@ -38,12 +40,26 @@ const SHIPPING_FEE = 5.0;
 
 const CartSummary = ({ selectedItems }) => {
   const navigate = useNavigate();
+
+  const [subTotal, setSubtotal] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
   // Tính tổng tiền cho các sản phẩm đã chọn
-  const subtotal = selectedItems.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
+  useEffect(() => {
+    // Tính tổng tiền cho các sản phẩm đã chọn
+    const newSubtotal = selectedItems.reduce((total, item) => {
+      return total + item.price * item.quantity;
+    }, 0);
+    
+    // Cập nhật subtotal và grandTotal
+    setSubtotal(newSubtotal);
+    setGrandTotal(newSubtotal + SHIPPING_FEE); // Thêm phí vận chuyển
+  }, [selectedItems]);
   // Hàm xử lý khi người dùng nhấn nút "Proceed To CheckOut"
   const handleProceedToCheckout = () => {
+    if(selectedItems.length === 0){
+      toast.warn("Please select a new item!");
+      return;
+    }
     const orderItems = selectedItems.map((item) => ({
       product_id: item.product_id,
       product_variant_id: item.product_variant_id,
@@ -55,9 +71,6 @@ const CartSummary = ({ selectedItems }) => {
     localStorage.setItem("orderItems", JSON.stringify(orderItems));
     navigate("/checkout");
   };
-  
-  // Tính tổng cuối cùng
-  const grandTotal = subtotal + SHIPPING_FEE;
 
   return (
     <CartSummaryWrapper>
@@ -65,7 +78,7 @@ const CartSummary = ({ selectedItems }) => {
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Sub Total</span>
           <span className="font-medium text-outerspace">
-            ${subtotal.toFixed(2)}
+            ${subTotal.toFixed(2)}
           </span>
         </li>
         <li className="summary-item flex justify-between">

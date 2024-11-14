@@ -9,6 +9,13 @@ const productSchema = z.object({
         .refine((value) => !isNaN(Number(value)) && Number(value) >= 0, {
             message: "Price must be a valid number and greater than or equal to 0",
         }),
+        quantity: z
+        .string()
+        .min(1, "Quantity is required")
+        .transform((value) => Number(value)) // Chuyển chuỗi thành số
+        .refine((value) => value >= 0, {
+            message: "Quantity must be a valid number and greater than or equal to 0",
+        }),
     description: z.string().min(1, "Mô tả sản phẩm là bắt buộc."), // Mô tả sản phẩm là bắt buộc
     category_id: z.string().min(1, "Danh mục là bắt buộc."), // Danh mục là bắt buộc
     sale_price: z
