@@ -13,7 +13,7 @@ import ProductServices from "../../components/product/ProductServices";
 import { breakpoints } from "../../styles/themes/default";
 import { defaultTheme } from "../../styles/themes/default";
 import apiClient from "../../api/axiosConfig";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 const DetailsScreenWrapper = styled.main`
     margin: 40px 0;
 `;
@@ -58,10 +58,20 @@ const ProductDetailsWrapper = styled.div`
         column-gap: 10px;
     }
     .prod-add-btn {
-        min-width: 160px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border: 1px solid;
+        min-width: 80px;
         column-gap: 8px;
+        border-radius: 5px;
         &-text {
             margin-top: 2px;
+        }
+        &:hover {
+            background-color: ${defaultTheme.color_sea_green}; /* Màu nền khi hover (ví dụ màu xanh dương) */
+            border-color: ${defaultTheme.color_sea_green}; /* Màu viền khi hover */
+            color: ${defaultTheme.color_white}; /* Màu chữ khi hover */
         }
     }
 
@@ -310,12 +320,11 @@ const ProductDetailsScreen = () => {
                     color: selectedColor || null,
                     product_variant_id: productVariantId,
                 },
-                {withCredentials: true}
+                { withCredentials: true }
             );
-            // localStorage.setItem("session_id", data.data.session_id);        
-            const session_id = Cookies.get("laravel_session");  
+            // localStorage.setItem("session_id", data.data.session_id);
+            const session_id = Cookies.get("laravel_session");
             console.log(session_id);
-            
 
             // alert("Sản phẩm đã được thêm vào giỏ hàng (local storage)!");
         } else {
@@ -405,8 +414,9 @@ const ProductDetailsScreen = () => {
                                 </div>
                                 <div className="prod-colors-list flex items-center">
                                     {colors.map((color, index) => (
-                                        <div className="prod-colors-item" key={index}>
+                                        <div className="prod-colors-item" style={{ margin: 20 }} key={index}>
                                             <input
+                                                style={{ width: "60px", height: "35px" }}
                                                 type="radio"
                                                 name="colors"
                                                 checked={selectedColor === color.id}
@@ -415,8 +425,13 @@ const ProductDetailsScreen = () => {
                                                 }
                                             />
                                             <span
-                                                className="prod-colorbox"
+                                                className=" flex items-center justify-center font-medium text-outerspace text-sm"
                                                 style={{
+                                                    width: "60px",
+                                                    height: "35px",
+                                                    fontSize: "16px",
+                                                    border: "1px solid #ccc",
+                                                    borderRadius: "5px",
                                                     backgroundColor: color.name, // Sử dụng màu từ biến thể
                                                 }}
                                             >
@@ -429,15 +444,19 @@ const ProductDetailsScreen = () => {
                         )}
 
                         <div className="btn-and-price flex items-center flex-wrap">
-                            <button className="prod-add-btn" onClick={() => handleAddToCart(product.id)}>
-                                <span className="prod-add-btn-icon">
+                            <button
+                                style={{ padding: 10, fontSize: 16 }}
+                                className="prod-add-btn"
+                                onClick={() => handleAddToCart(product.id)}
+                            >
+                                <div className="prod-add-btn-icon">
                                     <i className="bi bi-cart2"></i>
-                                </span>
-                                <span className="prod-add-btn-text">Add to cart</span>
+                                </div>
+                                <div className="prod-add-btn-text">Add to cart</div>
                             </button>
-                            <span className="prod-price text-xl font-bold text-outerspace">
-                                {currencyFormat(variantPrice)}
-                            </span>
+                            <div style={{}} className="prod-price text-xl font-bold text-outerspace">
+                                <div>Price: {currencyFormat(variantPrice)}</div>
+                            </div>
                         </div>
                         <ProductServices />
                     </ProductDetailsWrapper>
