@@ -5,6 +5,8 @@ import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import useProduct from "../../hooks/useProduct";
+import useCategory from "../../hooks/useCategory";
 
 const ProductsContent = styled.div`
   display: grid;
@@ -120,8 +122,8 @@ const ProductsContentRight = styled.div`
 `;
 
 const ProductListPage = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const { getAllCategories} = useCategory();
+  
   // State để lưu các bộ lọc
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(1000);
@@ -188,28 +190,6 @@ const ProductListPage = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchProductsAndCategories = async () => {
-      try {
-        const productsResponse = await fetch(
-          "http://127.0.0.1:8000/api/products"
-        );
-        const productsData = await productsResponse.json();
-        setProducts(productsData);
-
-        const categoriesResponse = await fetch(
-          "http://127.0.0.1:8000/api/categories"
-        );
-        const categoriesData = await categoriesResponse.json();
-        setCategories(categoriesData.categories);
-      } catch (error) {
-        console.error("Error fetching products and categories:", error);
-      }
-    };
-
-    fetchProductsAndCategories();
-  }, []);
-
   const { data = [], isError, error } = useQuery(
     ["filteredProducts", minRange, maxRange, selectedColors, selectedSizes],
     fetchFilteredProducts,
@@ -219,8 +199,19 @@ const ProductListPage = () => {
     }
   );
 
+  const { categories = [] } = useQuery(
+    ["categories"],
+    getAllCategories,
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
+  );
+  console.log(data);
+  
+
   const getCategoryById = (categoryId) => {
-    return categories.find((category) => category.id == categoryId);
+    return (categories) ? categories.find((category) => category.id == categoryId) : undefined;
   };
 
   // const handleAddToCart = async (productId) => {

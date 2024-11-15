@@ -79,9 +79,9 @@ const CartTable = ({ cartItems, selectedItems, onSelectItem, handleIncreaseQuant
                     onChange={() => onSelectItem(item)}
                   />
                 </td>
-                <td>{item.product_name}</td>
+                <td>{item.name || item.product_name}</td>
                 <td>
-                  <img src={item.product_image} alt="" style={{width: "50px", height: "50px"}} />
+                  <img src={item.product_image || item.image} alt="" style={{width: "50px", height: "50px"}} />
                 </td>
                 <td>
                   {item.size && item.color ? (

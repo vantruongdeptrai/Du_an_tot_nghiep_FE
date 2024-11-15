@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import styled from "styled-components";
 import { Input } from "../../styles/form";
 import CheckoutSummary from "./CheckoutSummary";
@@ -96,7 +97,22 @@ const BillingDetailsWrapper = styled.div`
 `;
 
 const Billing = () => {
-  const { register } = useFormContext();
+  const { register, setValue } = useFormContext();
+  
+  useEffect(() => {
+    // Lấy thông tin user từ localStorage
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      try {
+        const user = JSON.parse(storedUserInfo);
+        // Điền giá trị vào form nếu user tồn tại
+        setValue("name_order", user.name || "");
+        setValue("email_order", user.email || "");
+      } catch (error) {
+        console.error("Failed to parse userInfo from localStorage:", error);
+      }
+    }
+  }, [setValue]);
   return (
     <BillingOrderWrapper className="billing-and-order grid items-start">
       <BillingDetailsWrapper>
@@ -110,7 +126,7 @@ const Billing = () => {
               >
                 Full name *
               </label>
-              <Input {...register("name_order")} type="text" placeholder="First Name" />
+              <Input {...register("name_order")} type="text" placeholder="Full name" />
             </div>
             <div className="input-elem">
               <label
