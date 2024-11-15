@@ -65,6 +65,8 @@ const CartSummary = ({ selectedItems }) => {
       product_variant_id: item.product_variant_id,
       price: item.price,
       quantity: item.quantity,
+      size: item.size,
+      color: item.color,
     }));
     console.log(orderItems);
     

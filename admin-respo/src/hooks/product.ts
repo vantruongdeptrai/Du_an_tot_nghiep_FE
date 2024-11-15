@@ -45,6 +45,7 @@ const useProduct = () => {
         formData.append("name", data.name);
         formData.append("price", data.price);
         formData.append("description", data.description);
+        formData.append("quantity", data.quantity);
         formData.append("sale_price", data.sale_price);
         formData.append("sale_start", data.sale_start);
         formData.append("category_id", data.category_id);
