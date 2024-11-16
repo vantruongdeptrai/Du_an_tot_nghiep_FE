@@ -108,7 +108,9 @@ const CheckoutSummary = () => {
                                 <div className="order-item-img">
                                     {/* Nếu sản phẩm có biến thể thì lấy ảnh biến thể, nếu không thì lấy ảnh mặc định của sản phẩm */}
                                     <img
+
                                         src={item.image_url || order.image_url}
+
                                         className="object-fit-cover"
                                         alt={order.name}
                                     />
@@ -133,7 +135,9 @@ const CheckoutSummary = () => {
                                         )}
                                     </div>
                                     <div className="order-item-info-r text-gray font-bold text-base">
+
                                         {formatCurrency(item.price)}
+
                                     </div>
                                 </div>
                             </div>
