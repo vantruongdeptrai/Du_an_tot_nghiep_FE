@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import styled from "styled-components";
+import formatCurrency from "../../utils/formatUtils";
 
 const Table = styled.table`
   width: 100%;
@@ -122,7 +123,7 @@ const CartTable = ({ cartItems, selectedItems, onSelectItem, handleIncreaseQuant
                     +
                   </button>
                 </td>
-                <td>${((item.price || 0) * item.quantity).toFixed(2)}</td>
+                <td>{(formatCurrency((item.price || 0) * item.quantity))}</td>
                 <td>
                   <button
                     className="delete-button"

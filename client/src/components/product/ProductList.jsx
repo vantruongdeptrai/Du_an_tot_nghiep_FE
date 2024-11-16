@@ -2,7 +2,6 @@ import styled from "styled-components";
 import ProductItem from "./ProductItem";
 import { PropTypes } from "prop-types";
 import { breakpoints } from "../../styles/themes/default";
-import useProduct from "../../hooks/useProduct";
 
 const ProductListWrapper = styled.div`
   column-gap: 20px;
@@ -15,12 +14,12 @@ const ProductListWrapper = styled.div`
   }
 `;
 
-const ProductList = () => {
-  const {products} = useProduct()
+const ProductList = ({productSeller}) => {
+  
   return (
     <ProductListWrapper className="grid">
-      {products?.map((product) => {
-        return <ProductItem key={product.id} product={product} />;
+      {productSeller?.map((product, index) => {
+        return <ProductItem key={index} product={product} />;
       })}
     </ProductListWrapper>
   );
@@ -29,5 +28,7 @@ const ProductList = () => {
 export default ProductList;
 
 ProductList.propTypes = {
-  products: PropTypes.array,
+  products: PropTypes.array, // Nếu bạn truyền "products" làm prop
+  productSeller: PropTypes.array, // Định nghĩa productSeller là string (hoặc kiểu phù hợp)
 };
+

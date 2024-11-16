@@ -4,25 +4,27 @@ import Featured from "../../components/home/Featured";
 import NewArrival from "../../components/home/NewArrival";
 import SavingZone from "../../components/home/SavingZone";
 import Catalog from "../../components/home/Catalog";
-import { limelightCatalog, mensCatalog, womensCatalog } from "../../data/data";
 import Brands from "../../components/home/Brands";
 import Feedback from "../../components/home/Feedback";
+import useProduct from "../../hooks/useProduct";
 
 
 const HomeScreenWrapper = styled.main``;
 
 const HomeScreen = () => {
-  
+  const { products } = useProduct();
+    const bestSellerProduct = products.filter((product) => product.best_seller_product == 1);
+    const featuredProduct = products.filter((product) => product.featured_product == 1);
   return (
     <HomeScreenWrapper>
       <Hero />
       <Featured />
       <NewArrival />
       <SavingZone />
-      <Catalog catalogTitle={"Categories For Men"} products={mensCatalog} />
-      <Catalog catalogTitle={"Categories For Women"} products={womensCatalog} />
+      <Catalog catalogTitle={"Product best seller"} productSeller={bestSellerProduct || []} />
+      <Catalog catalogTitle={"All Product"} products={products} />
       <Brands />
-      <Catalog catalogTitle={"In The LimeLight"} products={limelightCatalog} />
+      <Catalog catalogTitle={"Featured product"} products={featuredProduct} />
       <Feedback />
     </HomeScreenWrapper>
   );

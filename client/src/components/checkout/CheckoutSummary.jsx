@@ -3,6 +3,7 @@ import { orderData } from "../../data/data";
 import { currencyFormat } from "../../utils/helper";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useProduct from "../../hooks/useProduct";
+import formatCurrency from "../../utils/formatUtils";
 
 const CheckoutSummaryWrapper = styled.div`
     box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.05), -2px -2px 4px 0px rgba(0, 0, 0, 0.05);
@@ -107,7 +108,7 @@ const CheckoutSummary = () => {
                                 <div className="order-item-img">
                                     {/* Nếu sản phẩm có biến thể thì lấy ảnh biến thể, nếu không thì lấy ảnh mặc định của sản phẩm */}
                                     <img
-                                        src={item.image_url || order.image_url || "/default-image.png"}
+                                        src={item.image_url || order.image_url}
                                         className="object-fit-cover"
                                         alt={order.name}
                                     />
@@ -132,7 +133,7 @@ const CheckoutSummary = () => {
                                         )}
                                     </div>
                                     <div className="order-item-info-r text-gray font-bold text-base">
-                                        {currencyFormat(item.price)}
+                                        {formatCurrency(item.price)}
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +147,7 @@ const CheckoutSummary = () => {
                     <span className="text-outerspace font-bold text-lg">
                         Subtotal <span className="text-gray font-semibold">({data.length} items)</span>
                     </span>
-                    <span className="text-outerspace font-bold text-lg">${subtotal}</span>
+                    <span className="text-outerspace font-bold text-lg">{formatCurrency(subtotal)}</span>
                 </li>
                 <li className="flex items-center justify-between">
                     <span className="text-outerspace font-bold text-lg">Savings</span>
@@ -159,7 +160,7 @@ const CheckoutSummary = () => {
                 <li className="list-separator"></li>
                 <li className="flex items-center justify-between">
                     <span className="text-outerspace font-bold text-lg">Total</span>
-                    <span className="text-outerspace font-bold text-lg">${subtotal}</span>
+                    <span className="text-outerspace font-bold text-lg">{formatCurrency(subtotal)}</span>
                 </li>
             </ul>
         </CheckoutSummaryWrapper>
