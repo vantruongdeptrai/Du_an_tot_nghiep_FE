@@ -157,39 +157,39 @@ const ShippingPayment = () => {
                 <form action="">
                     <div className="list-group">
                         <div className="list-group-item">
-                        <div className="flex items-center list-group-item-head">
-                            <Input type="radio" className="list-group-item-check" name="payment_method" />
-                            <p className="font-semibold text-lg">
-                                Credit Card
-                                <span className="flex text-base font-medium text-gray">
-                                    We accept all major credit cards.
-                                </span>
-                            </p>
-                        </div>
-                        <div className="payment-cards flex flex-wrap">
-                            {cardsData?.map((card) => {
-                                return (
-                                    <div className="payment-card flex items-center justify-center" key={card.id}>
-                                        <Input type="radio" name="payment_cards" />
-                                        <div className="card-wrapper bg-white w-full h-full flex items-center justify-center">
-                                            <img src={card.imgSource} alt="" />
-                                            <div className="card-selected text-sea-green">
-                                                <i className="bi bi-check-circle-fill"></i>
+                            <div className="flex items-center list-group-item-head">
+                                <Input type="radio" className="list-group-item-check" name="payment_method" />
+                                <p className="font-semibold text-lg">
+                                    Credit Card
+                                    <span className="flex text-base font-medium text-gray">
+                                        We accept all major credit cards.
+                                    </span>
+                                </p>
+                            </div>
+                            <div className="payment-cards flex flex-wrap">
+                                {cardsData?.map((card) => {
+                                    return (
+                                        <div className="payment-card flex items-center justify-center" key={card.id}>
+                                            <Input type="radio" name="payment_cards" />
+                                            <div className="card-wrapper bg-white w-full h-full flex items-center justify-center">
+                                                <img src={card.imgSource} alt="" />
+                                                <div className="card-selected text-sea-green">
+                                                    <i className="bi bi-check-circle-fill"></i>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
-                        
-                    </div>
 
                         <div className="horiz-line-separator"></div>
                         <div className="list-group-item flex items-center">
                             <Input
                                 {...register("payment_type")}
                                 type="radio"
-                                className="list-group-item-check"hh
+                                className="list-group-item-check"
+                                hh
                                 value={"Tiền mặt"}
                             />
                             <p className="font-semibod text-lg">
@@ -199,15 +199,19 @@ const ShippingPayment = () => {
                                 </span>
                             </p>
                         </div>
-                        <div className="horiz-line-separator"></div>
-                        <div className="list-group-item flex items-center">
+                        <div style={{marginTop: 10}} className="list-group-item flex items-center">
                             <Input
                                 {...register("payment_type")}
                                 type="radio"
                                 className="list-group-item-check"
-                                defaultValue={"VNP Bank"}
+                                value="VNPay"
                             />
-                            <p className="font-semibod text-lg">PayPal</p>
+                            <p className="font-semibod text-lg">
+                                VNPAY
+                                <span className="flex text-base font-medium text-gray">
+                                    Pay with VNPAY
+                                </span>
+                            </p>
                         </div>
                     </div>
                 </form>

@@ -77,7 +77,7 @@ const CheckoutSummaryWrapper = styled.div`
 const CheckoutSummary = () => {
     const data = JSON.parse(localStorage.getItem("orderItems"));
     console.log(data);
-    
+
     const { products } = useProduct();
 
     // Lấy danh sách các `product_id` từ `data`
@@ -85,51 +85,66 @@ const CheckoutSummary = () => {
 
     // Lọc ra các sản phẩm có ID nằm trong `productIds`
     const checkoutSummary = products.filter((product) => productIds.includes(product.id));
-    const subtotal = data.reduce((acc, item) => {
-      return acc + parseFloat(item.price) * item.quantity;
-  }, 0);
     console.log(checkoutSummary);
-    
+
+    const subtotal = data.reduce((acc, item) => {
+        return acc + parseFloat(item.price) * item.quantity;
+    }, 0);
+    console.log(checkoutSummary);
 
     return (
         <CheckoutSummaryWrapper>
             <h4 className="text-xxl font-bold text-outersapce">Checkout Order Summary</h4>
             <div className="order-list grid">
                 {checkoutSummary.map((order) => {
-                  const itemData = data.find((item) => item.product_id === order.id);
-                    return (
-                        <div className="order-item grid" key={order.id}>
-                            <div className="order-item-img">
-                                <img src={order.image_url} className="object-fit-cover" alt="" />
-                            </div>
-                            <div className="order-item-info flex justify-between">
-                                <div className="order-item-info-l">
-                                    <p className="text-base font-bold text-outerspace">
-                                        {order.name}&nbsp;
-                                        <span className="text-gray">x{itemData?.quantity || 0}</span>
-                                    </p>
-                                    <p className="text-base font-bold text-outerspaace">
-                                        Color: &nbsp;
-                                        <span className="text-gray font-normal">{itemData?.color && itemData.color !== "N/A" ? itemData.color : "Không màu"}</span>
-                                    </p>
-                                    <p className="text-base font-bold text-outerspaace">
-                                        Size: &nbsp;
-                                        <span className="text-gray font-normal">{itemData?.size && itemData.size !== "N/A" ? itemData.size : "Không size"}</span>
-                                    </p>
+                    // Lấy dữ liệu từ `orderItems` tương ứng với sản phẩm
+                    const itemData = data.filter((item) => item.product_id === order.id);
+
+                    // Hiển thị từng sản phẩm trong data (có thể là sản phẩm không có biến thể hoặc có biến thể)
+                    return itemData.map((item, index) => {
+                        return (
+                            <div className="order-item grid" key={`${order.id}-${index}`}>
+                                <div className="order-item-img">
+                                    {/* Nếu sản phẩm có biến thể thì lấy ảnh biến thể, nếu không thì lấy ảnh mặc định của sản phẩm */}
+                                    <img
+                                        src={item.image_url || order.image_url || "/default-image.png"}
+                                        className="object-fit-cover"
+                                        alt={order.name}
+                                    />
                                 </div>
-                                <div className="order-item-info-r text-gray font-bold text-base">
-                                    {currencyFormat(itemData.price)}
+                                <div className="order-item-info flex justify-between">
+                                    <div className="order-item-info-l">
+                                        <p className="text-base font-bold text-outerspace">
+                                            {order.name}&nbsp;
+                                            <span className="text-gray">x{item.quantity}</span>
+                                        </p>
+                                        {item.color && item.color !== "N/A" && (
+                                            <p className="text-base font-bold text-outerspace">
+                                                Color: &nbsp;
+                                                <span className="text-gray font-normal">{item.color}</span>
+                                            </p>
+                                        )}
+                                        {item.size && item.size !== "N/A" && (
+                                            <p className="text-base font-bold text-outerspace">
+                                                Size: &nbsp;
+                                                <span className="text-gray font-normal">{item.size}</span>
+                                            </p>
+                                        )}
+                                    </div>
+                                    <div className="order-item-info-r text-gray font-bold text-base">
+                                        {currencyFormat(item.price)}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    );
+                        );
+                    });
                 })}
             </div>
 
             <ul className="order-info">
                 <li className="flex items-center justify-between">
                     <span className="text-outerspace font-bold text-lg">
-                        Subtotal <span className="text-gray font-semibold">({data.length} item)</span>
+                        Subtotal <span className="text-gray font-semibold">({data.length} items)</span>
                     </span>
                     <span className="text-outerspace font-bold text-lg">${subtotal}</span>
                 </li>

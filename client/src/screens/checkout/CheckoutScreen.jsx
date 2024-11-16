@@ -7,6 +7,7 @@ import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { FormProvider, useForm } from "react-hook-form";
 import { BaseButtonGreen } from "../../styles/button";
 import useOrder from "../../hooks/useOrder";
+import { toast } from "react-toastify";
 
 const CheckoutScreenWrapper = styled.main`
     padding: 48px 0;
@@ -30,7 +31,28 @@ const CheckoutScreen = () => {
     const orderItems = JSON.parse(localStorage.getItem("orderItems"));
     // Hàm xử lý submit khi người dùng ấn "Pay Now"
     const handleSubmitOrder = async (data) => {
-        createOrder(data, userId, orderItems);
+        const paymentType = data.payment_type;
+        
+        const userId = user ? user.id : null;
+
+        if (paymentType == "VNPay") {
+            // Nếu chọn thanh toán VNPay, gọi API tạo URL thanh toán
+            const response = await createOrder(data, userId, orderItems, paymentType);
+            console.log(response.data.payment_url);
+            localStorage.removeItem('orderItems')
+            
+            // if (response?.data) {
+            //     // Chuyển hướng đến URL thanh toán VNPay
+            //     window.location.href = response.payment_url;
+            // } else {
+            //     console.error("Failed to generate VNPay payment URL.");
+            // }
+        } else {
+            // Nếu không phải VNPay, gọi hàm tạo đơn hàng bình thường
+            await createOrder(data, userId, orderItems);
+            localStorage.removeItem('orderItems')
+            toast.success("Order created successfully.")
+        }
     };
     return (
         <CheckoutScreenWrapper>
