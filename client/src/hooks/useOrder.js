@@ -1,45 +1,62 @@
 import apiClient from "../api/axiosConfig";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const useOrder = () => {
-    const createOrder = async (data, id, orderItems) => {
+    const navigate = useNavigate();
+    const [orders, setOrders] = useState([]);
+    const getAllOrders = async () => {
+        try {
+            const response = await apiClient.get("/orders");
+            setOrders(response.data);
+            return response.data
+        } catch (error) {
+            console.log(error);
+            
+        }
+    };
+    const createOrder = async (data, id, orderItems, paymentMethod) => {
         try {
             const isLoggedIn = Boolean(localStorage.getItem("userInfo"));
-            
             const endPoint = isLoggedIn ? "/oder/login" : "/oder/no-login";
-            
-            // Tạo dữ liệu order
+
             const orderData = {
                 user_id: id,
                 ...data,
                 order_items: orderItems.map((item) => {
-                    // Kiểm tra nếu sản phẩm có product_variant
-                    if (item.product_variant_id) {
-                        return {
-                            product_variant_id: item.product_variant_id,
-                            quantity: item.quantity,
-                        };
-                    } else {
-                        return {
-                            product_id: item.product_id,
-                            quantity: item.quantity,
-                        };
-                    }
+                    return item.product_variant_id
+                        ? {
+                              product_variant_id: item.product_variant_id,
+                              quantity: item.quantity,
+                          }
+                        : { product_id: item.product_id, quantity: item.quantity };
                 }),
             };
 
-            // Gửi yêu cầu POST với session_id trong header
             const response = await apiClient.post(endPoint, orderData);
 
-            toast.success("Buy products successfully");
-            console.log(response.data);
+            if (paymentMethod == "VNPay") {
+                const vnpayResponse = await apiClient.post("/payment", {
+                    bank_code: 123456,
+                    amount: response.data.total_price * 100,
+                });
+                return vnpayResponse;
+            } else {
+                toast.success("Order created successfully!");
+            }
         } catch (error) {
-            toast.error(error.message);
-            console.log(error);
+            toast.error("Failed to create order. Please try again.");
         }
     };
 
+    useEffect(() => {
+        getAllOrders();
+    }, [])
+
     return {
+        orders,
+        getAllOrders,
         createOrder,
     };
 };
