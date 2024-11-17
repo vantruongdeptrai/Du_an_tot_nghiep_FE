@@ -5,8 +5,6 @@ import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import ProductPreview from "../../components/product/ProductPreview";
-import { Link } from "react-router-dom";
-import { currencyFormat } from "../../utils/helper";
 import ProductDescriptionTab from "../../components/product/ProductDescriptionTab";
 import ProductSimilar from "../../components/product/ProductSimilar";
 import ProductServices from "../../components/product/ProductServices";
@@ -14,6 +12,7 @@ import { breakpoints } from "../../styles/themes/default";
 import { defaultTheme } from "../../styles/themes/default";
 import apiClient from "../../api/axiosConfig";
 import Cookies from "js-cookie";
+import formatCurrency from "../../utils/formatUtils";
 const DetailsScreenWrapper = styled.main`
     margin: 40px 0;
 `;
@@ -196,7 +195,7 @@ const ProductColorWrapper = styled.div`
 
 const ProductDetailsScreen = () => {
     const { id } = useParams();
-    const [product, setProduct] = useState(null);
+    const [product, setProduct] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState(null);
     const [selectedColor, setSelectedColor] = useState(null);
@@ -455,14 +454,14 @@ const ProductDetailsScreen = () => {
                                 <div className="prod-add-btn-text">Add to cart</div>
                             </button>
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
-                                <div>Price: {currencyFormat(variantPrice)}</div>
+                                <div>Price: {formatCurrency(variantPrice)}</div>
                             </div>
                         </div>
                         <ProductServices />
                     </ProductDetailsWrapper>
                 </DetailsContent>
                 <ProductDescriptionTab />
-                <ProductSimilar />
+                <ProductSimilar product={product} />
             </Container>
         </DetailsScreenWrapper>
     );

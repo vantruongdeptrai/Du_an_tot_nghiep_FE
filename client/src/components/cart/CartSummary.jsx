@@ -5,6 +5,7 @@ import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
+import formatCurrency from "../../utils/formatUtils";
 
 const CartSummaryWrapper = styled.div`
   background-color: ${defaultTheme.color_flash_white};
@@ -36,7 +37,7 @@ const CartSummaryWrapper = styled.div`
 `;
 
 // Phí vận chuyển cố định
-const SHIPPING_FEE = 5.0;
+const SHIPPING_FEE = 5000;
 
 const CartSummary = ({ selectedItems }) => {
   const navigate = useNavigate();
@@ -80,19 +81,19 @@ const CartSummary = ({ selectedItems }) => {
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Sub Total</span>
           <span className="font-medium text-outerspace">
-            ${subTotal.toFixed(2)}
+            {formatCurrency(subTotal)}
           </span>
         </li>
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Shipping</span>
           <span className="font-medium text-outerspace">
-            ${SHIPPING_FEE.toFixed(2)}
+            {formatCurrency(SHIPPING_FEE)}
           </span>
         </li>
         <li className="summary-item flex justify-between">
           <span className="font-medium text-outerspace">Grand Total</span>
           <span className="summary-item-value font-bold text-outerspace">
-            ${grandTotal.toFixed(2)}
+            {formatCurrency(grandTotal)}
           </span>
         </li>
       </ul>
