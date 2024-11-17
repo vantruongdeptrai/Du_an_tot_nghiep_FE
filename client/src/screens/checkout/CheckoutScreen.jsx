@@ -49,9 +49,8 @@ const CheckoutScreen = () => {
             // }
         } else {
             // Nếu không phải VNPay, gọi hàm tạo đơn hàng bình thường
-            await createOrder(data, userId, orderItems);
+            await createOrder(data, userId, orderItems);    
             localStorage.removeItem('orderItems')
-            toast.success("Order created successfully.")
         }
     };
     return (

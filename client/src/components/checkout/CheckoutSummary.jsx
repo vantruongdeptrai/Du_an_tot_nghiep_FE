@@ -1,9 +1,8 @@
 import styled from "styled-components";
-import { orderData } from "../../data/data";
-import { currencyFormat } from "../../utils/helper";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useProduct from "../../hooks/useProduct";
 import formatCurrency from "../../utils/formatUtils";
+import { useColors, useSizes } from "../../hooks/useAtribute";
 
 const CheckoutSummaryWrapper = styled.div`
     box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.05), -2px -2px 4px 0px rgba(0, 0, 0, 0.05);
@@ -77,21 +76,20 @@ const CheckoutSummaryWrapper = styled.div`
 
 const CheckoutSummary = () => {
     const data = JSON.parse(localStorage.getItem("orderItems"));
-    console.log(data);
-
     const { products } = useProduct();
+    const { colors } = useColors();
+
+    const { sizes } = useSizes();
 
     // Lấy danh sách các `product_id` từ `data`
     const productIds = data.map((item) => item.product_id);
 
     // Lọc ra các sản phẩm có ID nằm trong `productIds`
     const checkoutSummary = products.filter((product) => productIds.includes(product.id));
-    console.log(checkoutSummary);
 
     const subtotal = data.reduce((acc, item) => {
         return acc + parseFloat(item.price) * item.quantity;
     }, 0);
-    console.log(checkoutSummary);
 
     return (
         <CheckoutSummaryWrapper>
@@ -103,14 +101,14 @@ const CheckoutSummary = () => {
 
                     // Hiển thị từng sản phẩm trong data (có thể là sản phẩm không có biến thể hoặc có biến thể)
                     return itemData.map((item, index) => {
+                        const detailColor = colors.find((color) => color.id === item.color);
+                        const detailSize = sizes.find((size) => size.id === item.size);
                         return (
                             <div className="order-item grid" key={`${order.id}-${index}`}>
                                 <div className="order-item-img">
                                     {/* Nếu sản phẩm có biến thể thì lấy ảnh biến thể, nếu không thì lấy ảnh mặc định của sản phẩm */}
                                     <img
-
                                         src={item.image_url || order.image_url}
-
                                         className="object-fit-cover"
                                         alt={order.name}
                                     />
@@ -124,20 +122,18 @@ const CheckoutSummary = () => {
                                         {item.color && item.color !== "N/A" && (
                                             <p className="text-base font-bold text-outerspace">
                                                 Color: &nbsp;
-                                                <span className="text-gray font-normal">{item.color}</span>
+                                                <span className="text-gray font-normal">{detailColor ? detailColor.name : item.color}</span>
                                             </p>
                                         )}
                                         {item.size && item.size !== "N/A" && (
                                             <p className="text-base font-bold text-outerspace">
                                                 Size: &nbsp;
-                                                <span className="text-gray font-normal">{item.size}</span>
+                                                <span className="text-gray font-normal">{detailSize ? detailSize.name : item.size}</span>
                                             </p>
                                         )}
                                     </div>
                                     <div className="order-item-info-r text-gray font-bold text-base">
-
                                         {formatCurrency(item.price)}
-
                                     </div>
                                 </div>
                             </div>

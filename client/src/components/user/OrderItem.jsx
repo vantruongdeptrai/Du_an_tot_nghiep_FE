@@ -1,11 +1,10 @@
 import styled from "styled-components";
 import PropTypes from "prop-types";
-import { currencyFormat } from "../../utils/helper";
+import formatCurrency from "../../utils/formatUtils";
 import { BaseLinkGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useUser from "../../hooks/useUser";
 import { useNavigate } from "react-router-dom";
-import useOrder from "../../hooks/useOrder";
 import useProductVariant from "../../hooks/useProductVariant";
 import { useColors, useSizes } from "../../hooks/useAtribute";
 import useProduct from "../../hooks/useProduct";
@@ -166,15 +165,23 @@ const OrderItem = ({ order }) => {
                                         <span className="text-silver">{item?.quantity}</span>
                                     </li>
                                     <li className="font-semibold text-base">
-                                        <span>Total:</span>
+                                        <span>Price:</span>
                                         <span className="text-silver">
-                                            {currencyFormat(productVariant?.price || product?.sale_price)}
+                                            {formatCurrency(productVariant?.price || product?.sale_price)}
                                         </span>
                                     </li>
                                 </ul>
                             </div>
                         </div>
-                        <BaseLinkGreen to="/order_detail">View Detail</BaseLinkGreen>
+                        <div style={{gap: 30}} className="flex flex-col">
+                            <BaseLinkGreen to="/order_detail">View Detail</BaseLinkGreen>
+                            <div>
+                                Total:{" "}
+                                {formatCurrency(
+                                    productVariant?.price * item.quantity || product?.sale_price * item.quantity
+                                )}
+                            </div>
+                        </div>
                     </div>
                 );
             })}

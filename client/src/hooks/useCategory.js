@@ -1,27 +1,27 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import apiClient from "../api/axiosConfig";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
+
+const getAllCategories = async () => {
+    try {
+        const response = await apiClient.get("/categories");
+        return response.data.categories;
+    } catch (error) {
+        toast.error("Error:", error);
+        throw error; // Đảm bảo lỗi được ném ra cho React Query xử lý
+    }
+};
 
 const useCategory = () => {
-    const [categories, setCategories] = useState([]);
-    const getAllCategories = async () => {
-        try {
-            const response = await apiClient.get("/categories");
-            setCategories(response.data.categories);
-            return response.data.categories;
-        } catch (error) {
-            toast.error("Error:", error);
-        }
-
-    };
-
-    useEffect(() => {
-        getAllCategories();
-    }, [])
+    const { data: categories, error, isLoading } = useQuery(
+        ['categories'], // queryKey, phải duy nhất
+        getAllCategories
+    );
 
     return {
         categories,
-        getAllCategories,
+        isLoading,
+        error
     };
 };
 

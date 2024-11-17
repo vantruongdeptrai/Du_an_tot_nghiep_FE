@@ -1,38 +1,39 @@
-// useSizes.ts
-import { useEffect, useState } from "react";
-export const useSizes = () => {
-    const [sizes, setSizes] = useState([]);
-    
-    // Lấy dữ liệu màu sắc từ API
-    const getAllSizes = async () => {
-        const response = await fetch("http://localhost:8000/api/sizes"); // Đường dẫn API của bạn
-        const data = await response.json();
-        setSizes(data);
-        return data;
-    };
-    
-    useEffect(() => {
-        getAllSizes();
-    }, []);
+import { useQuery } from "@tanstack/react-query";
 
-    return {sizes, getAllSizes};
+// Hook để lấy Sizes
+export const useSizes = () => {
+    const fetchSizes = async () => {
+        const response = await fetch("http://localhost:8000/api/sizes");
+        if (!response.ok) {
+            throw new Error("Failed to fetch sizes");
+        }
+        return response.json();
+    };
+
+    const { data: sizes = [], isLoading, isError, error } = useQuery(
+        ["sizes"],
+        fetchSizes,
+        { staleTime: 5 * 60 * 1000 } // 5 phút
+    );
+
+    return { sizes, isLoading, isError, error };
 };
 
-// useColors.ts
-
+// Hook để lấy Colors
 export const useColors = () => {
-    const [colors, setColors] = useState([]);
-     // Lấy dữ liệu màu sắc từ API
-     const getAllColors = async () => {
-        const response = await fetch("http://localhost:8000/api/colors"); // Đường dẫn API của bạn
-        const data = await response.json();
-        setColors(data);
-        return data;
+    const fetchColors = async () => {
+        const response = await fetch("http://localhost:8000/api/colors");
+        if (!response.ok) {
+            throw new Error("Failed to fetch colors");
+        }
+        return response.json();
     };
-    
-    useEffect(() => {
-        getAllColors();
-    }, []);
 
-    return {colors, getAllColors};
+    const { data: colors = [], isLoading, isError, error } = useQuery(
+        ["colors"],
+        fetchColors,
+        { staleTime: 5 * 60 * 1000 } // 5 phút
+    );
+
+    return { colors, isLoading, isError, error };
 };

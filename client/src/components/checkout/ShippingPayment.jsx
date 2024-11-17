@@ -30,7 +30,17 @@ const ShippingPaymentWrapper = styled.div`
 
         .list-group-item {
             column-gap: 20px;
+            opacity: 1; /* Mặc định không mờ */
+            pointer-events: auto; /* Mặc định có thể click */
+            cursor: pointer; /* Mặc định con trỏ là pointer */
+
+            &.disabled {
+                opacity: 0.5; /* Làm mờ */
+                pointer-events: none; /* Vô hiệu hóa các sự kiện */
+                cursor: not-allowed; /* Thay đổi con trỏ */
+            }
         }
+
         .horiz-line-separator {
             margin: 20px 0;
             @media (max-width: ${breakpoints.sm}) {
@@ -60,10 +70,21 @@ const ShippingPaymentWrapper = styled.div`
                 gap: 10px;
                 margin-left: 0;
             }
+
             .payment-card {
                 position: relative;
                 width: 80px;
                 height: 46px;
+                opacity: 1; /* Mặc định không mờ */
+                pointer-events: auto; /* Mặc định có thể click */
+                cursor: pointer; /* Mặc định con trỏ là pointer */
+
+                &.disabled {
+                    opacity: 0.5; /* Làm mờ */
+                    pointer-events: none; /* Vô hiệu hóa các sự kiện */
+                    cursor: not-allowed; /* Thay đổi con trỏ */
+                }
+
                 input {
                     opacity: 0;
                     position: absolute;
@@ -102,42 +123,6 @@ const ShippingPaymentWrapper = styled.div`
                 }
             }
         }
-
-        .payment-details {
-            margin-left: 34px;
-            display: grid;
-            row-gap: 16px;
-
-            @media (max-width: ${breakpoints.sm}) {
-                margin-left: 0;
-            }
-
-            .form-elem-group {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-                @media (max-width: ${breakpoints.sm}) {
-                    grid-template-columns: 100%;
-                    gap: 0;
-                }
-            }
-
-            .form-elem {
-                height: 40px;
-                border: 1px solid ${defaultTheme.color_platinum};
-                border-radius: 6px;
-                padding: 16px;
-
-                &:focus {
-                    border-color: ${defaultTheme.color_sea_green};
-                }
-
-                @media (max-width: ${breakpoints.sm}) {
-                    margin-bottom: 10px;
-                    border-radius: 4px;
-                }
-            }
-        }
     }
 
     .pay-now-btn {
@@ -149,16 +134,25 @@ const ShippingPaymentWrapper = styled.div`
 
 const ShippingPayment = () => {
     const { register } = useFormContext();
+    const isLoggedIn = !!localStorage.getItem("userInfo");
+
     return (
         <ShippingPaymentWrapper>
             <div className="payment-method">
                 <h3 className="text-xxl payment-method-title">Payment Method</h3>
                 <p className="text-base text-outerspace">All transactions are secure and encrypted.</p>
-                <form action="">
+                <form>
                     <div className="list-group">
-                        <div className="list-group-item">
+                        <div
+                            className={`list-group-item ${!isLoggedIn ? "disabled" : ""}`}
+                        >
                             <div className="flex items-center list-group-item-head">
-                                <Input type="radio" className="list-group-item-check" name="payment_method" />
+                                <Input
+                                    type="radio"
+                                    className="list-group-item-check"
+                                    name="payment_method"
+                                    disabled={!isLoggedIn}
+                                />
                                 <p className="font-semibold text-lg">
                                     Credit Card
                                     <span className="flex text-base font-medium text-gray">
@@ -167,29 +161,36 @@ const ShippingPayment = () => {
                                 </p>
                             </div>
                             <div className="payment-cards flex flex-wrap">
-                                {cardsData?.map((card) => {
-                                    return (
-                                        <div className="payment-card flex items-center justify-center" key={card.id}>
-                                            <Input type="radio" name="payment_cards" />
-                                            <div className="card-wrapper bg-white w-full h-full flex items-center justify-center">
-                                                <img src={card.imgSource} alt="" />
-                                                <div className="card-selected text-sea-green">
-                                                    <i className="bi bi-check-circle-fill"></i>
-                                                </div>
+                                {cardsData?.map((card) => (
+                                    <div
+                                        className={`payment-card flex items-center justify-center ${
+                                            !isLoggedIn ? "disabled" : ""
+                                        }`}
+                                        key={card.id}
+                                    >
+                                        <Input
+                                            type="radio"
+                                            name="payment_cards"
+                                            disabled={!isLoggedIn}
+                                        />
+                                        <div className="card-wrapper bg-white w-full h-full flex items-center justify-center">
+                                            <img src={card.imgSource} alt="" />
+                                            <div className="card-selected text-sea-green">
+                                                <i className="bi bi-check-circle-fill"></i>
                                             </div>
                                         </div>
-                                    );
-                                })}
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
                         <div className="horiz-line-separator"></div>
+
                         <div className="list-group-item flex items-center">
                             <Input
                                 {...register("payment_type")}
                                 type="radio"
                                 className="list-group-item-check"
-                                hh
                                 value={"Tiền mặt"}
                             />
                             <p className="font-semibod text-lg">
@@ -199,12 +200,18 @@ const ShippingPayment = () => {
                                 </span>
                             </p>
                         </div>
-                        <div style={{marginTop: 10}} className="list-group-item flex items-center">
+
+                        <div style={{marginTop: 20}}
+                            className={`list-group-item flex items-center ${
+                                !isLoggedIn ? "disabled" : ""
+                            }`}
+                        >
                             <Input
                                 {...register("payment_type")}
                                 type="radio"
                                 className="list-group-item-check"
                                 value="VNPay"
+                                disabled={!isLoggedIn}
                             />
                             <p className="font-semibod text-lg">
                                 VNPAY
