@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { debounce } from "lodash"; // Import lodash debounce
 import {
     ColorsFilter,
     FilterTitle,
@@ -6,9 +7,8 @@ import {
     PriceFilter,
     ProductCategoryFilter,
     SizesFilter,
-    StyleFilter,
 } from "../../styles/filter";
-import { ProductFilterList, StyleFilterList } from "../../data/data";
+import { ProductFilterList } from "../../data/data";
 
 const ProductFilter = ({
     minRange,
@@ -20,24 +20,25 @@ const ProductFilter = ({
     selectedSizes,
     setSelectedSizes,
 }) => {
-    const [isProductFilterOpen, setProductFilterOpen] = useState(true);
-    const [isPriceFilterOpen, setPriceFilterOpen] = useState(true);
-    const [isColorFilterOpen, setColorFilterOpen] = useState(true);
-    const [isSizeFilterOpen, setSizeFilterOpen] = useState(true);
-    const [isStyleFilterOpen, setStyleFilterOpen] = useState(true);
+    const [filterState, setFilterState] = useState({
+        product: true,
+        price: true,
+        color: true,
+        size: true,
+        style: true,
+    });
 
     const [sizes, setSizes] = useState([]);
     const [colors, setColors] = useState([]);
 
+    // Fetch sizes and colors from API
     useEffect(() => {
         const fetchSizeAndColor = async () => {
             try {
-                // Lấy màu sắc từ API
                 const colorsResponse = await fetch("http://127.0.0.1:8000/api/colors");
                 const colorsData = await colorsResponse.json();
                 setColors(colorsData);
 
-                // Lấy kích thước từ API
                 const sizesResponse = await fetch("http://127.0.0.1:8000/api/sizes");
                 const sizesData = await sizesResponse.json();
                 setSizes(sizesData);
@@ -49,26 +50,21 @@ const ProductFilter = ({
         fetchSizeAndColor();
     }, []);
 
+    // Debounce for price filter
+    const debouncedSetMinRange = useCallback(
+        debounce((value) => setMinRange(value), 500),
+        []
+    );
+    const debouncedSetMaxRange = useCallback(
+        debounce((value) => setMaxRange(value), 500),
+        []
+    );
+
     const toggleFilter = (filter) => {
-        switch (filter) {
-            case "product":
-                setProductFilterOpen((prev) => !prev);
-                break;
-            case "price":
-                setPriceFilterOpen((prev) => !prev);
-                break;
-            case "color":
-                setColorFilterOpen((prev) => !prev);
-                break;
-            case "size":
-                setSizeFilterOpen((prev) => !prev);
-                break;
-            case "style":
-                setStyleFilterOpen((prev) => !prev);
-                break;
-            default:
-                break;
-        }
+        setFilterState((prevState) => ({
+            ...prevState,
+            [filter]: !prevState[filter],
+        }));
     };
 
     const rangeMin = 100;
@@ -76,7 +72,7 @@ const ProductFilter = ({
     // Đảm bảo min và max nằm trong khoảng hợp lệ
     useEffect(() => {
         if (minRange < 0) setMinRange(0);
-        if (maxRange > 1000) setMaxRange(1000);
+        if (maxRange > 2000000) setMaxRange(2000000); // Thay đổi giới hạn giá trị maxRange
         if (maxRange - minRange < rangeMin) {
             setMaxRange(minRange + rangeMin);
         }
@@ -84,20 +80,18 @@ const ProductFilter = ({
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        const inputValue = Math.min(Math.max(parseInt(value), 0), 1000);
-        console.log(e.target);
+        const inputValue = Math.min(Math.max(parseInt(value), 0), 2000000); // Thay đổi giới hạn cho giá trị
 
         if (name === "min") {
-            if (inputValue <= 900) {
-                setMinRange(inputValue);
+            if (inputValue <= 999900) {
+                // Thay đổi điều kiện này để phù hợp với giá trị lớn hơn
+                debouncedSetMinRange(inputValue); // Debounced update for min range
             }
-            // Nếu min lớn hơn hoặc bằng max, điều chỉnh max
             if (inputValue >= maxRange) {
                 setMaxRange(inputValue + rangeMin);
             }
         } else if (name === "max") {
-            setMaxRange(inputValue);
-            // Nếu max nhỏ hơn hoặc bằng min, điều chỉnh min
+            debouncedSetMaxRange(inputValue); // Debounced update for max range
             if (inputValue <= minRange) {
                 setMinRange(inputValue - rangeMin);
             }
@@ -108,16 +102,14 @@ const ProductFilter = ({
         return (value / max) * 100 + "%";
     };
 
+    // Handle color changes
     const handleColorChange = (colorId) => {
-        setSelectedColors((prevColors) => {
-            return prevColors.includes(colorId) ? prevColors.filter((c) => c !== colorId) : [...prevColors, colorId];
-        });
+        setSelectedColors(colorId); // Lưu chỉ 1 giá trị cho màu đã chọn
     };
-
+    
+    // Handle size changes
     const handleSizeChange = (sizeId) => {
-        setSelectedSizes((prevSizes) => {
-            return prevSizes.includes(sizeId) ? prevSizes.filter((s) => s !== sizeId) : [...prevSizes, sizeId];
-        });
+        setSelectedSizes(sizeId); // Lưu chỉ 1 giá trị cho kích thước đã chọn
     };
 
     return (
@@ -128,11 +120,11 @@ const ProductFilter = ({
                     onClick={() => toggleFilter("product")}
                 >
                     <p className="filter-title-text text-gray text-base font-semibold text-lg">Bộ lọc</p>
-                    <span className={`text-gray text-xxl filter-title-icon ${!isProductFilterOpen ? "rotate" : ""}`}>
+                    <span className={`text-gray text-xxl filter-title-icon ${!filterState.product ? "rotate" : ""}`}>
                         <i className="bi bi-filter"></i>
                     </span>
                 </FilterTitle>
-                <FilterWrap className={`${!isProductFilterOpen ? "hide" : "show"}`}>
+                <FilterWrap className={`${!filterState.product ? "hide" : "show"}`}>
                     {ProductFilterList?.map((productFilter) => (
                         <div className="product-filter-item" key={productFilter.id}>
                             <button type="button" className="filter-item-head w-full flex items-center justify-between">
@@ -154,17 +146,17 @@ const ProductFilter = ({
                     onClick={() => toggleFilter("price")}
                 >
                     <p className="filter-title-text text-gray text-base font-semibold text-lg">Giá</p>
-                    <span className={`text-gray text-xl filter-title-icon ${!isPriceFilterOpen ? "rotate" : ""}`}>
+                    <span className={`text-gray text-xl filter-title-icon ${!filterState.price ? "rotate" : ""}`}>
                         <i className="bi bi-chevron-up"></i>
                     </span>
                 </FilterTitle>
-                <FilterWrap className={`range filter-wrap ${!isPriceFilterOpen ? "hide" : "show"}`}>
+                <FilterWrap className={`range filter-wrap ${!filterState.price ? "hide" : "show"}`}>
                     <div className="range-slider">
                         <span
                             className="range-selected h-full bg-sea-green"
                             style={{
-                                left: calculateRangePosition(minRange, 1000),
-                                right: calculateRangePosition(1000 - maxRange, 1000),
+                                left: calculateRangePosition(minRange, 2000000), // Thay đổi max thành 10000000
+                                right: calculateRangePosition(2000000 - maxRange, 2000000), // Thay đổi max thành 20000000
                             }}
                         ></span>
                     </div>
@@ -173,9 +165,9 @@ const ProductFilter = ({
                             type="range"
                             className="min w-full"
                             min="0"
-                            max="1000"
+                            max="3000000" // Thay đổi max thành 20000000
                             value={minRange}
-                            step="10"
+                            step="1000" // Thay đổi bước nhảy thành 1000
                             name="min"
                             onChange={handleInputChange}
                         />
@@ -183,9 +175,9 @@ const ProductFilter = ({
                             type="range"
                             className="max w-full"
                             min="0"
-                            max="1000"
+                            max="2000000" // Thay đổi max thành 20000000
                             value={maxRange}
-                            step="10"
+                            step="1000" // Thay đổi bước nhảy thành 1000
                             name="max"
                             onChange={handleInputChange}
                         />
@@ -212,25 +204,33 @@ const ProductFilter = ({
             <ColorsFilter>
                 <FilterTitle className="flex items-center justify-between" onClick={() => toggleFilter("color")}>
                     <p className="filter-title-text text-gray text-base font-semibold text-lg">Màu sắc</p>
-                    <span className={`text-gray text-xl filter-title-icon ${!isColorFilterOpen ? "rotate" : ""}`}>
+                    <span className={`text-gray text-xl filter-title-icon ${!filterState.color ? "rotate" : ""}`}>
                         <i className="bi bi-chevron-up"></i>
                     </span>
                 </FilterTitle>
-                <FilterWrap className={`${!isColorFilterOpen ? "hide" : "show"}`}>
-                    <div className="colors-list grid">
+                <FilterWrap className={`${!filterState.color ? "hide" : "show"}`}>
+                    <div style={{gap: 20}} className="flex flex-col">
                         {colors.map((color) => (
                             <div
-                                className="colors-item text-center flex flex-col justify-center items-center"
+                                style={{gap: 20, border: "1px solid", padding: 10, borderRadius: 5}}
+                                className="flex"
                                 key={color.id}
                             >
                                 <input
-                                    type="checkbox"
+                                    type="radio"
                                     id={`color-${color.id}`}
+                                    name="color"
                                     onChange={() => handleColorChange(color.id)}
                                     aria-label={`Bộ lọc theo màu ${color.name}`}
+
                                 />
-                                <label htmlFor={`color-${color.id}`}>
-                                    <img src={color.src} alt={color.name} />
+                                <label
+                                    htmlFor={`color-${color.id}`}
+                                    className=""
+                                    style={{ backgroundColor: color.name }} // Dùng color.name làm background
+                                >
+                                    {/* Hiển thị tên màu bên trong label */}
+                                    <span style={{padding: "0 10px"}} className="text-white text-lg font-semibold">{color.name}</span>
                                 </label>
                             </div>
                         ))}
@@ -241,51 +241,26 @@ const ProductFilter = ({
             <SizesFilter>
                 <FilterTitle className="flex items-center justify-between" onClick={() => toggleFilter("size")}>
                     <p className="filter-title-text text-gray text-base font-semibold text-lg">Kích thước</p>
-                    <span className={`text-gray text-xl filter-title-icon ${!isSizeFilterOpen ? "rotate" : ""}`}>
+                    <span className={`text-gray text-xl filter-title-icon ${!filterState.size ? "rotate" : ""}`}>
                         <i className="bi bi-chevron-up"></i>
                     </span>
                 </FilterTitle>
-                <FilterWrap className={`${!isSizeFilterOpen ? "hide" : "show"}`}>
-                    <div className="sizes-list grid text-center justify-center">
+                <FilterWrap className={`${!filterState.size ? "hide" : "show"}`}>
+                    <div style={{gap: 20}} className="flex flex-col">
                         {sizes.map((size) => (
-                            <div className="sizes-item text-sm font-semibold text-outerspace w-full" key={size.id}>
+                            <div style={{gap: 20, border: "1px solid", padding: 10, borderRadius: 5}} className="flex" key={size.id}>
                                 <input
-                                    type="checkbox"
+                                    type="radio"
+                                    name="size"
                                     id={`size-${size.id}`}
                                     onChange={() => handleSizeChange(size.id)}
-                                    aria-label={`Bộ lọc theo kích thước ${size.name}`}
                                 />
-                                <label htmlFor={`size-${size.id}`}>
-                                    <span className="flex items-center justify-center uppercase">{size.name}</span>
-                                </label>
+                                <label style={{ border: "1px solid", padding: "5px 20px", borderRadius: 2}} htmlFor={`size-${size.id}`}>{size.name}</label>
                             </div>
                         ))}
                     </div>
                 </FilterWrap>
             </SizesFilter>
-
-            <StyleFilter>
-                <FilterTitle className="flex items-center justify-between" onClick={() => toggleFilter("style")}>
-                    <p className="filter-title-text text-gray text-base font-semibold text-lg">Phong cách váy</p>
-                    <span className={`text-gray text-xl filter-title-icon ${!isStyleFilterOpen ? "rotate" : ""}`}>
-                        <i className="bi bi-chevron-up"></i>
-                    </span>
-                </FilterTitle>
-                <FilterWrap className={`${!isStyleFilterOpen ? "hide" : "show"}`}>
-                    {StyleFilterList?.map((styleFilter) => (
-                        <div className="style-filter-item" key={styleFilter.id}>
-                            <button type="button" className="filter-item-head w-full flex items-center justify-between">
-                                <span className="filter-head-title text-base text-gray font-semibold">
-                                    {styleFilter.title}
-                                </span>
-                                <span className="filter-head-icon text-gray">
-                                    <i className="bi bi-chevron-right"></i>
-                                </span>
-                            </button>
-                        </div>
-                    ))}
-                </FilterWrap>
-            </StyleFilter>
         </>
     );
 };
