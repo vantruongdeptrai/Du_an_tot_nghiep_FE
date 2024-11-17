@@ -20,29 +20,72 @@ const Login: React.FC = () => {
   }, [isLoggedIn, user, navigate]);
 
   return (
-    <div className="login-container">
-      <h2>Đăng nhập Admin</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={identifier}
-          onChange={(e) => setIdentifier(e.target.value)}
-          placeholder="Email hoặc Số điện thoại"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Mật khẩu"
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Đang đăng nhập..." : "Đăng nhập"}
-        </button>
-      </form>
-      {error && <p className="error-message">{error}</p>} {}
-      {isLoggedIn && user?.role_id === 1 && (
-        <p>Đăng nhập thành công! Đang chuyển hướng...</p>
-      )}
+    <div className="min-h-screen flex items-center justify-center bg-white text-gray-900">
+      <div className="bg-gray-100 shadow-lg rounded-2xl p-10 max-w-md w-full transform transition-all duration-500 hover:scale-105">
+        <h2 className="text-3xl font-bold text-center mb-8 text-gray-900">
+          Đăng nhập Admin
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <input
+              type="text"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="Email hoặc Số điện thoại"
+              className="w-full p-4 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-500 transition duration-300 text-gray-900 placeholder-gray-400"
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Mật khẩu"
+              className="w-full p-4 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-blue-500 transition duration-300 text-gray-900 placeholder-gray-400"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 text-lg font-semibold text-white rounded-lg shadow-md ${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
+            } transition duration-300`}
+          >
+            {loading ? "Đang đăng nhập..." : "Đăng nhập"}
+          </button>
+        </form>
+        {error && (
+          <p className="mt-4 text-center text-sm text-red-500 animate-pulse">
+            {error}
+          </p>
+        )}
+        {isLoggedIn && user?.role_id === 1 && (
+          <p className="mt-4 text-center text-sm text-green-500">
+            Đăng nhập thành công! Đang chuyển hướng...
+          </p>
+        )}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Quên mật khẩu?{" "}
+          <a
+            href="/forgot-password"
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
+            Nhấn vào đây
+          </a>
+        </p>
+        {/* Nút chuyển sang trang đăng ký */}
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Chưa có tài khoản?{" "}
+          <button
+            onClick={() => navigate("/register")}
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
+            Đăng ký ngay
+          </button>
+        </p>
+      </div>
     </div>
   );
 };

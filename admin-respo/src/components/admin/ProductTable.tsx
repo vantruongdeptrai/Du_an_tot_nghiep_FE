@@ -2,15 +2,39 @@ import { Link } from "react-router-dom";
 import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
 import useProduct from "../../hooks/product";
 import useCategory from "../../hooks/category";
+import { useState } from "react";
 
 const ProductTable = () => {
   const { products, deleteProduct } = useProduct();
   const { categories } = useCategory();
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 5;
 
   const getCategoryName = (categoryId: string) => {
-      // Kiểm tra nếu categories là một mảng
-      const category = categories.find((cat) => cat.id == categoryId);
-      return category ? category.name : "unknown";
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.name : "unknown";
+  };
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const totalPages = Math.ceil(products.length / productsPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -49,14 +73,13 @@ const ProductTable = () => {
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
               Featured Product
             </th>
-
             <th scope="col" className="py-2 pl-0 pr-4 text-right font-semibold">
               Actions
             </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/5">
-          {products.map((item) => (
+          {currentProducts.map((item) => (
             <tr key={item.id}>
               <td className="py-4 pl-4 pr-8">
                 <div className="flex items-center gap-x-4">
@@ -130,6 +153,44 @@ const ProductTable = () => {
           ))}
         </tbody>
       </table>
+      {/* Phân trang */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={goToPreviousPage}
+          className={`px-4 py-2 mx-1 ${
+            currentPage === 1
+              ? "bg-gray-300 text-gray-500"
+              : "bg-gray-300 text-black"
+          } rounded`}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        {pageNumbers.map((number) => (
+          <button
+            key={number}
+            onClick={() => setCurrentPage(number)}
+            className={`px-4 py-2 mx-1 ${
+              currentPage === number
+                ? "bg-blue-500 text-white"
+                : "bg-gray-300 text-black"
+            } rounded`}
+          >
+            {number}
+          </button>
+        ))}
+        <button
+          onClick={goToNextPage}
+          className={`px-4 py-2 mx-1 ${
+            currentPage === totalPages
+              ? "bg-gray-300 text-gray-500"
+              : "bg-gray-300 text-black"
+          } rounded`}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
