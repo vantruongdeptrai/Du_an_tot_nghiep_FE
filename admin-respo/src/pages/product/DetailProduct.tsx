@@ -6,11 +6,12 @@ const DetailProduct: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<any>(null);
   const [category, setCategory] = useState<any>(null);
-  const [variants, setVariants] = useState<any[]>([]); // Biến thể sản phẩm
-  const [sizes, setSizes] = useState<any[]>([]); // Danh sách size
-  const [colors, setColors] = useState<any[]>([]); // Danh sách màu sắc
+  const [variants, setVariants] = useState<any[]>([]);
+  const [sizes, setSizes] = useState<any[]>([]);
+  const [colors, setColors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  console.log(product);
 
   const getProductById = async (id: string | undefined) => {
     if (!id) return;
@@ -18,6 +19,7 @@ const DetailProduct: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(`http://localhost:8000/api/products`);
+
       const foundProduct = response.data.find(
         (item: any) => item.id === parseInt(id)
       );
@@ -25,9 +27,9 @@ const DetailProduct: React.FC = () => {
       if (foundProduct) {
         setProduct(foundProduct);
         await getCategoryById(foundProduct.category_id);
-        await getProductVariantById(foundProduct.id); // Luôn gọi hàm lấy biến thể sản phẩm
-        await getSizes(); // Lấy danh sách kích thước
-        await getColors(); // Lấy danh sách màu sắc
+        await getProductVariantById(foundProduct.id);
+        await getSizes();
+        await getColors();
       } else {
         setError("Sản phẩm không tìm thấy");
       }
@@ -53,7 +55,6 @@ const DetailProduct: React.FC = () => {
     }
   };
 
-  // Hàm để lấy dữ liệu biến thể sản phẩm
   const getProductVariantById = async (product_id: string) => {
     try {
       const response = await axios.get(
@@ -62,29 +63,27 @@ const DetailProduct: React.FC = () => {
       const variantsData = response.data.filter(
         (variant: any) => variant.product_id === parseInt(product_id)
       );
-      setVariants(variantsData); // Lưu dữ liệu biến thể vào state
+      setVariants(variantsData);
     } catch (error) {
       console.error("Failed to fetch product variant:", error);
       setError("Lỗi khi lấy biến thể sản phẩm");
     }
   };
 
-  // Hàm lấy danh sách size
   const getSizes = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/sizes`);
-      setSizes(response.data); // Lưu danh sách kích thước
+      setSizes(response.data);
     } catch (error) {
       console.error("Failed to fetch sizes:", error);
       setError("Lỗi khi lấy kích thước sản phẩm");
     }
   };
 
-  // Hàm lấy danh sách màu sắc
   const getColors = async () => {
     try {
       const response = await axios.get(`http://localhost:8000/api/colors`);
-      setColors(response.data); // Lưu danh sách màu sắc
+      setColors(response.data);
     } catch (error) {
       console.error("Failed to fetch colors:", error);
       setError("Lỗi khi lấy màu sắc sản phẩm");
@@ -95,145 +94,102 @@ const DetailProduct: React.FC = () => {
     getProductById(id);
   }, [id]);
 
-  if (isLoading) return <div>Đang tải...</div>;
-  if (error) return <div>{error}</div>;
-  if (!product) return <div>Không tìm thấy sản phẩm.</div>;
+  if (isLoading)
+    return <div className="text-center text-lg font-semibold">Đang tải...</div>;
+  if (error)
+    return (
+      <div className="text-center text-lg font-semibold text-red-500">
+        {error}
+      </div>
+    );
+  if (!product)
+    return <div className="text-center text-lg">Không tìm thấy sản phẩm.</div>;
 
   return (
-    <div
-      style={{
-        maxWidth: "900px",
-        margin: "40px auto",
-        padding: "20px",
-        border: "1px solid #eaeaea",
-        borderRadius: "8px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-        backgroundColor: "#fff",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "28px",
-          marginBottom: "20px",
-          textAlign: "center",
-          color: "#333",
-          textTransform: "uppercase",
-          letterSpacing: "1px",
-        }}
-      >
+    <div className="max-w-6xl mx-auto p-6 bg-gray-100 shadow-lg rounded-lg mt-10">
+      <h1 className="text-4xl font-bold text-gray-800 text-center mb-6">
         {product.name}
       </h1>
-      <img
-        src={product.image}
-        alt={product.name}
-        style={{
-          width: "100%",
-          borderRadius: "8px",
-          marginBottom: "20px",
-          objectFit: "cover",
-          boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
-          transition: "transform 0.3s ease",
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-        onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
-      />
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "20px",
-        }}
-      >
-        <div style={{ flex: "1 1 45%" }}>
-          <p>
-            <strong>Giá:</strong> {product.price} $
+
+      {/* Bố cục 2 cột */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Cột hình ảnh */}
+        <div>
+          <img
+            src={product.image_url}
+            alt={product.name}
+            className="w-full rounded-lg shadow-md object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </div>
+
+        {/* Cột thông tin chi tiết */}
+        <div className="space-y-4">
+          <p className="text-lg font-semibold">
+            <span className="text-gray-600">Giá:</span>{" "}
+            <span className="text-blue-600">{product.price} $</span>
           </p>
-          <p>
-            <strong>Danh mục:</strong>{" "}
+          <p className="text-lg font-semibold">
+            <span className="text-gray-600">Danh mục:</span>{" "}
             {category ? category.name : "Không xác định"}
           </p>
-        </div>
-        <div style={{ flex: "1 1 45%" }}>
-          <p>
-            <strong>Trạng thái:</strong>{" "}
+          <p className="text-lg font-semibold">
+            <span className="text-gray-600">Trạng thái:</span>{" "}
             <span
-              style={{
-                color: product.status === 1 ? "red" : "green",
-                fontWeight: "bold",
-              }}
+              className={`${
+                product.status === 1 ? "text-red-500" : "text-green-500"
+              } font-bold`}
             >
-              {product.status === 1 ? "hết hàng" : "còn hàng"}
+              {product.status === 1 ? "Hết hàng" : "Còn hàng"}
             </span>
           </p>
+
+          {/* Biến thể sản phẩm */}
+          {variants.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                Biến thể sản phẩm:
+              </h2>
+              <div className="space-y-4">
+                {variants.map((variant) => {
+                  const size = sizes.find((s) => s.id === variant.size_id);
+                  const color = colors.find((c) => c.id === variant.color_id);
+                  return (
+                    <div
+                      key={variant.id}
+                      className="p-4 border border-gray-300 rounded-lg shadow-sm bg-white"
+                    >
+                      <p className="text-gray-700">
+                        <strong>Màu sắc:</strong>{" "}
+                        {color ? color.name : "Không xác định"}
+                      </p>
+                      <p className="text-gray-700">
+                        <strong>Kích thước:</strong>{" "}
+                        {size ? size.name : "Không xác định"}
+                      </p>
+                      <p className="text-gray-700">
+                        <strong>Số lượng:</strong> {variant.quantity}
+                      </p>
+                      <p className="text-gray-700">
+                        <strong>SKU:</strong> {variant.sku}
+                      </p>
+                      <p className="text-gray-700">
+                        <strong>Giá:</strong> {variant.price} $
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Hiển thị biến thể sản phẩm nếu có biến thể */}
-      {variants.length > 0 && (
-        <div style={{ marginTop: "20px" }}>
-          <h3
-            style={{
-              fontSize: "22px",
-              marginBottom: "10px",
-              color: "#555",
-              borderBottom: "2px solid #eaeaea",
-              paddingBottom: "10px",
-            }}
-          >
-            Biến thể sản phẩm:
-          </h3>
-          {variants.map((variant) => {
-            const size = sizes.find((s) => s.id === variant.size_id);
-            const color = colors.find((c) => c.id === variant.color_id);
-            return (
-              <div
-                key={variant.id}
-                style={{
-                  padding: "10px",
-                  marginBottom: "10px",
-                  border: "1px solid #eaeaea",
-                  borderRadius: "5px",
-                }}
-              >
-                <p>
-                  <strong>Màu sắc:</strong>{" "}
-                  {color ? color.name : "Không xác định"}
-                </p>
-                <p>
-                  <strong>Kích thước:</strong>{" "}
-                  {size ? size.name : "Không xác định"}
-                </p>
-                <p>
-                  <strong>Số lượng:</strong> {variant.quantity}
-                </p>
-                <p>
-                  <strong>SKU:</strong> {variant.sku}
-                </p>
-                <p>
-                  <strong>Giá:</strong> {variant.price} $
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <div style={{ marginTop: "20px" }}>
-        <h3
-          style={{
-            fontSize: "22px",
-            marginBottom: "10px",
-            color: "#555",
-            borderBottom: "2px solid #eaeaea",
-            paddingBottom: "10px",
-          }}
-        >
+      {/* Mô tả sản phẩm */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
           Mô tả sản phẩm:
-        </h3>
-        <p style={{ lineHeight: "1.6", color: "#777" }}>
-          {product.description}
-        </p>
+        </h2>
+        <p className="text-gray-700 leading-relaxed">{product.description}</p>
       </div>
     </div>
   );

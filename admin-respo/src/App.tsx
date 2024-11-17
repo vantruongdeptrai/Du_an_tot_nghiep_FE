@@ -133,7 +133,7 @@ const router = createBrowserRouter([
         element: <CreateOrder />,
       },
       {
-        path: "/orders/1",
+        path: "/orders/:id",
         element: <EditOrder />,
       },
       {
