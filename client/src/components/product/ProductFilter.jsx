@@ -9,6 +9,9 @@ import {
     SizesFilter,
 } from "../../styles/filter";
 import { ProductFilterList } from "../../data/data";
+import useCategory from "../../hooks/useCategory";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 
 const ProductFilter = ({
     minRange,
@@ -106,11 +109,13 @@ const ProductFilter = ({
     const handleColorChange = (colorId) => {
         setSelectedColors(colorId); // Lưu chỉ 1 giá trị cho màu đã chọn
     };
-    
+
     // Handle size changes
     const handleSizeChange = (sizeId) => {
         setSelectedSizes(sizeId); // Lưu chỉ 1 giá trị cho kích thước đã chọn
     };
+
+    const { categories } = useCategory();
 
     return (
         <>
@@ -125,17 +130,22 @@ const ProductFilter = ({
                     </span>
                 </FilterTitle>
                 <FilterWrap className={`${!filterState.product ? "hide" : "show"}`}>
-                    {ProductFilterList?.map((productFilter) => (
-                        <div className="product-filter-item" key={productFilter.id}>
-                            <button type="button" className="filter-item-head w-full flex items-center justify-between">
-                                <span className="filter-head-title text-base text-gray font-semibold">
-                                    {productFilter.title}
-                                </span>
-                                <span className="filter-head-icon text-gray">
-                                    <i className="bi bi-chevron-right"></i>
-                                </span>
-                            </button>
-                        </div>
+                    {categories?.map((category, index) => (
+                        <Link to={`/product/${category.slug}`} key={category.slug}>
+                            <div className="product-filter-item" key={index}>
+                                <button
+                                    type="button"
+                                    className="filter-item-head w-full flex items-center justify-between"
+                                >
+                                    <span className="filter-head-title text-base text-gray font-semibold">
+                                        {category.name}
+                                    </span>
+                                    <span className="filter-head-icon text-gray">
+                                        <i className="bi bi-chevron-right"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </Link>
                     ))}
                 </FilterWrap>
             </ProductCategoryFilter>
@@ -209,10 +219,10 @@ const ProductFilter = ({
                     </span>
                 </FilterTitle>
                 <FilterWrap className={`${!filterState.color ? "hide" : "show"}`}>
-                    <div style={{gap: 20}} className="flex flex-col">
+                    <div style={{ gap: 20 }} className="flex flex-col">
                         {colors.map((color) => (
                             <div
-                                style={{gap: 20, border: "1px solid", padding: 10, borderRadius: 5}}
+                                style={{ gap: 20, border: "1px solid", padding: 10, borderRadius: 5 }}
                                 className="flex"
                                 key={color.id}
                             >
@@ -222,7 +232,6 @@ const ProductFilter = ({
                                     name="color"
                                     onChange={() => handleColorChange(color.id)}
                                     aria-label={`Bộ lọc theo màu ${color.name}`}
-
                                 />
                                 <label
                                     htmlFor={`color-${color.id}`}
@@ -230,7 +239,9 @@ const ProductFilter = ({
                                     style={{ backgroundColor: color.name }} // Dùng color.name làm background
                                 >
                                     {/* Hiển thị tên màu bên trong label */}
-                                    <span style={{padding: "0 10px"}} className="text-white text-lg font-semibold">{color.name}</span>
+                                    <span style={{ padding: "0 10px" }} className="text-white text-lg font-semibold">
+                                        {color.name}
+                                    </span>
                                 </label>
                             </div>
                         ))}
@@ -246,16 +257,25 @@ const ProductFilter = ({
                     </span>
                 </FilterTitle>
                 <FilterWrap className={`${!filterState.size ? "hide" : "show"}`}>
-                    <div style={{gap: 20}} className="flex flex-col">
+                    <div style={{ gap: 20 }} className="flex flex-col">
                         {sizes.map((size) => (
-                            <div style={{gap: 20, border: "1px solid", padding: 10, borderRadius: 5}} className="flex" key={size.id}>
+                            <div
+                                style={{ gap: 20, border: "1px solid", padding: 10, borderRadius: 5 }}
+                                className="flex"
+                                key={size.id}
+                            >
                                 <input
                                     type="radio"
                                     name="size"
                                     id={`size-${size.id}`}
                                     onChange={() => handleSizeChange(size.id)}
                                 />
-                                <label style={{ border: "1px solid", padding: "5px 20px", borderRadius: 2}} htmlFor={`size-${size.id}`}>{size.name}</label>
+                                <label
+                                    style={{ border: "1px solid", padding: "5px 20px", borderRadius: 2 }}
+                                    htmlFor={`size-${size.id}`}
+                                >
+                                    {size.name}
+                                </label>
                             </div>
                         ))}
                     </div>

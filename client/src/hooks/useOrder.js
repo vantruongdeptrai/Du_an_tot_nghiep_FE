@@ -33,10 +33,12 @@ const useOrder = () => {
                         : { product_id: item.product_id, quantity: item.quantity };
                 }),
             };
-
+            const session_id = localStorage.getItem('session_id');
+            console.log(session_id);
+            
             const response = await apiClient.post(endPoint, orderData);
 
-            if (paymentMethod == "VNPay") {
+            if (paymentMethod === "VNPay") {
                 const vnpayResponse = await apiClient.post("/payment", {
                     bank_code: 123456,
                     amount: response.data.total_price * 100,
@@ -46,7 +48,7 @@ const useOrder = () => {
                 toast.success("Order created successfully!");
             }
         } catch (error) {
-            toast.error("Failed to create order. Please try again.");
+            toast.error("error")
         }
     };
 

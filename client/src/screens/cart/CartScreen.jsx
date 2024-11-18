@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
@@ -6,6 +6,7 @@ import { breakpoints } from "../../styles/themes/default";
 import CartTable from "../../components/cart/CartTable";
 import CartDiscount from "../../components/cart/CartDiscount";
 import CartSummary from "../../components/cart/CartSummary";
+import { useColors, useSizes } from "../../hooks/useAtribute";
 
 const CartPageWrapper = styled.main`
     padding: 48px 0;
@@ -55,7 +56,9 @@ const CartScreen = () => {
     ];
 
     const [cartItems, setCartItems] = useState([]);
-    const [selectedItems, setSelectedItems] = useState([]); // State để lưu các sản phẩm đã chọn
+    const [selectedItems, setSelectedItems] = useState([]);
+    const {colors} = useColors();
+    const {sizes} = useSizes();
 
     useEffect(() => {
         const fetchCartItems = async () => {
@@ -124,7 +127,8 @@ const CartScreen = () => {
             }
         });
     };
-
+    const isLoggedIn = Boolean(localStorage.getItem("userInfo"));
+    
     return (
         <CartPageWrapper>
             <Container>
@@ -138,6 +142,9 @@ const CartScreen = () => {
                             onSelectItem={handleSelectItem}
                             handleIncreaseQuantity={handleIncreaseQuantity}
                             handleDecreaseQuantity={handleDecreaseQuantity}
+                            colors={colors}
+                            sizes={sizes}
+                            isLoggedIn={isLoggedIn}
                         />
                     </div>
                     <div className="grid cart-content-right">

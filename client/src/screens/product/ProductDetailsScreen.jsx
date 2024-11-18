@@ -13,6 +13,7 @@ import { defaultTheme } from "../../styles/themes/default";
 import apiClient from "../../api/axiosConfig";
 import Cookies from "js-cookie";
 import formatCurrency from "../../utils/formatUtils";
+import { toast } from "react-toastify";
 const DetailsScreenWrapper = styled.main`
     margin: 40px 0;
 `;
@@ -276,6 +277,7 @@ const ProductDetailsScreen = () => {
         const user = JSON.parse(localStorage.getItem("userInfo"));
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         const existingProduct = cart.find((item) => item.product_id === productId);
+        
 
         let finalPrice = product.price; // Default to base price
         let productVariantId = null;
@@ -321,12 +323,10 @@ const ProductDetailsScreen = () => {
                 },
                 { withCredentials: true }
             );
-            // localStorage.setItem("session_id", data.data.session_id);
-            const session_id = Cookies.get("laravel_session");
-            console.log(session_id);
-
-            // alert("Sản phẩm đã được thêm vào giỏ hàng (local storage)!");
-        } else {
+            localStorage.setItem("session_id", data.data.session_id);     
+            toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).")
+            return;
+       } else {
             try {
                 const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
                     method: "POST",
@@ -337,7 +337,7 @@ const ProductDetailsScreen = () => {
                     body: JSON.stringify({
                         user_id: user.id,
                         product_id: productId,
-                        quantity: existingProduct ? existingProduct.quantity : 1,
+                        quantity: 1,
                         price: finalPrice,
                         size: selectedSize || null,
                         color: selectedColor || null,
@@ -346,13 +346,13 @@ const ProductDetailsScreen = () => {
                 });
 
                 if (response.ok) {
-                    alert("Sản phẩm đã được thêm vào giỏ hàng (database)!");
+                    toast.success("Sản phẩm đã được thêm vào giỏ hàng (database).")
                 } else {
-                    alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
+                    toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
                 }
             } catch (error) {
                 console.error("Lỗi khi gửi giỏ hàng lên server:", error);
-                alert("Lỗi kết nối đến server.");
+                toast.error("Lỗi kết nối đến server.");
             }
         }
     };

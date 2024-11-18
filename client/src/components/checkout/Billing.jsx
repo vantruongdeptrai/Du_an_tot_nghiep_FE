@@ -135,7 +135,7 @@ const Billing = () => {
               >
                 Email *
               </label>
-              <Input {...register("email_order")} type="text" placeholder="Last Name" />
+              <Input {...register("email_order")} type="text" placeholder="Email" />
             </div>
             <div className="input-elem">
               <label
@@ -144,7 +144,7 @@ const Billing = () => {
               >
                 Shipping address *
               </label>
-              <Input {...register("shipping_address")} type="text" placeholder="Last Name" />
+              <Input {...register("shipping_address")} type="text" placeholder="Shipping address" />
             </div>
             <div className="input-elem">
               <label
@@ -153,7 +153,7 @@ const Billing = () => {
               >
                 Phone number *
               </label>
-              <Input {...register("phone_order")} type="text" placeholder="Last Name" />
+              <Input {...register("phone_order")} type="text" placeholder="Phone number" />
             </div>
             <div className="input-elem">
               <label
@@ -162,7 +162,7 @@ const Billing = () => {
               >
                 Note *
               </label>
-              <textarea {...register("user_note")} style={{width: "100%", height: "200px", padding: "10px"}} type="text" placeholder="Last Name" />
+              <textarea {...register("user_note")} style={{width: "100%", height: "200px", padding: "10px"}} type="text" placeholder="Note" />
             </div>
         </form>
       </BillingDetailsWrapper>
