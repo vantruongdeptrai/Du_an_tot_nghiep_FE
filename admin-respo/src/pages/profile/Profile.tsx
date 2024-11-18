@@ -1,15 +1,6 @@
-import {
-  HiOutlineSave,
-  HiOutlineUpload,
-  HiOutlineLogout,
-} from "react-icons/hi";
-import {
-  InputWithLabel,
-  Sidebar,
-  SimpleInput,
-  WhiteButton,
-} from "../../components";
-import { useState } from "react";
+import { HiOutlineLogout } from "react-icons/hi";
+import { InputWithLabel, Sidebar, SimpleInput } from "../../components";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
@@ -20,14 +11,35 @@ const Profile = () => {
     confirmPassword: "",
   });
 
+  const [user, setUser] = useState<any>(null); // Dữ liệu người dùng
   const navigate = useNavigate();
+
+  // Lấy thông tin từ localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+
+      // Cập nhật dữ liệu vào inputObject nếu cần chỉnh sửa
+      setInputObject({
+        username: parsedUser.name || "",
+        email: parsedUser.email || "",
+        password: "",
+        confirmPassword: "",
+      });
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     navigate("/login");
   };
+
+  if (!user) {
+    return <p>Loading...</p>; // Hiển thị trong lúc load dữ liệu
+  }
 
   return (
     <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
@@ -40,58 +52,35 @@ const Profile = () => {
                 Your Profile
               </h2>
             </div>
-            {}
-            <WhiteButton
-              link="/profile"
-              textSize="lg"
-              width="48"
-              py="2"
-              text="Update profile"
-            >
-              <HiOutlineSave className="dark:text-blackPrimary text-whiteSecondary text-xl" />
-            </WhiteButton>
           </div>
-          <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8">
-            {}
-            <div className="flex flex-col gap-4">
-              {}
-              <div className="flex justify-between items-center max-sm:flex-col max-sm:gap-10">
-                <div className="flex items-center gap-4">
-                  <img
-                    src="/src/assets/profile.jpg"
-                    alt="Profile"
-                    className="rounded-full w-20 h-20"
-                  />
-                  <div>
-                    <p className="dark:text-whiteSecondary text-blackPrimary text-xl">
-                      Sherwood Gruninger
-                    </p>
-                    <p className="dark:text-whiteSecondary text-blackPrimary">
-                      Web Developer
-                    </p>
-                  </div>
-                </div>
 
-                <button className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-72 py-2 text-lg dark:hover:border-gray-500 hover:border-gray-400 duration-200 flex items-center justify-center gap-x-2">
-                  <HiOutlineUpload className="dark:text-whiteSecondary text-blackPrimary text-xl" />
-                  <span className="dark:text-whiteSecondary text-blackPrimary font-medium">
-                    Change profile picture
-                  </span>
-                </button>
+          <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <img
+                  src={user.image || "/src/assets/profile.jpg"} // Hiển thị ảnh từ user.image hoặc ảnh mặc định
+                  alt="Profile"
+                  className="rounded-full w-20 h-20"
+                />
+                <div>
+                  <p className="dark:text-whiteSecondary text-blackPrimary text-xl">
+                    {user.name} {/* Hiển thị tên người dùng */}
+                  </p>
+                  <p className="dark:text-whiteSecondary text-blackPrimary">
+                    {user.role?.name || "No role assigned"}{" "}
+                    {/* Hiển thị role */}
+                  </p>
+                </div>
               </div>
-              {}
+
+              {/* Form chỉ hiển thị thông tin */}
               <div className="flex flex-col gap-3 mt-5">
                 <InputWithLabel label="Your username">
                   <SimpleInput
                     type="text"
                     placeholder="Your username"
                     value={inputObject.username}
-                    onChange={(e) =>
-                      setInputObject({
-                        ...inputObject,
-                        username: e.target.value,
-                      })
-                    }
+                    readOnly // Chỉ đọc
                   />
                 </InputWithLabel>
                 <InputWithLabel label="Your email">
@@ -99,41 +88,12 @@ const Profile = () => {
                     type="text"
                     placeholder="Your email"
                     value={inputObject.email}
-                    onChange={(e) =>
-                      setInputObject({ ...inputObject, email: e.target.value })
-                    }
-                  />
-                </InputWithLabel>
-                <InputWithLabel label="New password">
-                  <SimpleInput
-                    type="password"
-                    placeholder="Enter your new password..."
-                    value={inputObject.password}
-                    onChange={(e) =>
-                      setInputObject({
-                        ...inputObject,
-                        password: e.target.value,
-                      })
-                    }
-                  />
-                </InputWithLabel>
-                <InputWithLabel label="Confirm new password">
-                  <SimpleInput
-                    type="password"
-                    placeholder="Confirm your new password..."
-                    value={inputObject.confirmPassword}
-                    onChange={(e) =>
-                      setInputObject({
-                        ...inputObject,
-                        confirmPassword: e.target.value,
-                      })
-                    }
+                    readOnly // Chỉ đọc
                   />
                 </InputWithLabel>
               </div>
             </div>
 
-            {}
             <div className="mt-10">
               <button
                 onClick={handleLogout}

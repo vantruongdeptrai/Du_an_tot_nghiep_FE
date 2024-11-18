@@ -1,111 +1,148 @@
-// *********************
-// Role of the component: Reviews table component that displays the reviews in a table
-// Name of the component: ReviewsTable.tsx
-// Developer: Aleksandar Kuzmanovic
-// Version: 1.0
-// Component call: <ReviewsTable />
-// Input parameters: no input parameters
-// Output: ReviewsTable component that displays the reviews in a table
-// *********************
-
-import { nanoid } from "nanoid";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { HiOutlinePencil } from "react-icons/hi";
-import { HiOutlineTrash } from "react-icons/hi";
-import { HiOutlineEye } from "react-icons/hi";
-import { HiStar } from "react-icons/hi";
-import { reviewsAdminItems } from "../../utils/data";
+import {
+  HiOutlinePencil,
+  HiOutlineTrash,
+  HiOutlineEye,
+  HiStar,
+} from "react-icons/hi";
 
-// Function to render stars based on the rating
+// Định nghĩa kiểu dữ liệu cho một comment
+interface Comment {
+  id: number;
+  product_id: number;
+  user_id: number;
+  comment: string;
+  deleted_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Function to render stars based on the rating (nếu cần)
 const renderStars = (rating: number) => {
-    const stars = [];
-    for (let i = 0; i < rating; i++) {
-        stars.push(<HiStar key={i} className="text-yellow-500" />);
-    }
-    return stars;
+  const stars = [];
+  for (let i = 0; i < rating; i++) {
+    stars.push(<HiStar key={i} className="text-yellow-500" />);
+  }
+  return stars;
 };
 
 const ReviewsTable = () => {
-    return (
-        <table className="mt-6 w-full whitespace-nowrap text-left max-lg:block max-lg:overflow-x-scroll">
-            <colgroup>
-                <col className="w-full sm:w-4/12" />
-                <col className="lg:w-4/12" />
-                <col className="lg:w-2/12" />
-                <col className="lg:w-1/12" />
-                <col className="lg:w-1/12" />
-            </colgroup>
-            <thead className="border-b border-white/10 text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
-                <tr>
-                    <th scope="col" className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">
-                        User
-                    </th>
-                    <th scope="col" className="py-2 pl-0 pr-8 font-semibold table-cell">
-                        Rating
-                    </th>
-                    <th scope="col" className="py-2 pl-0 pr-8 font-semibold table-cell">
-                        Product
-                    </th>
-                    <th scope="col" className="py-2 pl-0 pr-8 font-semibold table-cell lg:pr-20">
-                        Date
-                    </th>
-                    <th scope="col" className="py-2 pl-0 pr-4 text-right font-semibold table-cell sm:pr-6 lg:pr-8">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-                {reviewsAdminItems.map((item) => (
-                    <tr key={nanoid()}>
-                        <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
-                            <div className="flex items-center gap-x-4">
-                                <img src={item.user.imageUrl} alt="" className="h-8 w-8 rounded-full bg-gray-800" />
-                                <div className="truncate text-sm font-medium leading-6 dark:text-whiteSecondary text-blackPrimary">
-                                    {item.user.name}
-                                </div>
-                            </div>
-                        </td>
-                        <td className="py-4 pl-0 pr-4 table-cell pr-8">
-                            <div className="flex gap-x-3">
-                                <div className="text-lg leading-6 py-1 flex">{renderStars(item.rating)}</div>
-                            </div>
-                        </td>
-                        <td className="py-4 pl-0 pr-4 text-sm leading-6 sm:pr-8 lg:pr-20">
-                            <div className="flex items-center gap-x-2 justify-start">
-                                <div className="dark:text-whiteSecondary text-blackPrimary block font-medium">
-                                    {item.product}
-                                </div>
-                            </div>
-                        </td>
-                        <td className="py-4 pl-0 pr-8 text-sm leading-6 dark:text-whiteSecondary text-blackPrimary table-cell lg:pr-20">
-                            {item.lastLogin}
-                        </td>
-                        <td className="py-4 pl-0 pr-4 text-right text-sm leading-6 dark:text-whiteSecondary text-blackPrimary table-cell pr-6 lg:pr-8">
-                            <div className="flex gap-x-1 justify-end">
-                                <Link
-                                    to="/reviews/1"
-                                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                                >
-                                    <HiOutlinePencil className="text-lg" />
-                                </Link>
-                                <Link
-                                    to="/reviews/1"
-                                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                                >
-                                    <HiOutlineEye className="text-lg" />
-                                </Link>
-                                <Link
-                                    to="#"
-                                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                                >
-                                    <HiOutlineTrash className="text-lg" />
-                                </Link>
-                            </div>
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    );
+  const [reviews, setReviews] = useState<Comment[]>([]);
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/comments`);
+        const data: Comment[] = await response.json();
+        setReviews(data);
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+
+    fetchReviews();
+  }, []);
+
+  // Function to handle delete with confirmation and perform deletion
+  const handleDelete = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this review?")) {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/comments/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          alert("Review deleted successfully!");
+          setReviews((prev) => prev.filter((review) => review.id !== id));
+        } else {
+          alert("Failed to delete the review. Response not OK.");
+          console.log("Response:", await response.json());
+        }
+      } catch (error) {
+        console.error("Error deleting review:", error);
+        alert("An error occurred while deleting the review.");
+      }
+    }
+  };
+
+  return (
+    <table className="mt-6 w-full text-sm text-gray-700 bg-white rounded-lg shadow-md overflow-hidden table-fixed">
+      <colgroup>
+        <col className="w-2/12" />
+        <col className="w-4/12" />
+        <col className="w-2/12" />
+        <col className="w-2/12" />
+        <col className="w-2/12" />
+      </colgroup>
+      <thead className="bg-gray-100 border-b border-gray-200 text-gray-600 uppercase text-sm">
+        <tr>
+          <th scope="col" className="py-3 px-4 font-semibold text-center">
+            User ID
+          </th>
+          <th scope="col" className="py-3 px-4 font-semibold text-left">
+            Comment
+          </th>
+          <th scope="col" className="py-3 px-4 font-semibold text-center">
+            Product ID
+          </th>
+          <th scope="col" className="py-3 px-4 font-semibold text-center">
+            Created At
+          </th>
+          <th scope="col" className="py-3 px-4 font-semibold text-center">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-200">
+        {reviews.map((item) => (
+          <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+            <td className="py-4 px-4 text-center">
+              <div className="text-gray-800 font-medium">{item.user_id}</div>
+            </td>
+            <td className="py-4 px-4 text-left">
+              <div className="bg-gray-100 p-2 rounded-md text-gray-700">
+                {item.comment}
+              </div>
+            </td>
+            <td className="py-4 px-4 text-center text-gray-800 font-medium">
+              {item.product_id}
+            </td>
+            <td className="py-4 px-4 text-center text-gray-600">
+              {new Date(item.created_at).toLocaleDateString()}
+            </td>
+            <td className="py-4 px-4 text-center">
+              <div className="flex gap-2 justify-center">
+                {/* <Link
+                  to={`/reviews/${item.id}`}
+                  className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                >
+                  <HiOutlineEye />
+                </Link>
+                <Link
+                  to={`/reviews/${item.id}/edit`}
+                  className="p-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
+                >
+                  <HiOutlinePencil />
+                </Link> */}
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="p-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+                >
+                  <HiOutlineTrash />
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 };
+
 export default ReviewsTable;
