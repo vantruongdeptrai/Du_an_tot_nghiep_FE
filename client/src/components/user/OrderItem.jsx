@@ -106,7 +106,6 @@ const OrderItem = ({ order, guestOrder }) => {
 
     // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
     const currentOrder = users ? order : guestOrder;
-    console.log(order);
     
 
     return (

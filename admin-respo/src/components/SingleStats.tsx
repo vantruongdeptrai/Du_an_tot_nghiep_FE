@@ -8,7 +8,7 @@
 // Output: SingleStats component that displays the single stats with the title and value
 // *********************
 
-const SingleStats = ({ title, value }: { title: string; value: string }) => {
+const SingleStats = ({ title, value }: { title: string; value: React.ReactNode }) => {
   return (
     <div className="bg-whiteSecondary flex w-[300px] h-28 shadow-custom-white border-1 border-white flex items-center justify-between px-4 hover:scale-105 hover:ease-linear hover:duration-200 cursor-pointer">
       <div>

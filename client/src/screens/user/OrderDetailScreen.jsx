@@ -6,7 +6,6 @@ import UserMenu from "../../components/user/UserMenu";
 import { Link, useParams } from "react-router-dom";
 import Title from "../../components/common/Title";
 import { orderData } from "../../data/data";
-import { currencyFormat } from "../../utils/helper";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useOrder from "../../hooks/useOrder";
 import useUser from "../../hooks/useUser";
@@ -270,6 +269,7 @@ const OrderDetailScreen = () => {
     const userOrder = orders.filter((order) => order.user_id == users.id);
     const orderDetail = userOrder.find((order) => order.id == id);
     console.log(orderDetail);
+    
     if (!orderDetail) return <p>Không có đơn hàng nào</p>;
 
     return (
@@ -370,22 +370,26 @@ const OrderDetailScreen = () => {
                                     const productVariant = productVariants.find(
                                         (variant) => variant.id === item.product_variant_id
                                     );
+                                    console.log(productVariant);
+                                    
                                     const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
                                     const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
+                                    console.log(sizeDetail);
+                                    
                                     return (
                                         <div className="order-d-item grid" key={item.product_id}>
                                             <div className="order-d-item-img">
-                                                <img src={productVariant.image_url} alt="" className="object-fit-cover" />
+                                                <img src={productVariant?.image_url} alt="" className="object-fit-cover" />
                                             </div>
                                             <div className="order-d-item-info">
                                                 <p className="text-xl font-bold">{product?.name}</p>
                                                 <p className="text-md font-bold">
                                                     Color: &nbsp;
-                                                    <span className="font-medium text-gray">{colorDetail.name || "Không có màu"}</span>
+                                                    <span className="font-medium text-gray">{colorDetail?.name || "Không có màu"}</span>
                                                 </p>
                                                 <p className="text-md font-bold">
                                                     Size: &nbsp;
-                                                    <span className="font-medium text-gray">{sizeDetail.name || "Không có size"}</span>
+                                                    <span className="font-medium text-gray">{sizeDetail?.name || "Không có size"}</span>
                                                 </p>
                                             </div>
                                             <div className="order-d-item-calc">

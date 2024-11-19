@@ -7,7 +7,7 @@ const useProductVariant = () => {
     const getAllProductVariants = async () => {
         try {
             const response = await apiClient.get("/product-variants");
-            setproductVariants(response.data);
+            setproductVariants(response.data);     
             return response.data;
         } catch (error) {
             toast.error("Error:", error);
