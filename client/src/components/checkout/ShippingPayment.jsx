@@ -135,7 +135,6 @@ const ShippingPaymentWrapper = styled.div`
 const ShippingPayment = () => {
     const { register } = useFormContext();
     const isLoggedIn = !!localStorage.getItem("userInfo");
-    // const handlePayment = (paymentType) => {
     //     if (paymentType === "VNPay") {
     //         // Thông tin thanh toán từ form
     //         const orderData = {
@@ -221,10 +220,10 @@ const ShippingPayment = () => {
                                 {...register("payment_type")}
                                 type="radio"
                                 className="list-group-item-check"
-                                value={"Tiền mặt"}
+                                value={"COD"}
                             />
                             <p className="font-semibod text-lg">
-                                Cash on delivery
+                                Cash on delivery (COD)
                                 <span className="flex text-base font-medium text-gray">
                                     Pay with cash upon delivery.
                                 </span>
@@ -239,13 +238,12 @@ const ShippingPayment = () => {
                                 {...register("payment_type")}
                                 type="radio"
                                 className="list-group-item-check"
-                                value="VNPay"
-                                // onChange={() => handlePayment("VNPay")}
+                                value="NCB"
                                 disabled={!isLoggedIn}
                             />
                             <p className="font-semibod text-lg">
-                                VNPAY
-                                <span className="flex text-base font-medium text-gray">Pay with VNPAY</span>
+                                NCB
+                                <span className="flex text-base font-medium text-gray">Pay with NCB</span>
                             </p>
                         </div>
                     </div>

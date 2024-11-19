@@ -8,12 +8,17 @@ import {
     Welcome,
 } from "../../components";
 import { BarChart, LineGraph, PieChart } from "../../components/chart";
+import { useStats } from "../../hooks/useStatistical";
 
 const Landing = () => {
+    const {totalRevenue, bestSellers} = useStats();
+    console.log(bestSellers?.data);
+    
+    
     return (
         <div className="h-auto border-t dark:border-blackSecondary border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
             <Sidebar />
-            <div className="dark:bg-blackPrimary bg-whiteSecondary w-full pt-6 pl-9 max-sm:pt-6 max-sm:pl-5 flex max-[1700px]:flex-wrap gap-x-10 max-[400px]:pl-2">
+            <div className="dark:bg-blackPrimary bg-whiteSecondary w-full pt-6 pl-9 max-sm:pt-6 max-sm:pl-5 flex max-[2000px]:flex-wrap gap-x-10 max-[400px]:pl-2">
                 <div>
                     <div>
                         <Welcome>
@@ -26,7 +31,7 @@ const Landing = () => {
                                 Analyze the statistics
                             </Welcome.ActionButton>
                         </Welcome>
-                        <Stats />
+                        <Stats totalRevenue={totalRevenue} bestSellers={bestSellers} />
                     </div>
                     <div className="sm:w-[66%] mt-10 max-sm:w-[80%]">
                         <h3 className="text-3xl dark:text-whiteSecondary text-blackPrimary font-bold mb-7 max-sm:text-2xl">

@@ -35,22 +35,19 @@ const CheckoutScreen = () => {
         
         const userId = user ? user.id : null;
 
-        if (paymentType == "VNPay") {
+        if (paymentType == "NCB") {
             // Nếu chọn thanh toán VNPay, gọi API tạo URL thanh toán
             const response = await createOrder(data, userId, orderItems, paymentType);
-            console.log(response);
             localStorage.removeItem('orderItems')
-            
-            // if (response?.data) {
-            //     // Chuyển hướng đến URL thanh toán VNPay
-            //     window.location.href = response.payment_url;
-            // } else {
-            //     console.error("Failed to generate VNPay payment URL.");
-            // }
+            if (response?.data) {
+                // Chuyển hướng đến URL thanh toán VNPay
+                window.location.href = response.data.payment_url;
+            } else {
+                console.error("Failed to generate VNPay payment URL.");
+            }
         } else {
             // Nếu không phải VNPay, gọi hàm tạo đơn hàng bình thường
             await createOrder(data, userId, orderItems);    
-            localStorage.removeItem('orderItems')
         }
     };
     return (
