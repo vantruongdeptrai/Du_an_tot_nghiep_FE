@@ -74,7 +74,7 @@ const NewArrival = () => {
                                             <img className="object-fit-cover" src={newArrival.image_url} />
                                         </div>
                                         <div className="product-info">
-                                            <p className="font-semibold text-xl">{newArrival.name}</p>
+                                            <p className="font-semibold text-xl">{newArrival.name.length > 20 ? newArrival.name.substring(0, 20) + '...' : newArrival.name}</p>
                                         </div>
                                     </Link>
                                 </ProductCardBoxWrapper>

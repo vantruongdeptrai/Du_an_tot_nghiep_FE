@@ -38,7 +38,7 @@ const CheckoutScreen = () => {
         if (paymentType == "VNPay") {
             // Nếu chọn thanh toán VNPay, gọi API tạo URL thanh toán
             const response = await createOrder(data, userId, orderItems, paymentType);
-            console.log(response.data.payment_url);
+            console.log(response);
             localStorage.removeItem('orderItems')
             
             // if (response?.data) {

@@ -11,6 +11,7 @@ import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSearch from "../../../hooks/search";
+// import useCart from "../../hooks/useCart";
 
 const NavigationAndSearchWrapper = styled.div`
     column-gap: 20px;
@@ -127,6 +128,9 @@ const Header = () => {
     // State để lưu thông tin người dùng đăng nhập
     const [user, setUser] = useState(null);
     const { keyword, setKeyword } = useSearch();
+    // const {carts} = useCart();
+    // console.log(carts);
+    
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -206,6 +210,7 @@ const Header = () => {
                             <img src={staticImages.user} alt="" />
                         </Link>
                         <Link
+                            style={{ position: "relative" }}
                             to={user ? `/cart/${user.id}` : "/cart"}
                             className={`icon-link ${
                                 location.pathname === "/cart" || location.pathname === `/cart/${user?.id}`
@@ -214,6 +219,21 @@ const Header = () => {
                             } inline-flex items-center justify-center`}
                         >
                             <img src={staticImages.cart} alt="" />
+                            <span
+                                style={{
+                                    position: "absolute",
+                                    top: -5,
+                                    right: -10,
+                                    color: "white",
+                                    width: 20,
+                                    background: `${defaultTheme.color_dim_gray}`,
+                                    borderRadius: "100%",
+                                    textAlign: "center",
+                                }}
+                                className="cart-item-count"
+                            >
+                                3
+                            </span>
                         </Link>
                     </IconLinksWrapper>
                 </div>

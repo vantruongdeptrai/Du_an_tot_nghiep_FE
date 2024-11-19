@@ -44,6 +44,7 @@ const OrderListScreen = () => {
     const { orders } = useOrder();
     const { users } = useUser();
     const userOrders = orders.filter((item) => item.user_id == users.id);
+    const guestOrder = JSON.parse(localStorage.getItem('guestOrder'));
     
     return (
         <OrderListScreenWrapper className="page-py-spacing">
@@ -89,7 +90,7 @@ const OrderListScreen = () => {
                             <div className="order-tabs-contents">
                                 {activeTab === "active" && (
                                     <div className="order-tabs-content" id="active">
-                                        <OrderItemList orders={userOrders} />
+                                        <OrderItemList orders={userOrders} guestOrders={guestOrder} />
                                     </div>
                                 )}
                                 {activeTab === "cancelled" && (

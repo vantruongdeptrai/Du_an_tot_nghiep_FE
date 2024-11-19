@@ -12,8 +12,6 @@ apiClient.interceptors.request.use(
         const token = localStorage.getItem("token");
           const session_id = localStorage.getItem("session_id");
 
-        console.log(session_id);
-
         if (session_id) {
             config.headers["session_id"] = session_id; // Đưa session_id vào header
         }

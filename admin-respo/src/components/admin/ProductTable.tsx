@@ -9,9 +9,10 @@ const ProductTable = () => {
   const { categories } = useCategory();
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 5;
+  
 
   const getCategoryName = (categoryId: string) => {
-    const category = categories.find((cat) => cat.id === categoryId);
+    const category = categories.find((cat) => cat.id == categoryId);
     return category ? category.name : "unknown";
   };
 
@@ -21,6 +22,7 @@ const ProductTable = () => {
     indexOfFirstProduct,
     indexOfLastProduct
   );
+  
 
   const totalPages = Math.ceil(products.length / productsPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);

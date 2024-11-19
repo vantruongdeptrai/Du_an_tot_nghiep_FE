@@ -43,7 +43,7 @@ function App() {
             <Route path="/empty_cart" element={<CartEmpty />} />
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order" element={<Order />} />
-            <Route path="/order_detail" element={<OrderDetail />} />
+            <Route path="/order_detail/:id" element={<OrderDetail />} />
             <Route path="/wishlist" element={<WishList />} />
             <Route path="/empty_wishlist" element={<WishListEmpty />} />
             <Route path="/confirm" element={<Confirm />} />

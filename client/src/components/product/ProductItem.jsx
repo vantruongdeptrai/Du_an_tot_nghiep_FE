@@ -64,7 +64,7 @@ const ProductItem = ({ product }) => {
                     </button>
                 </div>
                 <div className="product-info">
-                    <p className="font-bold">{product.name}</p>
+                    <p className="font-bold">{product.name.length > 20 ? product.name.substring(0, 40) + '...' : product.name}</p>
                     <div className="text-sm text-gray">{product.category_name}</div>
                     <div className="product-price">
                         {product.sale_price ? (
