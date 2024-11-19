@@ -84,6 +84,8 @@ const CartTable = ({
             <tbody>
                 {cartItems.length > 0 ? (
                     cartItems.map((item, index) => {
+                        console.log(cartItems);
+                        
                         const isSelected = selectedItems.some(
                             (selected) =>
                                 selected.product_id === item.product_id &&

@@ -160,7 +160,6 @@ const EditOrder = () => {
                         <option value="Đã xác nhận">Đã xác nhận</option>
                         <option value="Đang chuẩn bị">Đang chuẩn bị</option>
                         <option value="Đang vận chuyển">Đang giao</option>
-                        <option value="Đã giao hàng">Đã giao hàng</option>
                         <option value="Giao hàng thành công">
                           Giao hàng thành công
                         </option>

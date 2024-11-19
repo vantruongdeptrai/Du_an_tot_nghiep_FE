@@ -239,8 +239,8 @@ const ProductFilter = ({
                                     style={{ backgroundColor: color.name }} // Dùng color.name làm background
                                 >
                                     {/* Hiển thị tên màu bên trong label */}
-                                    <span style={{ padding: "0 10px" }} className="text-white text-lg font-semibold">
-                                        {color.name}
+                                    <span style={{ padding: "0 20px"}} className="text-white text-lg font-semibold">
+                                        
                                     </span>
                                 </label>
                             </div>

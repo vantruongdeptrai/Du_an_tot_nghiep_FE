@@ -95,102 +95,193 @@ const OrderItemWrapper = styled.div`
     }
 `;
 
-const OrderItem = ({ order }) => {
+const OrderItem = ({ order, guestOrder }) => {
     const { productVariants } = useProductVariant();
     const { colors } = useColors();
     const { sizes } = useSizes();
     const { products } = useProduct();
 
     const nav = useNavigate();
-    const { users } = useUser();
-    if (!users) {
-        // Nếu không có người dùng (chưa đăng nhập), điều hướng đến trang đăng nhập
-        return nav("/login");
-    }
+    const users = localStorage.getItem("userInfo");
+
+    // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
+    const currentOrder = users ? order : guestOrder;
+    console.log(order);
+    
 
     return (
         <OrderItemWrapper>
-            <div className="order-item-details">
-                <h3 className="text-x order-item-title">Order no: {order.id}</h3>
-                <div className="order-info-group flex flex-wrap">
-                    <div className="order-info-item">
-                        <span className="text-gray font-semibold">Order Date:</span>
-                        <span className="text-silver">
-                            {new Date(order.created_at).toLocaleDateString("vi-VN", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                            })}
-                        </span>
+            {Array.isArray(currentOrder) ? (
+                // Nếu currentOrder là mảng, hiển thị tất cả các đơn hàng trong guestOrder
+                currentOrder.map((guestOrderItem, index) => (
+                    <div key={index} className="order-item-details">
+                        <h3 className="text-x order-item-title">Order no: {guestOrderItem.id}</h3>
+                        <div className="order-info-group flex flex-wrap">
+                            <div className="order-info-item">
+                                <span className="text-gray font-semibold">Order Date:</span>
+                                <span className="text-silver">
+                                    {new Date(guestOrderItem.created_at).toLocaleDateString("vi-VN", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })}
+                                </span>
+                            </div>
+                            <div className="order-info-item">
+                                <span className="text-gray font-semibold">Order Status:</span>
+                                <span className="text-silver">{guestOrderItem.status_order}</span>
+                            </div>
+                            <div className="order-info-item">
+                                <span className="text-gray font-semibold">Estimated Delivery Date:</span>
+                                <span className="text-silver">{guestOrderItem.updated_at}</span>
+                            </div>
+                            <div className="order-info-item">
+                                <span className="text-gray font-semibold">Method:</span>
+                                <span className="text-silver">{guestOrderItem.payment_type}</span>
+                            </div>
+                        </div>
+
+                        {/* {guestOrderItem.order_items.map((item, itemIndex) => {
+                            const product = products.find((product) => product.id === item.product_id);
+                            const productVariant = productVariants.find((variant) => variant.id === item.product_variant_id);
+                            const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
+                            const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
+
+                            return (
+                                <div key={itemIndex} className="order-overview flex justify-between">
+                                    <div className="order-overview-content grid">
+                                        <div className="order-overview-img">
+                                            <img src={product?.image_url} alt="" className="object-fit-cover" />
+                                        </div>
+                                        <div className="order-overview-info">
+                                            <h4 className="text-xl">{product?.name}</h4>
+                                            <ul>
+                                                <li className="font-semibold text-base">
+                                                    <span>Color:</span>
+                                                    <span className="text-silver">{colorDetail?.name || "Không có color"}</span>
+                                                </li>
+                                                <li className="font-semibold text-base">
+                                                    <span>Size:</span>
+                                                    <span className="text-silver">{sizeDetail?.name || "Không có size"}</span>
+                                                </li>
+                                                <li className="font-semibold text-base">
+                                                    <span>Quantity:</span>
+                                                    <span className="text-silver">{item?.quantity}</span>
+                                                </li>
+                                                <li className="font-semibold text-base">
+                                                    <span>Price:</span>
+                                                    <span className="text-silver">
+                                                        {formatCurrency(productVariant?.price || product?.sale_price)}
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div style={{ fontSize: 18 }}>
+                                        Total:{" "}
+                                        {formatCurrency(
+                                            productVariant?.price * item.quantity || product?.sale_price * item.quantity
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })} */}
+                        <div style={{ gap: 30 }} className="flex flex-col">
+                            <BaseLinkGreen style={{ fontSize: 18 }} to={`/order_detail/${guestOrderItem.id}`}>
+                                View Detail
+                            </BaseLinkGreen>
+                        </div>
                     </div>
-                    <div className="order-info-item">
-                        <span className="text-gray font-semibold">Order Status:</span>
-                        <span className="text-silver">{order.status_order}</span>
+                ))
+            ) : (
+                // Nếu currentOrder không phải là mảng, hiển thị 1 đơn hàng duy nhất
+                <div className="order-item-details">
+                    <h3 className="text-x order-item-title">Order no: {currentOrder.id}</h3>
+                    <div className="order-info-group flex flex-wrap">
+                        <div className="order-info-item">
+                            <span className="text-gray font-semibold">Order Date:</span>
+                            <span className="text-silver">
+                                {new Date(currentOrder.created_at).toLocaleDateString("vi-VN", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })}
+                            </span>
+                        </div>
+                        <div className="order-info-item">
+                            <span className="text-gray font-semibold">Order Status:</span>
+                            <span className="text-silver">{currentOrder.status_order}</span>
+                        </div>
+                        <div className="order-info-item">
+                            <span className="text-gray font-semibold">Estimated Delivery Date:</span>
+                            <span className="text-silver">{currentOrder.updated_at}</span>
+                        </div>
+                        <div className="order-info-item">
+                            <span className="text-gray font-semibold">Method:</span>
+                            <span className="text-silver">{currentOrder.payment_type}</span>
+                        </div>
                     </div>
-                    <div className="order-info-item">
-                        <span className="text-gray font-semibold">Estimated Delivery Date:</span>
-                        <span className="text-silver">{order.updated_at}</span>
-                    </div>
-                    <div className="order-info-item">
-                        <span className="text-gray font-semibold">Method:</span>
-                        <span className="text-silver">{order.payment_type}</span>
+
+                    {currentOrder.order_items.map((item, itemIndex) => {
+                        const product = products.find((product) => product.id === item.product_id);
+                        const productVariant = productVariants.find((variant) => variant.id === item.product_variant_id);
+                        const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
+                        const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
+
+                        return (
+                            <div key={itemIndex} className="order-overview flex justify-between">
+                                <div className="order-overview-content grid">
+                                    <div className="order-overview-img">
+                                        <img src={product?.image_url} alt="" className="object-fit-cover" />
+                                    </div>
+                                    <div className="order-overview-info">
+                                        <h4 className="text-xl">{product?.name}</h4>
+                                        <ul>
+                                            <li className="font-semibold text-base">
+                                                <span>Color:</span>
+                                                <span className="text-silver">{colorDetail?.name || "Không có color"}</span>
+                                            </li>
+                                            <li className="font-semibold text-base">
+                                                <span>Size:</span>
+                                                <span className="text-silver">{sizeDetail?.name || "Không có size"}</span>
+                                            </li>
+                                            <li className="font-semibold text-base">
+                                                <span>Quantity:</span>
+                                                <span className="text-silver">{item?.quantity}</span>
+                                            </li>
+                                            <li className="font-semibold text-base">
+                                                <span>Price:</span>
+                                                <span className="text-silver">
+                                                    {formatCurrency(productVariant?.price || product?.sale_price)}
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div style={{ fontSize: 18 }}>
+                                    Total:{" "}
+                                    {formatCurrency(
+                                        productVariant?.price * item.quantity || product?.sale_price * item.quantity
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                    <div style={{ gap: 30 }} className="flex flex-col">
+                        <BaseLinkGreen style={{ fontSize: 18 }} to={`/order_detail/${currentOrder.id}`}>
+                            View Detail
+                        </BaseLinkGreen>
                     </div>
                 </div>
-            </div>
-            {order.order_items.map((item, itemIndex) => {
-                const product = products.find((product) => product.id === item.product_id);
-                const productVariant = productVariants.find((variant) => variant.id === item.product_variant_id);
-                const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
-                const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
-
-                return (
-                    <div key={itemIndex} className="order-overview flex justify-between">
-                        <div className="order-overview-content grid">
-                            <div className="order-overview-img">
-                                <img src={product?.image_url} alt="" className="object-fit-cover" />
-                            </div>
-                            <div className="order-overview-info">
-                                <h4 className="text-xl">{product?.name}</h4>
-                                <ul>
-                                    <li className="font-semibold text-base">
-                                        <span>Color:</span>
-                                        <span className="text-silver">{colorDetail?.name || "Không có color"}</span>
-                                    </li>
-                                    <li className="font-semibold text-base">
-                                        <span>Size:</span>
-                                        <span className="text-silver">{sizeDetail?.name || "Không có size"}</span>
-                                    </li>
-                                    <li className="font-semibold text-base">
-                                        <span>Quantity:</span>
-                                        <span className="text-silver">{item?.quantity}</span>
-                                    </li>
-                                    <li className="font-semibold text-base">
-                                        <span>Price:</span>
-                                        <span className="text-silver">
-                                            {formatCurrency(productVariant?.price || product?.sale_price)}
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div style={{gap: 30}} className="flex flex-col">
-                            <BaseLinkGreen to="/order_detail">View Detail</BaseLinkGreen>
-                            <div>
-                                Total:{" "}
-                                {formatCurrency(
-                                    productVariant?.price * item.quantity || product?.sale_price * item.quantity
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                );
-            })}
+            )}
         </OrderItemWrapper>
     );
 };
+
 
 export default OrderItem;
 
 OrderItem.propTypes = {
     order: PropTypes.object,
+    guestOrder: PropTypes.array
 };

@@ -33,16 +33,16 @@ const useOrder = () => {
                         : { product_id: item.product_id, quantity: item.quantity };
                 }),
             };
-            const session_id = localStorage.getItem('session_id');
-            console.log(session_id);
             
             const response = await apiClient.post(endPoint, orderData);
+            
 
             if (paymentMethod === "VNPay") {
                 const vnpayResponse = await apiClient.post("/payment", {
                     bank_code: 123456,
                     amount: response.data.total_price * 100,
                 });
+                
                 return vnpayResponse;
             } else {
                 toast.success("Order created successfully!");

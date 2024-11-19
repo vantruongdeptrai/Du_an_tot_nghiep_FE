@@ -135,6 +135,42 @@ const ShippingPaymentWrapper = styled.div`
 const ShippingPayment = () => {
     const { register } = useFormContext();
     const isLoggedIn = !!localStorage.getItem("userInfo");
+    // const handlePayment = (paymentType) => {
+    //     if (paymentType === "VNPay") {
+    //         // Thông tin thanh toán từ form
+    //         const orderData = {
+    //             order_id: "123456789",
+    //             order_desc: "Thanh toán đơn hàng test",
+    //             order_type: "billpayment",
+    //             amount: 150000,
+    //             language: "vn",
+    //             bank_code: "VNPAY",
+    //             txtexpire: "20241118153000",
+    //             txt_billing_mobile: "0123456789",
+    //             txt_billing_email: "example@gmail.com",
+    //             txt_billing_fullname: "Nguyen Van A",
+    //             txt_inv_addr1: "123 Đường ABC, Quận X, TP Y",
+    //             txt_bill_city: "Hà Nội",
+    //             txt_bill_country: "Việt Nam",
+    //             txt_bill_state: "State A",
+    //             txt_inv_mobile: "0987654321",
+    //             txt_inv_email: "invoice@example.com",
+    //             txt_inv_customer: "Nguyen Van A",
+    //             txt_inv_company: "Company XYZ",
+    //             txt_inv_taxcode: "123456789",
+    //             cbo_inv_type: "individual",
+    //         };
+
+    //         // Tạo URL với các tham số
+    //         const baseURL = "https://sandbox.vnpayment.vn/paymentv2/";
+    //         const queryParams = new URLSearchParams(orderData).toString();
+
+    //         const paymentURL = `${baseURL}?${queryParams}`;
+
+    //         // Chuyển hướng đến VNPAY
+    //         window.location.href = paymentURL;
+    //     }
+    // };
 
     return (
         <ShippingPaymentWrapper>
@@ -143,9 +179,7 @@ const ShippingPayment = () => {
                 <p className="text-base text-outerspace">All transactions are secure and encrypted.</p>
                 <form>
                     <div className="list-group">
-                        <div
-                            className={`list-group-item ${!isLoggedIn ? "disabled" : ""}`}
-                        >
+                        <div className={`list-group-item ${!isLoggedIn ? "disabled" : ""}`}>
                             <div className="flex items-center list-group-item-head">
                                 <Input
                                     type="radio"
@@ -168,11 +202,7 @@ const ShippingPayment = () => {
                                         }`}
                                         key={card.id}
                                     >
-                                        <Input
-                                            type="radio"
-                                            name="payment_cards"
-                                            disabled={!isLoggedIn}
-                                        />
+                                        <Input type="radio" name="payment_cards" disabled={!isLoggedIn} />
                                         <div className="card-wrapper bg-white w-full h-full flex items-center justify-center">
                                             <img src={card.imgSource} alt="" />
                                             <div className="card-selected text-sea-green">
@@ -201,23 +231,21 @@ const ShippingPayment = () => {
                             </p>
                         </div>
 
-                        <div style={{marginTop: 20}}
-                            className={`list-group-item flex items-center ${
-                                !isLoggedIn ? "disabled" : ""
-                            }`}
+                        <div
+                            style={{ marginTop: 20 }}
+                            className={`list-group-item flex items-center ${!isLoggedIn ? "disabled" : ""}`}
                         >
                             <Input
                                 {...register("payment_type")}
                                 type="radio"
                                 className="list-group-item-check"
                                 value="VNPay"
+                                // onChange={() => handlePayment("VNPay")}
                                 disabled={!isLoggedIn}
                             />
                             <p className="font-semibod text-lg">
                                 VNPAY
-                                <span className="flex text-base font-medium text-gray">
-                                    Pay with VNPAY
-                                </span>
+                                <span className="flex text-base font-medium text-gray">Pay with VNPAY</span>
                             </p>
                         </div>
                     </div>

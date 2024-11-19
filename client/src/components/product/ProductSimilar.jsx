@@ -6,12 +6,10 @@ import { PropTypes } from "prop-types";
 
 const ProductSimilar = ({ product }) => {
     const { products } = useProduct();
-    console.log(product);
 
     const similarProduct = products.filter(
         (item) => item.category_name == product.category_name && item.id !== product.id
     );
-    console.log(similarProduct);
     
     return (
         <Section>

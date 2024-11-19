@@ -204,6 +204,7 @@ const ProductDetailsScreen = () => {
     const [colors, setColors] = useState([]);
     const [variants, setVariants] = useState([]);
     const [variantPrice, setVariantPrice] = useState(null);
+    const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
         { label: "Shop", link: "" },
         { label: "Women", link: "" },
@@ -274,7 +275,6 @@ const ProductDetailsScreen = () => {
         ></span>
     ));
     const handleAddToCart = async (productId) => {
-        const user = JSON.parse(localStorage.getItem("userInfo"));
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         const existingProduct = cart.find((item) => item.product_id === productId);
         
@@ -434,7 +434,7 @@ const ProductDetailsScreen = () => {
                                                     backgroundColor: color.name, // Sử dụng màu từ biến thể
                                                 }}
                                             >
-                                                {color.name}
+                                               
                                             </span>
                                         </div>
                                     ))}
@@ -460,7 +460,7 @@ const ProductDetailsScreen = () => {
                         <ProductServices />
                     </ProductDetailsWrapper>
                 </DetailsContent>
-                <ProductDescriptionTab />
+                <ProductDescriptionTab product_id={id} user={user} />
                 <ProductSimilar product={product} />
             </Container>
         </DetailsScreenWrapper>
