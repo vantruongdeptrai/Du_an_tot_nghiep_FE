@@ -1,3 +1,4 @@
+import { useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import formatCurrency from "../../utils/formatUtils";
@@ -8,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import useProductVariant from "../../hooks/useProductVariant";
 import { useColors, useSizes } from "../../hooks/useAtribute";
 import useProduct from "../../hooks/useProduct";
+import Modals from "../modals/Modals";
+import useOrder from "../../hooks/useOrder";
 
 const OrderItemWrapper = styled.div`
     margin: 30px 0;
@@ -93,6 +96,16 @@ const OrderItemWrapper = styled.div`
             }
         }
     }
+    .button-delete {
+        width: 120px;
+        border-radius: 5px;
+        border: 1px solid;
+        height: 40px;
+    }
+    .button-delete:hover button {
+        background-color: ${defaultTheme.color_red};
+        color: ${defaultTheme.color_white};
+    }
 `;
 
 const OrderItem = ({ order, guestOrder }) => {
@@ -100,13 +113,22 @@ const OrderItem = ({ order, guestOrder }) => {
     const { colors } = useColors();
     const { sizes } = useSizes();
     const { products } = useProduct();
+    const { deleteOrderReason, deleteOrder } = useOrder();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    console.log(order);
 
     const nav = useNavigate();
     const users = localStorage.getItem("userInfo");
 
     // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
     const currentOrder = users ? order : guestOrder;
-    
+
+    const handleCancelOrder = async (reason) => {
+        // Handle the order cancellation logic here
+        console.log("Payload gửi lên:", { cancel_reason: reason });
+        await deleteOrderReason(order.id, { cancel_reason: reason });
+        setIsModalOpen(false); // Close modal after confirmation
+    };
 
     return (
         <OrderItemWrapper>
@@ -195,10 +217,30 @@ const OrderItem = ({ order, guestOrder }) => {
             ) : (
                 // Nếu currentOrder không phải là mảng, hiển thị 1 đơn hàng duy nhất
                 <div className="order-item-details">
-                    <h3 className="text-x order-item-title">Order no: {currentOrder.id}</h3>
+                    <div
+                        style={{ justifyContent: "space-between", alignItems: "center", margin: "15px 0" }}
+                        className="flex"
+                    >
+                        <h3 className="text-x order-item-title">Order no: {currentOrder.id}</h3>
+                        {order.status_order === "Đã hủy" || order.status_order === "Đã giao hàng thành công" ? (
+                            <div className="button-delete">
+                                <button onClick={() => deleteOrder(order.id)} className="button-delete" style={{ fontSize: 16, fontWeight: 500, border: "none" }}>Xóa đơn hàng</button>
+                            </div>
+                        ) : (
+                            <div className="button-delete">
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    style={{ fontSize: 16, fontWeight: 500, border: "none" }}
+                                    className="button-delete"
+                                >
+                                    Hủy đơn hàng
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <div className="order-info-group flex flex-wrap">
                         <div className="order-info-item">
-                            <span className="text-gray font-semibold">Order Date:</span>
+                            <span className="font-semibold">Order Date:</span>
                             <span className="text-silver">
                                 {new Date(currentOrder.created_at).toLocaleDateString("vi-VN", {
                                     year: "numeric",
@@ -208,22 +250,28 @@ const OrderItem = ({ order, guestOrder }) => {
                             </span>
                         </div>
                         <div className="order-info-item">
-                            <span className="text-gray font-semibold">Order Status:</span>
+                            <span className=" font-semibold">Order Status:</span>
                             <span className="text-silver">{currentOrder.status_order}</span>
                         </div>
                         <div className="order-info-item">
-                            <span className="text-gray font-semibold">Estimated Delivery Date:</span>
+                            <span className=" font-semibold">Estimated Delivery Date:</span>
                             <span className="text-silver">{currentOrder.updated_at}</span>
                         </div>
                         <div className="order-info-item">
-                            <span className="text-gray font-semibold">Method:</span>
+                            <span className=" font-semibold">Method:</span>
                             <span className="text-silver">{currentOrder.payment_type}</span>
+                        </div>
+                        <div className="order-info-item">
+                            <span className=" font-semibold">Total price:</span>
+                            <span className="text-silver">{formatCurrency(currentOrder.total_price)}</span>
                         </div>
                     </div>
 
                     {currentOrder.order_items.map((item, itemIndex) => {
                         const product = products.find((product) => product.id === item.product_id);
-                        const productVariant = productVariants.find((variant) => variant.id === item.product_variant_id);
+                        const productVariant = productVariants.find(
+                            (variant) => variant.id === item.product_variant_id
+                        );
                         const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
                         const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
 
@@ -238,11 +286,15 @@ const OrderItem = ({ order, guestOrder }) => {
                                         <ul>
                                             <li className="font-semibold text-base">
                                                 <span>Color:</span>
-                                                <span className="text-silver">{colorDetail?.name || "Không có color"}</span>
+                                                <span className="text-silver">
+                                                    {colorDetail?.name || "Không có color"}
+                                                </span>
                                             </li>
                                             <li className="font-semibold text-base">
                                                 <span>Size:</span>
-                                                <span className="text-silver">{sizeDetail?.name || "Không có size"}</span>
+                                                <span className="text-silver">
+                                                    {sizeDetail?.name || "Không có size"}
+                                                </span>
                                             </li>
                                             <li className="font-semibold text-base">
                                                 <span>Quantity:</span>
@@ -257,12 +309,6 @@ const OrderItem = ({ order, guestOrder }) => {
                                         </ul>
                                     </div>
                                 </div>
-                                <div style={{ fontSize: 18 }}>
-                                    Total:{" "}
-                                    {formatCurrency(
-                                        productVariant?.price * item.quantity || product?.sale_price * item.quantity
-                                    )}
-                                </div>
                             </div>
                         );
                     })}
@@ -271,16 +317,23 @@ const OrderItem = ({ order, guestOrder }) => {
                             View Detail
                         </BaseLinkGreen>
                     </div>
+                    {/* Kiểm tra nếu trạng thái là "Đã hủy" thì hiển thị nút Xóa */}
+
+                    {/* Modal xác nhận xóa */}
+                    <Modals
+                        isOpen={isModalOpen}
+                        onClose={() => setIsModalOpen(false)} // Đóng modal khi nhấn Cancel
+                        onConfirm={handleCancelOrder} // Hành động xóa đơn hàng khi nhấn Confirm
+                    />
                 </div>
             )}
         </OrderItemWrapper>
     );
 };
 
-
 export default OrderItem;
 
 OrderItem.propTypes = {
     order: PropTypes.object,
-    guestOrder: PropTypes.array
+    guestOrder: PropTypes.array,
 };

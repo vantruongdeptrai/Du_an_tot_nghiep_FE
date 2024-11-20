@@ -135,7 +135,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
     };
 
     const commentUser = comments ? comments.filter((comment) => comment.product_id == product_id) : [];
-    const { register, handleSubmit, reset } = useForm();
+    const { register, handleSubmit} = useForm();
 
     const onSubmit = (data) => {
         createComments(data);
@@ -231,11 +231,11 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                                         padding: 5,
                                                     }}
                                                 >
-                                                    <div style={{ fontSize: 16, fontWeight: 600 }}>{user.name}</div>
-                                                    <div>{comment.comment}</div>
+                                                    <div style={{ fontSize: 16, fontWeight: 600 }}>{user?.name}</div>
+                                                    <div>{comment?.comment}</div>
                                                 </div>
                                                 <div>
-                                                    <p>{formatDate(comment.created_at)}</p>
+                                                    <p>{formatDate(comment?.created_at)}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -244,7 +244,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                     <p>No comments yet.</p>
                                 )}
                                 <form onSubmit={handleSubmit(onSubmit)} action="">
-                                    <input {...register("user_id")} type="hidden" value={user.id} />
+                                    <input {...register("user_id")} type="hidden" value={user?.id} />
                                     <input {...register("product_id")} type="hidden" value={product_id} />
                                     <textarea
                                         {...register("comment")}

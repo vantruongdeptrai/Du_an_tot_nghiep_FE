@@ -2,20 +2,24 @@ import { useQuery } from "@tanstack/react-query";
 import apiClient from "../api/axiosConfig";
 import { toast } from "react-toastify";
 
-const getAllCart = async () => {
+const getAllCart = async (userId) => {
     try {
-        const response = await apiClient.get("/cart");
+        const url = userId ? `/cart/auth?user_id=${userId}` : `/cart/guest`;
+        const response = await apiClient.get(url);
         return response.data;
     } catch (error) {
-        toast.error("Error:", error);
-        throw error; // Đảm bảo lỗi được ném ra cho React Query xử lý
+        toast.error(`Error fetching cart: ${error.message}`);
+        throw error;
     }
 };
 
-const useCart = () => {
+const useCart = (userId) => {
     const { data: carts, error, isLoading } = useQuery(
-        ['carts'], // queryKey, phải duy nhất
-        getAllCart
+        ['cart', userId || 'guest'], // queryKey đảm bảo duy nhất
+        () => getAllCart(userId),   // Gọi hàm fetch tương ứng
+        {
+            enabled: true, // Luôn bật query
+        }
     );
 
     return {

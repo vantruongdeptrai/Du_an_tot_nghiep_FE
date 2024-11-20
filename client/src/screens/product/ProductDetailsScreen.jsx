@@ -204,6 +204,7 @@ const ProductDetailsScreen = () => {
     const [colors, setColors] = useState([]);
     const [variants, setVariants] = useState([]);
     const [variantPrice, setVariantPrice] = useState(null);
+    const [variantStock, setVariantStock] = useState(null);
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
         { label: "Shop", link: "" },
@@ -254,6 +255,7 @@ const ProductDetailsScreen = () => {
             );
             if (selectedVariant) {
                 setVariantPrice(selectedVariant.price);
+                setVariantStock(selectedVariant.quantity);
             }
         } else if (product) {
             setVariantPrice(product.price);
@@ -275,9 +277,12 @@ const ProductDetailsScreen = () => {
         ></span>
     ));
     const handleAddToCart = async (productId) => {
+        // if(!selectedColor && !selectedSize) {
+        //     toast.warn("Please select color or size!");
+        //     return;
+        // }
         const cart = JSON.parse(localStorage.getItem("cart")) || [];
         const existingProduct = cart.find((item) => item.product_id === productId);
-        
 
         let finalPrice = product.price; // Default to base price
         let productVariantId = null;
@@ -323,10 +328,12 @@ const ProductDetailsScreen = () => {
                 },
                 { withCredentials: true }
             );
-            localStorage.setItem("session_id", data.data.session_id);     
-            toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).")
+            console.log(data.data.cart);
+            
+            // localStorage.setItem("session_id", data.data.session_id);
+            toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).");
             return;
-       } else {
+        } else {
             try {
                 const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
                     method: "POST",
@@ -346,7 +353,7 @@ const ProductDetailsScreen = () => {
                 });
 
                 if (response.ok) {
-                    toast.success("Sản phẩm đã được thêm vào giỏ hàng (database).")
+                    toast.success("Sản phẩm đã được thêm vào giỏ hàng (database).");
                 } else {
                     toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
                 }
@@ -413,7 +420,7 @@ const ProductDetailsScreen = () => {
                                 </div>
                                 <div className="prod-colors-list flex items-center">
                                     {colors.map((color, index) => (
-                                        <div className="prod-colors-item" style={{ margin: 20 }} key={index}>
+                                        <div className="prod-colors-item" style={{ margin: "10px 20px" }} key={index}>
                                             <input
                                                 style={{ width: "60px", height: "35px" }}
                                                 type="radio"
@@ -433,9 +440,7 @@ const ProductDetailsScreen = () => {
                                                     borderRadius: "5px",
                                                     backgroundColor: color.name, // Sử dụng màu từ biến thể
                                                 }}
-                                            >
-                                               
-                                            </span>
+                                            ></span>
                                         </div>
                                     ))}
                                 </div>
@@ -454,7 +459,9 @@ const ProductDetailsScreen = () => {
                                 <div className="prod-add-btn-text">Add to cart</div>
                             </button>
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
-                                <div>Price: {formatCurrency(variantPrice)}</div>
+                                <div>
+                                    Price: {formatCurrency(variantPrice)} <span style={{opacity: 0.6}}>({variantStock} products)</span>
+                                </div>
                             </div>
                         </div>
                         <ProductServices />
