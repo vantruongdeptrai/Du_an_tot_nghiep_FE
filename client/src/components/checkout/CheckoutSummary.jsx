@@ -88,8 +88,10 @@ const CheckoutSummary = () => {
     const checkoutSummary = products.filter((product) => productIds.includes(product.id));
 
     const subtotal = data.reduce((acc, item) => {
-        return acc + parseFloat(item.price) * item.quantity;
+        return acc + (parseFloat(item.price) * item.quantity);
     }, 0);
+    const totalDiscount = data?.map((item) => item.discount);
+    
 
     return (
         <CheckoutSummaryWrapper>
@@ -151,16 +153,16 @@ const CheckoutSummary = () => {
                 </li>
                 <li className="flex items-center justify-between">
                     <span className="text-outerspace font-bold text-lg">Savings</span>
-                    <span className="text-outerspace font-bold text-lg">$0</span>
+                    <span className="text-outerspace font-bold text-lg">{formatCurrency(totalDiscount[0])}</span>
                 </li>
                 <li className="flex items-center justify-between">
                     <span className="text-outerspace font-bold text-lg">Shipping</span>
-                    <span className="text-outerspace font-bold text-lg">$0</span>
+                    <span className="text-outerspace font-bold text-lg">{formatCurrency(0)}</span>
                 </li>
                 <li className="list-separator"></li>
                 <li className="flex items-center justify-between">
                     <span className="text-outerspace font-bold text-lg">Total</span>
-                    <span className="text-outerspace font-bold text-lg">{formatCurrency(subtotal)}</span>
+                    <span className="text-outerspace font-bold text-lg">{formatCurrency(subtotal - totalDiscount[0])}</span>
                 </li>
             </ul>
         </CheckoutSummaryWrapper>

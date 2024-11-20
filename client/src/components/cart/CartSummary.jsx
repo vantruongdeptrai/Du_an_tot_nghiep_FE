@@ -39,11 +39,13 @@ const CartSummaryWrapper = styled.div`
 // Phí vận chuyển cố định
 const SHIPPING_FEE = 0;
 
-const CartSummary = ({ selectedItems }) => {
+const CartSummary = ({ selectedItems, appliedCoupon }) => {
     const navigate = useNavigate();
 
     const [subTotal, setSubtotal] = useState(0);
     const [grandTotal, setGrandTotal] = useState(0);
+    const [discount, setDiscount] = useState(0);
+    const [isDiscountValid, setIsDiscountValid] = useState(true);
     // Tính tổng tiền cho các sản phẩm đã chọn
     useEffect(() => {
         // Tính tổng tiền cho các sản phẩm đã chọn
@@ -51,14 +53,27 @@ const CartSummary = ({ selectedItems }) => {
             return total + item.price * item.quantity;
         }, 0);
 
+        // Kiểm tra nếu coupon có giá trị min_order_value
+        if (appliedCoupon && newSubtotal < appliedCoupon.min_order_value) {
+            setIsDiscountValid(false);
+            setDiscount(0); // Nếu không đủ điều kiện áp dụng giảm giá
+        } else {
+            setIsDiscountValid(true);
+            setDiscount(appliedCoupon ? (appliedCoupon.discount_amount / 100) * newSubtotal : 0);
+        }
+
         // Cập nhật subtotal và grandTotal
         setSubtotal(newSubtotal);
-        setGrandTotal(newSubtotal + SHIPPING_FEE); // Thêm phí vận chuyển
-    }, [selectedItems]);
+        setGrandTotal(newSubtotal - discount + SHIPPING_FEE); // Thêm phí vận chuyển
+    }, [selectedItems, appliedCoupon, discount]);
     // Hàm xử lý khi người dùng nhấn nút "Proceed To CheckOut"
     const handleProceedToCheckout = () => {
         if (selectedItems.length === 0) {
             toast.warn("Please select a new item!");
+            return;
+        }
+        if (!isDiscountValid) {
+            toast.warn("Your order does not meet the minimum amount for the discount!");
             return;
         }
         const orderItems = selectedItems.map((item) => ({
@@ -68,6 +83,8 @@ const CartSummary = ({ selectedItems }) => {
             quantity: item.quantity,
             size: item.size,
             color: item.color,
+            discount: discount,
+            coupon_name: appliedCoupon?.name
         }));
         console.log(orderItems);
 
@@ -88,6 +105,10 @@ const CartSummary = ({ selectedItems }) => {
                 <li className="summary-item flex justify-between">
                     <span className="font-medium text-outerspace">Sub Total</span>
                     <span className="font-medium text-outerspace">{formatCurrency(subTotal)}</span>
+                </li>
+                <li className="summary-item flex justify-between">
+                    <span className="font-medium text-outerspace">Saving</span>
+                    <span className="font-medium text-outerspace">{formatCurrency(discount)}</span>
                 </li>
                 <li className="summary-item flex justify-between">
                     <span className="font-medium text-outerspace">Shipping</span>
@@ -114,6 +135,10 @@ CartSummary.propTypes = {
             price: PropTypes.number.isRequired,
         })
     ).isRequired,
+    appliedCoupon: PropTypes.shape({
+        discount_amount: PropTypes.number.isRequired,
+        min_order_value: PropTypes.number.isRequired,
+    }), // Giảm giá từ mã coupon
 };
 
 export default CartSummary;

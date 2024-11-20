@@ -7,6 +7,7 @@ import CartTable from "../../components/cart/CartTable";
 import CartDiscount from "../../components/cart/CartDiscount";
 import CartSummary from "../../components/cart/CartSummary";
 import { useColors, useSizes } from "../../hooks/useAtribute";
+import useCoupons from "../../hooks/useCoupons"
 
 const CartPageWrapper = styled.main`
     padding: 48px 0;
@@ -59,7 +60,8 @@ const CartScreen = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const {colors} = useColors();
     const {sizes} = useSizes();
-
+    const { coupons } = useCoupons();
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
     useEffect(() => {
         const fetchCartItems = async () => {
             const user = JSON.parse(localStorage.getItem("userInfo"));
@@ -148,8 +150,8 @@ const CartScreen = () => {
                         />
                     </div>
                     <div className="grid cart-content-right">
-                        <CartDiscount />
-                        <CartSummary selectedItems={selectedItems} cartItems={cartItems} />
+                        <CartDiscount coupons={coupons} setAppliedCoupon={setAppliedCoupon} selectedItems={selectedItems}/>
+                        <CartSummary appliedCoupon={appliedCoupon} selectedItems={selectedItems} cartItems={cartItems} />
                     </div>
                 </CartContent>
             </Container>

@@ -11,7 +11,7 @@ import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSearch from "../../../hooks/search";
-// import useCart from "../../hooks/useCart";
+import useCart from "../../hooks/useCart";
 
 const NavigationAndSearchWrapper = styled.div`
     column-gap: 20px;
@@ -124,27 +124,20 @@ const Header = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    // State để lưu thông tin người dùng đăng nhập
-    const [user, setUser] = useState(null);
     const { keyword, setKeyword } = useSearch();
-    // const {carts} = useCart();
-    // console.log(carts);
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    const {carts} = useCart(user?.id);
+    const filteredCartItems = carts?.cart.filter(item => item.deleted_at == null);
+    const cartLocalStorage = JSON.parse(localStorage.getItem("cart"));
+    const cartLength = user ? filteredCartItems?.length : cartLocalStorage?.length;
+    
+    
     
 
     const handleSubmit = (e) => {
         e.preventDefault();
         navigate(`/search?name=${keyword}`);
     };
-
-    // Kiểm tra trạng thái đăng nhập khi component được mount
-    useEffect(() => {
-        const loggedInUser = JSON.parse(localStorage.getItem("user"));
-        if (loggedInUser) {
-            setUser(loggedInUser);
-        }
-    }, []);
-
     return (
         <HeaderMainWrapper className="header flex items-center">
             <Container className="container">
@@ -211,9 +204,9 @@ const Header = () => {
                         </Link>
                         <Link
                             style={{ position: "relative" }}
-                            to={user ? `/cart/${user.id}` : "/cart"}
+                            to={"/cart"}
                             className={`icon-link ${
-                                location.pathname === "/cart" || location.pathname === `/cart/${user?.id}`
+                                location.pathname === "/cart"
                                     ? "active"
                                     : ""
                             } inline-flex items-center justify-center`}
@@ -232,7 +225,7 @@ const Header = () => {
                                 }}
                                 className="cart-item-count"
                             >
-                                3
+                                {cartLength}
                             </span>
                         </Link>
                     </IconLinksWrapper>
