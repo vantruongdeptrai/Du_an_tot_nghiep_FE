@@ -61,13 +61,13 @@ const Orders = () => {
               </p>
             </div>
             <div className="flex gap-x-2 max-[370px]:flex-col max-[370px]:gap-2 max-[370px]:items-center">
-              <button className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-32 py-2 text-lg dark:hover:border-gray-500 hover:border-gray-400 duration-200 flex items-center justify-center gap-x-2">
+              {/* <button className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-32 py-2 text-lg dark:hover:border-gray-500 hover:border-gray-400 duration-200 flex items-center justify-center gap-x-2">
                 <AiOutlineExport className="dark:text-whiteSecondary text-blackPrimary text-base" />
                 <span className="dark:text-whiteSecondary text-blackPrimary font-medium">
                   Export
                 </span>
-              </button>
-              <Link
+              </button> */}
+              {/* <Link
                 to="/orders/create-order"
                 className="dark:bg-whiteSecondary bg-blackPrimary w-48 py-2 text-lg dark:hover:bg-white hover:bg-blackSecondary duration-200 flex items-center justify-center gap-x-1"
               >
@@ -75,7 +75,7 @@ const Orders = () => {
                 <span className="dark:text-blackPrimary text-whiteSecondary font-semibold">
                   Add an order
                 </span>
-              </Link>
+              </Link> */}
             </div>
           </div>
           <div className="px-4 sm:px-6 lg:px-8 flex justify-between items-center mt-5 max-sm:flex-col max-sm:gap-2">
@@ -134,7 +134,11 @@ const Orders = () => {
                   {orders.map((order) => (
                     <tr
                       key={order.id}
-                      className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                      className={`hover:bg-gray-100 dark:hover:bg-gray-700 ${
+                        order.status_order === "Đã hủy"
+                          ? "bg-red-100 dark:bg-red-900"
+                          : ""
+                      }`}
                     >
                       <td className="border border-gray-300 px-4 py-2">
                         {order.id}
@@ -145,7 +149,13 @@ const Orders = () => {
                       <td className="border border-gray-300 px-4 py-2">
                         {parseFloat(order.total_price).toFixed(0)}đ
                       </td>
-                      <td className="border border-gray-300 px-4 py-2">
+                      <td
+                        className={`border border-gray-300 px-4 py-2 ${
+                          order.status_order === "Đã hủy"
+                            ? "text-red-600 font-bold dark:text-red-400"
+                            : ""
+                        }`}
+                      >
                         {order.status_order}
                       </td>
                       <td className="border border-gray-300 px-4 py-2">

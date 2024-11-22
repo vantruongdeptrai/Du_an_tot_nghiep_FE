@@ -11,8 +11,8 @@ const productSchema = z.object({
         }),
         quantity: z
         .string()
-        .min(1, "Quantity is required")
-        .transform((value) => Number(value)) // Chuyển chuỗi thành số
+        .min(1, "số lượng là bắt buộc")
+        .transform((value) => Number(value)) 
         .refine((value) => value >= 0, {
             message: "Quantity must be a valid number and greater than or equal to 0",
         }),
