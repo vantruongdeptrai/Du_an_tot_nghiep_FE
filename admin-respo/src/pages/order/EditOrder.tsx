@@ -18,6 +18,7 @@ const EditOrder = () => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [availableStatuses, setAvailableStatuses] = useState<string[]>([]); // Đảm bảo rằng kiểu là mảng string
 
   // Gọi API để lấy thông tin đơn hàng
   useEffect(() => {
@@ -36,6 +37,9 @@ const EditOrder = () => {
           paymentType: data.order.payment_type,
           shippingAddress: data.order.shipping_address,
         });
+
+        // Cập nhật các lựa chọn trạng thái tương ứng với trạng thái hiện tại
+        updateAvailableStatuses(data.order.status_order);
       } catch (error) {
         console.error("Lỗi khi lấy thông tin đơn hàng:", error);
       } finally {
@@ -46,8 +50,34 @@ const EditOrder = () => {
     fetchOrderDetails();
   }, [id]);
 
+  // Hàm để cập nhật các trạng thái có thể chọn
+  const updateAvailableStatuses = (status: string) => {
+    // Đảm bảo tham số là kiểu string
+    switch (status) {
+      case "Chờ xác nhận":
+        setAvailableStatuses(["Chờ xác nhận ", "Đã xác nhận", "Đã hủy"]);
+        break;
+      case "Đã xác nhận":
+        setAvailableStatuses(["Đã xác nhận", "Đang chuẩn bị"]);
+        break;
+      case "Đang chuẩn bị":
+        setAvailableStatuses(["Đang chuẩn bị", "Đang vận chuyển"]);
+        break;
+      case "Đang vận chuyển":
+        setAvailableStatuses(["Đang vận chuyển", "Giao hàng thành công"]);
+        break;
+      case "Giao hàng thành công":
+      case "Đã hủy":
+        setAvailableStatuses([]);
+        break;
+      default:
+        setAvailableStatuses([]);
+    }
+  };
+
   if (loading) return <p>Đang tải...</p>;
 
+  // Hàm để cập nhật trạng thái đơn hàng
   // Hàm để cập nhật trạng thái đơn hàng
   const updateOrderStatus = async () => {
     try {
@@ -57,19 +87,23 @@ const EditOrder = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          status_order: inputObject.statusOrder, // Gửi status từ form vào
+          status_order: inputObject.statusOrder,
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
+
+        setInputObject((prevState) => ({
+          ...prevState,
+          statusOrder: data.order.new_status_order,
+        }));
         alert(`Cập nhật trạng thái thành công: ${data.order.new_status_order}`);
       } else {
         throw new Error("Cập nhật thất bại.");
       }
     } catch (error) {
-      console.error("Lỗi khi cập nhật trạng thái:", error);
-      alert("Có lỗi xảy ra khi cập nhật trạng thái.");
+      console.log(error);
     }
   };
 
@@ -156,14 +190,11 @@ const EditOrder = () => {
                         }
                         className="p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                       >
-                        <option value="Chờ xác nhận">Chờ xác nhận</option>
-                        <option value="Đã xác nhận">Đã xác nhận</option>
-                        <option value="Đang chuẩn bị">Đang chuẩn bị</option>
-                        <option value="Đang vận chuyển">Đang giao</option>
-                        <option value="Giao hàng thành công">
-                          Giao hàng thành công
-                        </option>
-                        <option value="Đã hủy">Đã hủy</option>
+                        {availableStatuses.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
                       </select>
                     </td>
                   </tr>
@@ -176,27 +207,6 @@ const EditOrder = () => {
               <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mb-4">
                 Đơn hàng
               </h3>
-              {/* <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {inputObject.products.map((product, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col items-center bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition"
-                  >
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-16 h-16 rounded-full border mb-2"
-                    />
-                    <h4 className="text-sm font-semibold text-gray-800">
-                      {product.name}
-                    </h4>
-                    <p className="text-gray-500">
-                      Số lượng: {product.quantity}
-                    </p>
-                  </div>
-                ))}
-              </div> */}
-
               <div className="mt-5">
                 <div className="flex justify-between">
                   <span className="font-semibold">Tổng tiền:</span>
