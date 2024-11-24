@@ -47,15 +47,15 @@ const Reviews = () => {
           </div>
           <div className="px-4 sm:px-6 lg:px-8 flex justify-between items-center mt-5 max-sm:flex-col max-sm:gap-2">
             <div className="relative">
-              <HiOutlineSearch className="text-gray-400 text-lg absolute top-3 left-3" />
+              {/* <HiOutlineSearch className="text-gray-400 text-lg absolute top-3 left-3" />
               <input
                 type="text"
                 className="w-60 h-10 border dark:bg-blackPrimary bg-white border-gray-600 dark:text-whiteSecondary text-blackPrimary outline-0 indent-10 dark:focus:border-gray-500 focus:border-gray-400"
                 placeholder="Search reviews..."
-              />
+              /> */}
             </div>
             <div>
-              <select
+              {/* <select
                 className="w-60 h-10 dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 dark:text-whiteSecondary text-blackPrimary outline-0 pl-3 pr-8 cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
                 name="sort"
                 id="sort"
@@ -65,7 +65,7 @@ const Reviews = () => {
                 <option value="za">Z-A</option>
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
-              </select>
+              </select> */}
             </div>
           </div>
           <ReviewsTable />

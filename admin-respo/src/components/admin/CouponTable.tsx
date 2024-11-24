@@ -5,6 +5,14 @@ import useCoupon from "../../hooks/coupons";
 const CouponTable = () => {
   const { coupons, deleteCoupon } = useCoupon();
 
+  // Hàm định dạng giá trị tiền tệ sang VNĐ
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(value);
+  };
+
   return (
     <table className="mt-6 w-full whitespace-nowrap text-left max-lg:block max-lg:overflow-x-scroll">
       <colgroup>
@@ -19,15 +27,15 @@ const CouponTable = () => {
       </colgroup>
       <thead className="border-b dark:border-white/10 border-black/10 text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
         <tr>
-          <th className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">Name</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Description</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Discount</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Min Order</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Usage Limit</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Active</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Start Date</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">End Date</th>
-          <th className="py-2 pl-0 pr-4 text-right font-semibold">Actions</th>
+          <th className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">Tên</th>
+          <th className="py-2 pl-0 pr-8 font-semibold">Mô tả</th>
+          <th className="py-2 pl-0 pr-8 font-semibold">Chiết khấu</th>
+          <th className="py-2 pl-0 pr-8 font-semibold">Đơn hàng tối thiểu</th>
+          <th className="py-2 pl-0 pr-8 font-semibold">Giới hạn sử dụng</th>
+          <th className="py-2 pl-0 pr-8 font-semibold">Trạng thái</th>
+          {/* <th className="py-2 pl-0 pr-8 font-semibold">Ngày bắt đầu</th>
+          <th className="py-2 pl-0 pr-8 font-semibold">Ngày kết thúc</th> */}
+          <th className="py-2 pl-0 pr-4 text-right font-semibold">Hành động</th>
         </tr>
       </thead>
       <tbody className="divide-y divide-white/5">
@@ -35,8 +43,12 @@ const CouponTable = () => {
           <tr key={item.id}>
             <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">{item.name}</td>
             <td className="py-4 pl-0 pr-8">{item.description}</td>
-            <td className="py-4 pl-0 pr-8">{item.discount_amount}</td>
-            <td className="py-4 pl-0 pr-8">{item.min_order_value}</td>
+            <td className="py-4 pl-0 pr-8">
+              {formatCurrency(item.discount_amount)}
+            </td>
+            <td className="py-4 pl-0 pr-8">
+              {formatCurrency(item.min_order_value)}
+            </td>
             <td className="py-4 pl-0 pr-8">{item.usage_limit}</td>
             <td className="py-4 pl-0 pr-8">
               <span
@@ -46,15 +58,15 @@ const CouponTable = () => {
                     : "bg-red-100 text-red-700"
                 }`}
               >
-                {item.is_active ? "Active" : "Inactive"}
+                {item.is_active ? "Hoạt động" : "Không hoạt động"}
               </span>
             </td>
-            <td className="py-4 pl-0 pr-8">
-              {new Date(item.start_date).toLocaleDateString()}
+            {/* <td className="py-4 pl-0 pr-8">
+              {new Date(item.start_date).toLocaleDateString("vi-VN")}
             </td>
             <td className="py-4 pl-0 pr-8">
-              {new Date(item.end_date).toLocaleDateString()}
-            </td>
+              {new Date(item.end_date).toLocaleDateString("vi-VN")}
+            </td> */}
             <td className="py-4 pl-0 text-right pr-6 lg:pr-8">
               <div className="flex gap-x-1 justify-end">
                 <Link
@@ -64,7 +76,7 @@ const CouponTable = () => {
                   <HiOutlinePencil className="text-lg" />
                 </Link>
                 <Link
-                  to={`/categories/${item.id}`}
+                  to={`/coupons/${item.id}`}
                   className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
                 >
                   <HiOutlineEye className="text-lg" />
