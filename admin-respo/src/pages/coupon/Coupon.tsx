@@ -21,14 +21,19 @@ const Coupon = () => {
               <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
                 All Coupon
               </h2>
-              <p className="dark:text-whiteSecondary text-blackPrimary text-base font-normal flex items-center">
+              {/* <p className="dark:text-whiteSecondary text-blackPrimary text-base font-normal flex items-center">
                 <span>Dashboard</span>{" "}
                 <HiOutlineChevronRight className="text-lg" />{" "}
                 <span>All Coupon</span>
-              </p>
+              </p> */}
             </div>
             <div className="flex gap-x-2 max-[370px]:flex-col max-[370px]:gap-2 max-[370px]:items-center">
-              
+              {/* <button className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-32 py-2 text-lg hover:border-gray-500 duration-200 flex items-center justify-center gap-x-2">
+                <AiOutlineExport className="dark:text-whiteSecondary text-blackPrimary text-base" />
+                <span className="dark:text-whiteSecondary text-blackPrimary font-medium">
+                  Export
+                </span>
+              </button> */}
               <WhiteButton
                 link="/coupons/create-coupon"
                 text="Add a coupon"
@@ -41,16 +46,16 @@ const Coupon = () => {
             </div>
           </div>
           <div className="px-4 sm:px-6 lg:px-8 flex justify-between items-center mt-5 max-sm:flex-col max-sm:gap-2">
-            <div className="relative">
+            {/* <div className="relative">
               <HiOutlineSearch className="text-gray-400 text-lg absolute top-3 left-3" />
               <input
                 type="text"
                 className="w-60 h-10 border dark:bg-blackPrimary bg-white border-gray-600 dark:text-whiteSecondary text-blackPrimary outline-0 indent-10 focus:border-gray-500"
                 placeholder="Search coupon..."
               />
-            </div>
+            </div> */}
             <div>
-              <select
+              {/* <select
                 className="w-60 h-10 dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 dark:text-whiteSecondary text-blackPrimary outline-0 pl-3 pr-8 cursor-pointer hover:border-gray-500"
                 name="sort"
                 id="sort"
@@ -60,7 +65,7 @@ const Coupon = () => {
                 <option value="za">Z-A</option>
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
-              </select>
+              </select> */}
             </div>
           </div>
           <CouponTable />

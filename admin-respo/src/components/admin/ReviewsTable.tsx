@@ -83,19 +83,19 @@ const ReviewsTable = () => {
       <thead className="bg-gray-100 border-b border-gray-200 text-gray-600 uppercase text-sm">
         <tr>
           <th scope="col" className="py-3 px-4 font-semibold text-center">
-            User ID
+            Id người dùng
           </th>
           <th scope="col" className="py-3 px-4 font-semibold text-left">
-            Comment
+            Bình luận
           </th>
           <th scope="col" className="py-3 px-4 font-semibold text-center">
-            Product ID
+            Id sản phẩm
           </th>
           <th scope="col" className="py-3 px-4 font-semibold text-center">
-            Created At
+            Thời điểm
           </th>
           <th scope="col" className="py-3 px-4 font-semibold text-center">
-            Actions
+            Hành động
           </th>
         </tr>
       </thead>
