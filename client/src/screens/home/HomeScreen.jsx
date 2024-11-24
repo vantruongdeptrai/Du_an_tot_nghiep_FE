@@ -21,10 +21,10 @@ const HomeScreen = () => {
       <Featured />
       <NewArrival />
       <SavingZone />
-      <Catalog catalogTitle={"Product best seller"} productSeller={bestSellerProduct || []} />
-      <Catalog catalogTitle={"All Product"} products={products} />
+      <Catalog catalogTitle={"Sản phẩm đang được giảm giá"} productSeller={bestSellerProduct || []} />
+      <Catalog catalogTitle={"Tất cả sản phẩm"} products={products} />
       <Brands />
-      <Catalog catalogTitle={"Featured product"} products={featuredProduct} />
+      <Catalog catalogTitle={"Sản phẩm đặc trưng của shop"} products={featuredProduct} />
       <Feedback />
     </HomeScreenWrapper>
   );
