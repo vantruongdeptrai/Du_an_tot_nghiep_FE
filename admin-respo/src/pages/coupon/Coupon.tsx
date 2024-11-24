@@ -6,7 +6,7 @@ import {
 } from "../../components";
 import { HiOutlinePlus } from "react-icons/hi";
 import { HiOutlineChevronRight } from "react-icons/hi";
-import { AiOutlineExport } from "react-icons/ai";
+
 import { HiOutlineSearch } from "react-icons/hi";
 import CouponTable from "../../components/admin/CouponTable";
 
@@ -28,12 +28,7 @@ const Coupon = () => {
               </p>
             </div>
             <div className="flex gap-x-2 max-[370px]:flex-col max-[370px]:gap-2 max-[370px]:items-center">
-              <button className="dark:bg-blackPrimary bg-whiteSecondary border border-gray-600 w-32 py-2 text-lg hover:border-gray-500 duration-200 flex items-center justify-center gap-x-2">
-                <AiOutlineExport className="dark:text-whiteSecondary text-blackPrimary text-base" />
-                <span className="dark:text-whiteSecondary text-blackPrimary font-medium">
-                  Export
-                </span>
-              </button>
+              
               <WhiteButton
                 link="/coupons/create-coupon"
                 text="Add a coupon"
