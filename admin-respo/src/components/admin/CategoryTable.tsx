@@ -43,16 +43,16 @@ const CategoryTable = () => {
               scope="col"
               className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8"
             >
-              Category
+              Danh mục
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Image
+              Hình ảnh
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
               Slug
             </th>
             <th scope="col" className="py-2 pl-0 pr-4 text-right font-semibold">
-              Actions
+              Hành động
             </th>
           </tr>
         </thead>
@@ -120,7 +120,7 @@ const CategoryTable = () => {
           }`}
           disabled={currentPage === 1}
         >
-          Previous
+          Trước
         </button>
         {pageNumbers.map((number) => (
           <button
@@ -144,63 +144,193 @@ const CategoryTable = () => {
           }`}
           disabled={currentPage === totalPages}
         >
-          Next
+          Tiếp theo
         </button>
       </div>
 
       {/* CSS Style cho phân trang */}
       <style>{`
-        /* Phân trang */
-        .pagination-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-top: 1rem;
-        }
+  /* Điều chỉnh khoảng cách từ phần tiêu đề "Tất cả danh mục" và phần "Thêm danh mục" đến bảng */
+  .category-table-container {
+    overflow-x: auto;
+    margin-top: 5 rem; 
+  }
 
-        .pagination-btn {
-          padding: 0.5rem 1rem;
-          margin: 0 0.25rem;
-          border-radius: 0.375rem;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
+  table {
+    width: 150%;
+    border-collapse: collapse;
+  }
 
-        .pagination-btn:disabled {
-          cursor: not-allowed;
-          opacity: 0.5;
-        }
+  /* Cải thiện khoảng cách bảng và phần tiêu đề */
+  .category-table-container table {
+    margin-top: 1rem;  /* Giảm khoảng cách giữa bảng và phần "Tất cả danh mục" */
+  }
 
-        .pagination-btn.bg-gray-300 {
-          background-color: #e2e8f0;
-          color: #4a5568;
-        }
+  /* Các cột trong bảng */
+  colgroup col {
+    width: 20%;  /* Căn chỉnh bảng rộng hơn */
+  }
 
-        .pagination-btn.bg-blue-500 {
-          background-color: #3b82f6;
-          color: white;
-        }
+  /* Cải thiện kiểu dáng của tiêu đề bảng */
+  thead {
+    background-color: #f3f4f6;
+    border-bottom: 2px solid #e5e7eb;
+  }
 
-        .pagination-btn.bg-gray-300.text-black {
-          background-color: #e2e8f0;
-          color: #1a202c;
-        }
+  th {
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    text-transform: uppercase;
+  }
 
-        .pagination-btn.bg-blue-500.text-white {
-          background-color: #3b82f6;
-          color: white;
-        }
+  /* Bảng dữ liệu */
+  tbody {
+    background-color: #fff;
+  }
 
-        .pagination-btn:hover {
-          background-color: #a0aec0;
-        }
+  tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
 
-        .pagination-btn:focus {
-          outline: none;
-          box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
-        }
-      `}</style>
+  td {
+    padding: 1rem 1.5rem;
+    font-size: 0.875rem;
+    color: #555;
+  }
+
+  /* Các biểu tượng và hình ảnh trong bảng */
+  img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  /* Phân trang */
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.5rem;
+  }
+
+  .pagination-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    margin: 0 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .pagination-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  .pagination-btn.bg-gray-300 {
+    background-color: #e2e8f0;
+    color: #6b7280;
+  }
+
+  .pagination-btn.bg-blue-500 {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  .pagination-btn.bg-gray-300.text-black {
+    background-color: #e2e8f0;
+    color: #1a202c;
+  }
+
+  .pagination-btn.bg-blue-500.text-white {
+    background-color: #3b82f6;
+    color: white;
+  }
+
+  .pagination-btn:hover {
+    background-color: #a0aec0;
+    color: #1a202c;
+  }
+
+  .pagination-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+
+  /* Các nút hành động trong bảng */
+  .action-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    height: 32px;
+    margin: 0 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .action-btn:hover {
+    background-color: #f3f4f6;
+  }
+
+  .action-btn .text-lg {
+    font-size: 18px;
+  }
+
+  /* Các biểu tượng hành động */
+  .action-btn.edit {
+    background-color: #fbbf24;
+    color: white;
+  }
+
+  .action-btn.view {
+    background-color: #10b981;
+    color: white;
+  }
+
+  .action-btn.delete {
+    background-color: #ef4444;
+    color: white;
+  }
+
+  .action-btn.edit:hover {
+    background-color: #f59e0b;
+  }
+
+  .action-btn.view:hover {
+    background-color: #059669;
+  }
+
+  .action-btn.delete:hover {
+    background-color: #dc2626;
+  }
+
+  /* Điều chỉnh khoảng cách giữa phần "Tất cả danh mục" và bảng */
+  .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .sm\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .lg\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .py-10 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+`}</style>
     </div>
   );
 };

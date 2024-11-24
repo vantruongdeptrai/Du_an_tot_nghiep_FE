@@ -26,19 +26,53 @@ const EditOrder = () => {
       try {
         const response = await fetch(`http://localhost:8000/api/orders/${id}`);
         const data = await response.json();
+
+        // Gọi API để lấy thông tin biến thể
+        const variantResponse = await fetch(
+          `http://localhost:8000/api/product-variants`
+        );
+        const variants = await variantResponse.json();
+
+        // Gọi API để lấy thông tin màu sắc và kích thước
+        const colorResponse = await fetch(`http://localhost:8000/api/colors`);
+        const colors = await colorResponse.json();
+
+        const sizeResponse = await fetch(`http://localhost:8000/api/sizes`);
+        const sizes = await sizeResponse.json();
+
+        // Kết hợp dữ liệu để hiển thị
+        const updatedProducts = data.order.order_items.map((item: any) => {
+          const variant = variants.find(
+            (v) => v.id === item.product_variant_id
+          );
+
+          const color = colors.find((c: any) => c.id === variant?.color_id);
+          const size = sizes.find((s: any) => s.id === variant?.size_id);
+
+          return {
+            ...item,
+            variant_name: `${color?.name || "Không có màu"} - ${
+              size?.name || "Không có size"
+            }`,
+            variant_price: parseFloat(variant?.final_price) || 0, // Lấy giá cuối cùng của biến thể
+            total_item_price:
+              (parseFloat(variant?.final_price) || 0) * item.quantity, // Tính tổng giá của sản phẩm theo biến thể
+          };
+        });
+
         setInputObject({
           customerName: data.order.user_name,
           phoneNumber: data.order.phone_order,
           emailAddress: data.order.email_order,
           orderNotice: data.order.user_note,
-          products: data.order.products,
-          totalPrice: data.order.total_price,
+          products: updatedProducts,
+          totalPrice: parseFloat(data.order.total_price),
           statusOrder: data.order.status_order,
           paymentType: data.order.payment_type,
           shippingAddress: data.order.shipping_address,
         });
 
-        // Cập nhật các lựa chọn trạng thái tương ứng với trạng thái hiện tại
+        // Cập nhật các trạng thái có thể chọn
         updateAvailableStatuses(data.order.status_order);
       } catch (error) {
         console.error("Lỗi khi lấy thông tin đơn hàng:", error);
@@ -129,7 +163,7 @@ const EditOrder = () => {
                 <tbody>
                   <tr className="border-b hover:bg-gray-100">
                     <td className="font-semibold text-gray-700 py-2 px-4">
-                      Customer name:
+                      Tên khách hàng:
                     </td>
                     <td className="text-gray-600 py-2 px-4">
                       {inputObject.customerName}
@@ -137,7 +171,7 @@ const EditOrder = () => {
                   </tr>
                   <tr className="border-b hover:bg-gray-100">
                     <td className="font-semibold text-gray-700 py-2 px-4">
-                      Phone number:
+                      Số điện thoại :
                     </td>
                     <td className="text-gray-600 py-2 px-4">
                       {inputObject.phoneNumber}
@@ -145,7 +179,7 @@ const EditOrder = () => {
                   </tr>
                   <tr className="border-b hover:bg-gray-100">
                     <td className="font-semibold text-gray-700 py-2 px-4">
-                      Email address:
+                      Địa chỉ email:
                     </td>
                     <td className="text-gray-600 py-2 px-4">
                       {inputObject.emailAddress}
@@ -153,7 +187,7 @@ const EditOrder = () => {
                   </tr>
                   <tr className="border-b hover:bg-gray-100">
                     <td className="font-semibold text-gray-700 py-2 px-4">
-                      Order notice:
+                      Ghi chú :
                     </td>
                     <td className="text-gray-600 py-2 px-4">
                       {inputObject.orderNotice}
@@ -161,7 +195,7 @@ const EditOrder = () => {
                   </tr>
                   <tr className="border-b hover:bg-gray-100">
                     <td className="font-semibold text-gray-700 py-2 px-4">
-                      Payment type:
+                      Phương thức thanh toán :
                     </td>
                     <td className="text-gray-600 py-2 px-4">
                       {inputObject.paymentType}
@@ -169,7 +203,7 @@ const EditOrder = () => {
                   </tr>
                   <tr className="border-b hover:bg-gray-100">
                     <td className="font-semibold text-gray-700 py-2 px-4">
-                      Shipping address:
+                      Địa chỉ nhận hàng :
                     </td>
                     <td className="text-gray-600 py-2 px-4">
                       {inputObject.shippingAddress}
@@ -177,7 +211,7 @@ const EditOrder = () => {
                   </tr>
                   <tr className="border-b hover:bg-gray-100">
                     <td className="font-semibold text-gray-700 py-2 px-4">
-                      Order status:
+                      Trạng thái đơn hàng :
                     </td>
                     <td>
                       <select
@@ -201,22 +235,81 @@ const EditOrder = () => {
                 </tbody>
               </table>
             </div>
-
-            {/* Sản phẩm trong đơn hàng */}
             <div className="border p-6 rounded-lg shadow-md bg-gray-50">
               <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mb-4">
-                Đơn hàng
+                Sản phẩm trong đơn hàng
               </h3>
-              <div className="mt-5">
-                <div className="flex justify-between">
-                  <span className="font-semibold">Tổng tiền:</span>
-                  <span>
-                    {new Intl.NumberFormat("vi-VN", {
-                      style: "currency",
-                      currency: "VND",
-                    }).format(inputObject.totalPrice)}
-                  </span>
+              {inputObject.products.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full border border-gray-300 text-sm md:text-base rounded-lg">
+                    <thead>
+                      <tr className="bg-blue-100 text-gray-800 border-b border-gray-300">
+                        <th className="text-left py-3 px-4 font-semibold">
+                          Tên sản phẩm
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold">
+                          Biến thể
+                        </th>
+                        <th className="text-right py-3 px-4 font-semibold">
+                          Số lượng
+                        </th>
+                        <th className="text-right py-3 px-4 font-semibold">
+                          Giá
+                        </th>
+                        <th className="text-right py-3 px-4 font-semibold">
+                          Tổng cộng
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {inputObject.products.map((item, index) => (
+                        <tr
+                          key={item.product_id}
+                          className={`${
+                            index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"
+                          } border-b hover:bg-blue-50`}
+                        >
+                          <td className="py-3 px-4">{item.product_name}</td>
+                          <td className="py-3 px-4">
+                            {item.variant_name || "Không có"}
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            {item.quantity}
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            {new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(item.variant_price)}{" "}
+                            {/* Hiển thị giá của biến thể */}
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            {new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND",
+                            }).format(item.total_item_price)}{" "}
+                            {/* Hiển thị tổng giá của biến thể */}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+              ) : (
+                <p>Không có sản phẩm nào trong đơn hàng.</p>
+              )}
+
+              {/* Tổng tiền cần thanh toán */}
+              <div className="mt-5 flex justify-between">
+                <span className="font-semibold text-lg">
+                  Tổng tiền cần thanh toán:
+                </span>
+                <span className="font-semibold text-lg text-green-600">
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                  }).format(inputObject.totalPrice)}
+                </span>
               </div>
             </div>
           </div>

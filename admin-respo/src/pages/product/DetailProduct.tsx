@@ -65,7 +65,7 @@ const DetailProduct: React.FC = () => {
       );
       setVariants(variantsData);
     } catch (error) {
-      console.error("Failed to fetch product variant:", error);
+      console.error("Lỗi khi lấy biến thể sản phẩm:", error);
       setError("Lỗi khi lấy biến thể sản phẩm");
     }
   };
@@ -75,7 +75,7 @@ const DetailProduct: React.FC = () => {
       const response = await axios.get(`http://localhost:8000/api/sizes`);
       setSizes(response.data);
     } catch (error) {
-      console.error("Failed to fetch sizes:", error);
+      console.error("Lỗi khi lấy kích thước:", error);
       setError("Lỗi khi lấy kích thước sản phẩm");
     }
   };
@@ -85,7 +85,7 @@ const DetailProduct: React.FC = () => {
       const response = await axios.get(`http://localhost:8000/api/colors`);
       setColors(response.data);
     } catch (error) {
-      console.error("Failed to fetch colors:", error);
+      console.error("Lỗi khi lấy màu sắc:", error);
       setError("Lỗi khi lấy màu sắc sản phẩm");
     }
   };
@@ -126,7 +126,14 @@ const DetailProduct: React.FC = () => {
         <div className="space-y-4">
           <p className="text-lg font-semibold">
             <span className="text-gray-600">Giá:</span>{" "}
-            <span className="text-blue-600">{product.price} $</span>
+            <span className="text-blue-600">
+              {new Intl.NumberFormat("vi-VN", {
+                style: "currency",
+                currency: "VND",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(product.price)}
+            </span>
           </p>
           <p className="text-lg font-semibold">
             <span className="text-gray-600">Danh mục:</span>{" "}
@@ -173,7 +180,13 @@ const DetailProduct: React.FC = () => {
                         <strong>SKU:</strong> {variant.sku}
                       </p>
                       <p className="text-gray-700">
-                        <strong>Giá:</strong> {variant.price} $
+                        <strong>Giá:</strong>{" "}
+                        {new Intl.NumberFormat("vi-VN", {
+                          style: "currency",
+                          currency: "VND",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }).format(variant.price)}
                       </p>
                     </div>
                   );

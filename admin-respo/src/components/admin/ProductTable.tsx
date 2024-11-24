@@ -9,11 +9,10 @@ const ProductTable = () => {
   const { categories } = useCategory();
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 5;
-  
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((cat) => cat.id == categoryId);
-    return category ? category.name : "unknown";
+    return category ? category.name : "Không xác định";
   };
 
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -22,7 +21,6 @@ const ProductTable = () => {
     indexOfFirstProduct,
     indexOfLastProduct
   );
-  
 
   const totalPages = Math.ceil(products.length / productsPerPage);
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -55,28 +53,28 @@ const ProductTable = () => {
         <thead className="border-b border-white/10 text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
           <tr>
             <th scope="col" className="py-2 pl-4 pr-8 font-semibold">
-              Product
+              Sản phẩm
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Description
+              Mô tả
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Price
+              Giá
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Category
+              Danh mục
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              New Product
+              Sản phẩm mới
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Best Seller Product
+              Sản phẩm bán chạy
             </th>
             <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Featured Product
+              Sản phẩm nổi bật
             </th>
             <th scope="col" className="py-2 pl-0 pr-4 text-right font-semibold">
-              Actions
+              Hành động
             </th>
           </tr>
         </thead>
@@ -102,7 +100,12 @@ const ProductTable = () => {
               </td>
               <td className="py-4 pl-0 pr-4 text-sm leading-6">
                 <div className="dark:text-whiteSecondary text-blackPrimary block">
-                  ${item.price}
+                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND",
+                    minimumFractionDigits: 0, // Không hiển thị phần thập phân
+                    maximumFractionDigits: 0, // Không hiển thị phần thập phân
+                  }).format(item.price)}
                 </div>
               </td>
               <td className="py-4 pl-0 pr-8 text-sm leading-6 dark:text-rose-200 text-rose-600 font-medium">
@@ -166,7 +169,7 @@ const ProductTable = () => {
           } rounded`}
           disabled={currentPage === 1}
         >
-          Previous
+          Trước
         </button>
         {pageNumbers.map((number) => (
           <button
@@ -190,7 +193,7 @@ const ProductTable = () => {
           } rounded`}
           disabled={currentPage === totalPages}
         >
-          Next
+          Tiếp theo
         </button>
       </div>
     </div>
