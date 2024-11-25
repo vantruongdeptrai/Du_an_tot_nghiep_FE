@@ -107,7 +107,7 @@ const SignUpScreen = () => {
                                     Use 8 or more characters with a mix of letters, numbers & symbols
                                 </span>
 
-                                <CheckboxGroup>
+                                {/* <CheckboxGroup>
                                     <li className="flex items-center">
                                         <input type="checkbox" />
                                         <span className="text-sm">
@@ -125,7 +125,7 @@ const SignUpScreen = () => {
                                         <input type="checkbox" />
                                         <span className="text-sm">Subscribe to our monthly newsletter</span>
                                     </li>
-                                </CheckboxGroup>
+                                </CheckboxGroup> */}
                                 <BaseButtonBlack type="submit" className="form-submit-btn">
                                     Sign Up
                                 </BaseButtonBlack>

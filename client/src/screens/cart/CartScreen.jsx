@@ -58,6 +58,7 @@ const CartScreen = () => {
 
     const [cartItems, setCartItems] = useState([]);
     const [selectedItems, setSelectedItems] = useState([]);
+    
     const {colors} = useColors();
     const {sizes} = useSizes();
     const { coupons } = useCoupons();
@@ -77,7 +78,7 @@ const CartScreen = () => {
                     });
                     if (response.ok) {
                         const cartData = await response.json();
-
+                        
                         setCartItems(cartData.cart || []);
                     } else {
                         console.error("Failed to fetch cart from server.");

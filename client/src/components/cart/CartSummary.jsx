@@ -10,6 +10,7 @@ import formatCurrency from "../../utils/formatUtils";
 const CartSummaryWrapper = styled.div`
     background-color: ${defaultTheme.color_flash_white};
     padding: 16px;
+    border-radius: 5px;
 
     .checkout-btn {
         min-width: 100%;

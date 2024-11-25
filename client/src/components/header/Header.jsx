@@ -130,10 +130,6 @@ const Header = () => {
     const filteredCartItems = carts?.cart.filter(item => item.deleted_at == null);
     const cartLocalStorage = JSON.parse(localStorage.getItem("cart"));
     const cartLength = user ? filteredCartItems?.length : cartLocalStorage?.length;
-    
-    
-    
-
     const handleSubmit = (e) => {
         e.preventDefault();
         navigate(`/search?name=${keyword}`);

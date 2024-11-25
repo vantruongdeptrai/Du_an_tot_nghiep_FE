@@ -26,8 +26,11 @@ const useOrder = () => {
             //     const priceAfterDiscount = itemPrice - itemDiscount;
             //     return acc + priceAfterDiscount; // Cộng dồn giá trị sau giảm giá vào tổng giá trị đơn hàng
             // }, 0);
-            const couponName = orderItems.map((item) => item.coupon_name.toUpperCase());
-            
+            const couponNames = [...new Set(orderItems.map((item) => item.coupon_name))];
+            const couponName = couponNames.length > 0 ? couponNames[0] : null;
+
+            console.log(couponName);
+
             const orderData = {
                 user_id: id,
                 ...data,
@@ -39,7 +42,7 @@ const useOrder = () => {
                           }
                         : { product_id: item.product_id, quantity: item.quantity };
                 }),
-                coupon_name: couponName
+                coupon_name: couponName,
             };
             console.log(orderData);
 
@@ -71,6 +74,7 @@ const useOrder = () => {
                 toast.success("Order created successfully!");
             }
         } catch (error) {
+            console.log(error);
             toast.error("error");
         }
     };

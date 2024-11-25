@@ -11,7 +11,6 @@ import ProductServices from "../../components/product/ProductServices";
 import { breakpoints } from "../../styles/themes/default";
 import { defaultTheme } from "../../styles/themes/default";
 import apiClient from "../../api/axiosConfig";
-import Cookies from "js-cookie";
 import formatCurrency from "../../utils/formatUtils";
 import { toast } from "react-toastify";
 const DetailsScreenWrapper = styled.main`
@@ -194,6 +193,55 @@ const ProductColorWrapper = styled.div`
     }
 `;
 
+const IncreaAndDecreaWrapper = styled.div`
+    margin-top: 32px;
+
+    @media (max-width: ${breakpoints.sm}) {
+        margin-top: 24px;
+    }
+
+    .prod-colors-top {
+        margin-bottom: 16px;
+    }
+
+    .prod-colors-list {
+        column-gap: 12px;
+    }
+
+    .prod-colors-item {
+        position: relative;
+        width: 22px;
+        height: 22px;
+        transition: ${defaultTheme.default_transition};
+
+        &:hover {
+            scale: 0.9;
+        }
+
+        input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 22px;
+            height: 22px;
+            opacity: 0;
+            cursor: pointer;
+
+            &:checked + span {
+                outline: 1px solid ${defaultTheme.color_gray};
+                outline-offset: 3px;
+            }
+        }
+
+        .prod-colorbox {
+            border-radius: 100%;
+            width: 22px;
+            height: 22px;
+            display: inline-block;
+        }
+    }
+`;
+
 const ProductDetailsScreen = () => {
     const { id } = useParams();
     const [product, setProduct] = useState([]);
@@ -205,6 +253,8 @@ const ProductDetailsScreen = () => {
     const [variants, setVariants] = useState([]);
     const [variantPrice, setVariantPrice] = useState(null);
     const [variantStock, setVariantStock] = useState(null);
+    const [quantity, setQuantity] = useState(1);
+    
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
         { label: "Shop", link: "" },
@@ -287,6 +337,11 @@ const ProductDetailsScreen = () => {
         let finalPrice = product.price; // Default to base price
         let productVariantId = null;
 
+        if (!selectedSize || !selectedColor) {
+            toast.warn("Vui lòng chọn đầy đủ kích thước và màu sắc trước khi thêm vào giỏ hàng.");
+            return;
+        }
+
         if (selectedSize && selectedColor) {
             const selectedVariant = variants.find(
                 (variant) => variant.size_id === selectedSize && variant.color_id === selectedColor
@@ -295,18 +350,22 @@ const ProductDetailsScreen = () => {
                 finalPrice = selectedVariant.price;
                 productVariantId = selectedVariant.id; // Capture product_variant_id
             }
+            if (!selectedVariant || selectedVariant.quantity <= 0) {
+                toast.error("Sản phẩm đã hết hàng, không thể thêm vào giỏ.");
+                return;
+            }
         }
 
         if (existingProduct) {
-            existingProduct.quantity += 1;
+            existingProduct.quantity += quantity;
         } else {
             if (product && product.id === productId) {
                 cart.push({
                     product_id: product.id,
                     name: product.name,
                     image: product.image_url,
+                    quantity: quantity,
                     price: finalPrice,
-                    quantity: 1,
                     size: selectedSize || null,
                     color: selectedColor || null,
                     product_variant_id: productVariantId, // Add variant ID to local cart
@@ -320,7 +379,7 @@ const ProductDetailsScreen = () => {
                 "/cart/add/guest",
                 {
                     product_id: productId,
-                    quantity: existingProduct ? existingProduct.quantity : 1,
+                    quantity: quantity,
                     price: finalPrice,
                     size: selectedSize || null,
                     color: selectedColor || null,
@@ -329,7 +388,7 @@ const ProductDetailsScreen = () => {
                 { withCredentials: true }
             );
             console.log(data.data.cart);
-            
+
             // localStorage.setItem("session_id", data.data.session_id);
             toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).");
             return;
@@ -344,7 +403,7 @@ const ProductDetailsScreen = () => {
                     body: JSON.stringify({
                         user_id: user.id,
                         product_id: productId,
-                        quantity: 1,
+                        quantity: quantity,
                         price: finalPrice,
                         size: selectedSize || null,
                         color: selectedColor || null,
@@ -393,7 +452,7 @@ const ProductDetailsScreen = () => {
                                 <div className="prod-size-top flex items-center flex-wrap">
                                     <p className="text-lg font-semibold text-outerspace">Select size</p>
                                 </div>
-                                <div className="prod-size-list flex items-center">
+                                <div className="prod-size-list flex items-center" style={{ margin: "10px 20px" }}>
                                     {sizes.map((size, index) => (
                                         <div className="prod-size-item" key={index}>
                                             <input
@@ -447,20 +506,52 @@ const ProductDetailsScreen = () => {
                             </ProductColorWrapper>
                         )}
 
+                        <IncreaAndDecreaWrapper>
+                            <div className="prod-size-top flex items-center flex-wrap">
+                                <p className="text-lg font-semibold text-outerspace">Select quantity</p>
+                            </div>
+                            <div className="flex btn-and-price">
+                                <button
+                                    style={{ height: 25, fontSize: 25 }}
+                                    className="prod-add-btn"
+                                    onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
+                                >
+                                    -
+                                </button>
+                                <span className="prod-add-btn">{quantity}</span>
+                                <button
+                                    style={{ height: 25, fontSize: 25 }}
+                                    className="prod-add-btn"
+                                    onClick={() => setQuantity((prev) => prev + 1)}
+                                >
+                                    +
+                                </button>
+                            </div>
+                        </IncreaAndDecreaWrapper>
+
                         <div className="btn-and-price flex items-center flex-wrap">
                             <button
-                                style={{ padding: 10, fontSize: 16 }}
+                                style={{
+                                    padding: 10,
+                                    fontSize: 16,
+                                    opacity: variantStock === 0 ? 0.5 : 1,
+                                    cursor: variantStock === 0 ? "not-allowed" : "pointer",
+                                }}
                                 className="prod-add-btn"
                                 onClick={() => handleAddToCart(product.id)}
+                                disabled={variantStock === 0}
                             >
                                 <div className="prod-add-btn-icon">
-                                    <i className="bi bi-cart2"></i>
+                                    <i className={variantStock === 0 ? "bi bi-cart-x" : "bi bi-cart2"}></i>
                                 </div>
-                                <div className="prod-add-btn-text">Add to cart</div>
+                                <div className="prod-add-btn-text">
+                                    {variantStock === 0 ? "Out of stock" : "Add to cart"}
+                                </div>
                             </button>
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
                                 <div>
-                                    Price: {formatCurrency(variantPrice)} <span style={{opacity: 0.6}}>({variantStock} products)</span>
+                                    Price: {formatCurrency(variantPrice)}{" "}
+                                    <span style={{ opacity: 0.6 }}>({variantStock > 0 ? `${variantStock} products` : 'đã hết hàng'})</span>
                                 </div>
                             </div>
                         </div>

@@ -9,6 +9,9 @@ import useComment from "../../hooks/useComment";
 import { PropTypes } from "prop-types";
 import { useForm } from "react-hook-form";
 import formatDate from "../../utils/formatDate";
+import useProduct from "../../hooks/useProduct";
+import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const DetailsContent = styled.div`
     margin-top: 60px;
@@ -129,16 +132,24 @@ const DescriptionTabsWrapper = styled.div`
 const ProductDescriptionTab = ({ product_id, user }) => {
     const [activeDesTab, setActiveDesTab] = useState(productDescriptionTabHeads[0].tabHead);
     const { comments, createComments } = useComment();
+    const { products } = useProduct();
+
+    const productDescription = products.find((item) => item.id == product_id);
 
     const handleTabChange = (tabHead) => {
         setActiveDesTab(tabHead);
     };
 
     const commentUser = comments ? comments.filter((comment) => comment.product_id == product_id) : [];
-    const { register, handleSubmit} = useForm();
+    const { register, handleSubmit } = useForm();
 
     const onSubmit = (data) => {
-        createComments(data);
+        if (!user) {
+            toast.error("You must log in to comment.");
+            return;
+        }
+
+        createComments({ ...data, product_id });
     };
 
     return (
@@ -162,7 +173,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                         <span
                                             className={`tabs-badge inline-flex items-center justify-center text-white tabs-badge-${tab.badgeColor}`}
                                         >
-                                            {tab.badgeValue}
+                                            {commentUser.length}
                                         </span>
                                     )}
                                 </button>
@@ -173,9 +184,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                         <div className={`tabs-content ${activeDesTab === "tabDescription" ? "show" : ""}`}>
                             <ContentStylings>
                                 <p>
-                                    100% Bio-washed Cotton makes the fabric extra soft & silky. Lorem, ipsum dolor sit
-                                    amet consectetur adipisicing elit. Consectetur, odio. Infinite range of matte-finish
-                                    HD prints.
+                                    <p>{productDescription?.description}</p>
                                 </p>
                                 <h4>Specifications:</h4>
                                 <ul>
@@ -282,7 +291,6 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                         </div>
                     </div>
                 </DescriptionTabsWrapper>
-                <ProductDescriptionMedia />
             </div>
         </DetailsContent>
     );

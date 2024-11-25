@@ -8,7 +8,7 @@ const navMenuData = [
   },
   {
     id: "nav-menu-2",
-    menuLink: "/",
+    menuLink: "/product/vi-cam-tay",
     menuText: "Men",
   },
   {
