@@ -1,6 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
 import { Link } from "react-router-dom";
@@ -122,7 +122,7 @@ const ProductsContentRight = styled.div`
 `;
 
 const ProductListPage = () => {
-    const { categories, getAllCategories } = useCategory();
+    const { categories } = useCategory();
 
     // State để lưu các bộ lọc trong một đối tượng duy nhất
     const [filters, setFilters] = useState({
@@ -131,8 +131,6 @@ const ProductListPage = () => {
         selectedColors: [],
         selectedSizes: [],
     });
-
-    const navigate = useNavigate();
 
     // Hàm lấy dữ liệu sản phẩm từ API với các bộ lọc
     const fetchFilteredProducts = async () => {
@@ -144,8 +142,6 @@ const ProductListPage = () => {
                 throw new Error("Network response was not ok");
             }
             const data = await response.json();
-            console.log(response);
-
             return data;
         } catch (error) {
             console.error("Error fetching filtered products:", error);
@@ -153,11 +149,7 @@ const ProductListPage = () => {
         }
     };
 
-    const {
-        data = [],
-        isError,
-        error,
-    } = useQuery(
+    const { data = [] } = useQuery(
         ["filteredProducts", filters.minRange, filters.maxRange, filters.selectedColors, filters.selectedSizes],
         fetchFilteredProducts,
         {
@@ -169,14 +161,8 @@ const ProductListPage = () => {
     const getCategoryById = (categoryId) => {
         return categories ? categories.find((category) => category.id == categoryId) : undefined;
     };
-
-    // Hàm thêm vào giỏ hàng (chưa triển khai)
-    const handleAddToCart = (productId) => {
-        // Implement the add-to-cart functionality here
-    };
     const { slug } = useParams();
     const getProductByCategory = slug ? data.filter((product) => product.category.slug === slug) : data;
-    console.log(getProductByCategory);
 
     return (
         <ProductsContent>
@@ -209,7 +195,11 @@ const ProductListPage = () => {
                                         className="product-image"
                                     />
                                     <div className="product-info">
-                                        <h3 className="product-name">{product.name.length > 20 ? product.name.substring(0, 20) + '...' : product.name}</h3>
+                                        <h3 className="product-name">
+                                            {product.name.length > 20
+                                                ? product.name.substring(0, 20) + "..."
+                                                : product.name}
+                                        </h3>
                                         <p className="product-price">Price: {formatCurrency(product.price)}</p>
                                         {category && <p className="category-info">Danh mục: {category.name}</p>}
                                     </div>

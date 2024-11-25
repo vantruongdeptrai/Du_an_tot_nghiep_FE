@@ -77,8 +77,8 @@ const SignInScreen = () => {
             toast.success("Đăng nhập thành công!");
 
             setTimeout(() => {
-                navigate("/account");
-            }, 500);
+                navigate("/");
+            }, 200);
         } else if (error) {
             toast.error(error);
         }
@@ -96,14 +96,14 @@ const SignInScreen = () => {
                             <FormTitle>
                                 <h3>Sign In</h3>
                             </FormTitle>
-                            <AuthOptions />
-                            <div className="form-separator flex items-center justify-center">
+                            {/* <AuthOptions /> */}
+                            {/* <div className="form-separator flex items-center justify-center">
                                 <span className="separator-line"></span>
                                 <span className="separator-text inline-flex items-center justify-center text-white">
                                     OR
                                 </span>
                                 <span className="separator-line"></span>
-                            </div>
+                            </div> */}
 
                             <form onSubmit={handleSubmit}>
                                 <FormElement>

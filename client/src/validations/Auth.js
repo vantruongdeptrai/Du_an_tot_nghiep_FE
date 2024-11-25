@@ -12,4 +12,9 @@ const registerSchema = z
         path: ["password_confirmation"], // Đặt thông báo lỗi ở trường xác nhận mật khẩu
     });
 
-export { registerSchema };
+const loginSchema = z.object({
+    email: z.string().trim().email("Email is not valid!"),
+    password: z.string().min(8, "Password must be at least 8 characters long!"),
+});
+
+export { registerSchema, loginSchema };

@@ -4,10 +4,17 @@ import { Container } from "../../styles/styles";
 import { staticImages } from "../../utils/images";
 import PasswordInput from "../../components/auth/PasswordInput";
 import { BaseButtonBlack } from "../../styles/button";
+import { useForm } from "react-hook-form";
 
 const ChangePwdScreenWrapper = styled.section``;
 
 const ChangePasswordScreen = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  const onSubmit = (data) => {
+    console.log(data); // Xử lý dữ liệu form khi submit
+  };
+
   return (
     <ChangePwdScreenWrapper>
       <FormGridWrapper>
@@ -24,16 +31,24 @@ const ChangePasswordScreen = () => {
               <FormTitle>
                 <h3>Create New Password</h3>
                 <p>
-                  Your new password mst be different from previous used
+                  Your new password must be different from previous used
                   passwords.
                 </p>
               </FormTitle>
-              <form>
-                <PasswordInput fieldName="Password" name="password" />
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <PasswordInput
+                  fieldName="Password"
+                  name="password"
+                  register={register}
+                  required="Password is required"
+                  errorMsg={errors.password?.message}
+                />
                 <PasswordInput
                   fieldName="Confirm Password"
                   name="confirm_password"
-                  errorMsg="New password and confirm password do not match"
+                  register={register}
+                  required="Confirm password is required"
+                  errorMsg={errors.confirm_password?.message}
                 />
                 <BaseButtonBlack type="submit" className="form-submit-btn">
                   Reset Password

@@ -222,7 +222,7 @@ const ProductFilter = ({
                     <div style={{ gap: 20 }} className="flex flex-col">
                         {colors.map((color) => (
                             <div
-                                style={{ gap: 20, border: "1px solid", padding: 10, borderRadius: 5 }}
+                                style={{ gap: 20}}
                                 className="flex"
                                 key={color.id}
                             >
@@ -260,7 +260,7 @@ const ProductFilter = ({
                     <div style={{ gap: 20 }} className="flex flex-col">
                         {sizes.map((size) => (
                             <div
-                                style={{ gap: 20, border: "1px solid", padding: 10, borderRadius: 5 }}
+                                style={{ gap: 20}}
                                 className="flex"
                                 key={size.id}
                             >
@@ -271,7 +271,7 @@ const ProductFilter = ({
                                     onChange={() => handleSizeChange(size.id)}
                                 />
                                 <label
-                                    style={{ border: "1px solid", padding: "5px 20px", borderRadius: 2 }}
+                                    style={{ border: "1px solid", padding: "2px 15px", borderRadius: 2 }}
                                     htmlFor={`size-${size.id}`}
                                 >
                                     {size.name}

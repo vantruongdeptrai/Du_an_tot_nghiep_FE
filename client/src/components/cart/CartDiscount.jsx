@@ -4,7 +4,7 @@ import { Input } from "../../styles/form";
 import { BaseButtonOuterspace, BaseLinkOutlinePlatinum } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { toast } from "react-toastify";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import formatCurrency from "../../utils/formatUtils";
 
 const CartDiscountWrapper = styled.div`
@@ -46,35 +46,41 @@ const CartDiscountWrapper = styled.div`
 
 const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
     const [couponCode, setCouponCode] = useState("");
-    console.log(couponCode);
 
     // Hàm xử lý khi áp dụng mã giảm giá
     const handleApplyCoupon = (e) => {
         e.preventDefault();
-        const coupon = coupons.find((coupon) => coupon.name == couponCode);
-
-        // Thay đổi từ toast.err thành toast.error
-        if (!coupon) {
-            toast.error("Invalid coupon code!");
-            return;
-        }
-
-        if (selectedItems.length === 0) {
-            toast.warn("Please select at least one product to apply the coupon!");
-            return;
-        }
-
-        const subTotal = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
-        console.log(subTotal);
-        
-        if (subTotal < coupon.min_order_value) {
-            toast.warn(`Your total must be at least ${formatCurrency(coupon.min_order_value)} to apply a coupon.`);
-            return;
-        }
-
-        // Nếu mã giảm giá hợp lệ, cập nhật trạng thái
-        setAppliedCoupon(coupon);
-        toast.success("Coupon applied successfully!");
+         // Kiểm tra mã giảm giá có bị trống không
+         const trimmedCouponCode = couponCode.trim();
+         if (!trimmedCouponCode) {
+             toast.warn("Please enter a coupon code!");
+             return;
+         }
+         console.log(couponCode);
+         
+ 
+         const coupon = coupons.find((coupon) => coupon.name === trimmedCouponCode);
+         
+         if (!coupon) {
+             toast.error("Invalid coupon code!");
+             return;
+         }
+ 
+         if (selectedItems.length === 0) {
+             toast.warn("Please select at least one product to apply the coupon!");
+             return;
+         }
+ 
+         const subTotal = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+ 
+         if (subTotal < coupon.min_order_value) {
+             toast.warn(`Your total must be at least ${formatCurrency(coupon.min_order_value)} to apply a coupon.`);
+             return;
+         }
+ 
+         // Nếu mã giảm giá hợp lệ, cập nhật trạng thái
+         setAppliedCoupon(coupon);
+         toast.success("Coupon applied successfully!");
     };
     return (
         <CartDiscountWrapper>
@@ -87,7 +93,7 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
                         className="coupon-input w-full"
                         placeholder="Search"
                         value={couponCode}
-                        onInput={(e) => setCouponCode(e.target.value)}
+                        onChange={(e) => setCouponCode(e.target.value)}
                     />
                     <BaseButtonOuterspace type="submit" className="coupon-btn no-wrap h-full">
                         Apply Coupon
@@ -102,16 +108,17 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
 };
 
 CartDiscount.propTypes = {
-  coupons: PropTypes.array.isRequired, // Hoặc kiểu phù hợp với coupons của bạn
-  setAppliedCoupon: PropTypes.func.isRequired, // Hàm cập nhật coupon
-  selectedItems: PropTypes.arrayOf( // Đảm bảo selectedItems là một mảng
-      PropTypes.shape({
-          product_id: PropTypes.number.isRequired, // Hoặc kiểu phù hợp với dữ liệu của bạn
-          product_variant_id: PropTypes.number.isRequired, // Tùy thuộc vào dữ liệu của bạn
-          price: PropTypes.number.isRequired,
-          quantity: PropTypes.number.isRequired,
-      })
-  ).isRequired, // Kiểu của selectedItems là mảng các sản phẩm
+    coupons: PropTypes.array.isRequired, // Hoặc kiểu phù hợp với coupons của bạn
+    setAppliedCoupon: PropTypes.func.isRequired, // Hàm cập nhật coupon
+    selectedItems: PropTypes.arrayOf(
+        // Đảm bảo selectedItems là một mảng
+        PropTypes.shape({
+            product_id: PropTypes.number.isRequired, // Hoặc kiểu phù hợp với dữ liệu của bạn
+            product_variant_id: PropTypes.number.isRequired, // Tùy thuộc vào dữ liệu của bạn
+            price: PropTypes.number.isRequired,
+            quantity: PropTypes.number.isRequired,
+        })
+    ).isRequired, // Kiểu của selectedItems là mảng các sản phẩm
 };
 
 export default CartDiscount;

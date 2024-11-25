@@ -7,12 +7,14 @@ import { products } from "../../data/data";
 const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
+    border: none;
 
     th,
     td {
         padding: 12px;
         border: 1px solid #ddd;
         text-align: left;
+        border: none;
     }
 
     th {
@@ -22,29 +24,57 @@ const Table = styled.table`
     .delete-button {
         background-color: red;
         color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 6px 12px;
+        border: 1px solid #cc0000; // Thêm border cho nút xóa
+        border-radius: 8px; // Thêm bo góc cho nút
+        padding: 6px 16px; // Điều chỉnh kích thước nút
         cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s; // Thêm hiệu ứng khi hover
 
         &:hover {
             background-color: darkred;
+            transform: scale(1.1); // Thêm hiệu ứng phóng to khi hover
+        }
+
+        &:focus {
+            outline: none; // Loại bỏ outline khi nút được nhấn
         }
     }
 
     .quantity-button {
         background-color: #007bff;
         color: white;
-        border: none;
-        border-radius: 4px;
-        padding: 6px 12px;
+        border: 1px solid #0056b3; // Thêm border cho nút
+        border-radius: 6px; // Thêm bo góc cho nút
+        padding: 6px 16px; // Làm cho nút rộng ra
         cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s; // Thêm hiệu ứng khi hover
 
         &:hover {
             background-color: #0056b3;
+            transform: scale(1.05); // Thêm hiệu ứng phóng to khi hover
         }
 
-        margin: 0 4px;
+        &:focus {
+            outline: none; // Loại bỏ outline khi nút được nhấn
+        }
+
+        margin: 0 6px;
+    }
+
+    .quantity-value {
+        border: 1px solid #ddd; // Thêm border cho số lượng
+        padding: 6px 12px;
+        border-radius: 6px;
+        margin: 0 6px;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .product-name {
+        white-space: nowrap; /* Không cho phép xuống dòng */
+        overflow: hidden; /* Ẩn phần văn bản vượt ra ngoài */
+        text-overflow: ellipsis; /* Hiển thị dấu ba chấm '...' khi văn bản quá dài */
+        max-width: 180px; /* Giới hạn chiều rộng của cột tên sản phẩm */
     }
 `;
 
@@ -83,7 +113,7 @@ const CartTable = ({
             </thead>
             <tbody>
                 {cartItems.length > 0 ? (
-                    cartItems.map((item, index) => {        
+                    cartItems.map((item, index) => {
                         const isSelected = selectedItems.some(
                             (selected) =>
                                 selected.product_id === item.product_id &&
@@ -117,7 +147,8 @@ const CartTable = ({
                                 <td>
                                     {item.size && item.color ? (
                                         <>
-                                            Size: {isLoggedIn ? item.size : getSizeName(item.size)}, Màu: {isLoggedIn ? item.color : getColorName(item.color)}
+                                            Size: {isLoggedIn ? item.size : getSizeName(item.size)}, Màu:{" "}
+                                            {isLoggedIn ? item.color : getColorName(item.color)}
                                         </>
                                     ) : (
                                         <span>Không có biến thể</span>
