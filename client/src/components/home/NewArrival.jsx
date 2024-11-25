@@ -63,7 +63,7 @@ const NewArrival = () => {
     return (
         <Section>
             <Container>
-                <Title titleText={"New Arrival"} />
+                <Title titleText={"Sản phẩm mới"} />
                 <ArrivalSliderWrapper>
                     <Slider nextArrow={<CustomNextArrow />} prevArrow={<CustomPrevArrow />} {...settings}>
                         {newProduct?.map((newArrival, index) => {

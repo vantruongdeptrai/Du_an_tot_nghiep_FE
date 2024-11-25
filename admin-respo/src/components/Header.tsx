@@ -14,15 +14,24 @@ const Header = () => {
   const { darkMode } = useAppSelector((state) => state.darkMode);
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<{
+    name: string;
+    role: string;
+  } | null>(null);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
-    console.log("User in localStorage:", user); // Log giá trị của user
 
     if (user) {
+      const parsedUser = JSON.parse(user); // Chuyển chuỗi JSON thành object
+      setUserInfo({
+        name: parsedUser.name,
+        role: parsedUser.role_id === 1 ? "Admin" : "User",
+      });
       setIsLoggedIn(true);
-      console.log("User is logged in.");
+      console.log("User is logged in:", parsedUser.name);
     } else {
+      setIsLoggedIn(false);
       console.log("User is not logged in.");
     }
   }, []);
@@ -62,12 +71,22 @@ const Header = () => {
                 className="rounded-full w-10 h-10"
               />
               <div className="flex flex-col">
-                <p className="dark:text-whiteSecondary text-blackPrimary text-base max-xl:text-sm">
-                  Sherwood Gruninger
-                </p>
-                <p className="dark:text-whiteSecondary text-blackPrimary text-sm max-xl:text-xs">
-                  Web Developer
-                </p>
+                {userInfo ? (
+                  <>
+                    <p className="dark:text-whiteSecondary text-blackPrimary text-base max-xl:text-sm">
+                      {userInfo.name}
+                    </p>
+                    <p className="dark:text-whiteSecondary text-blackPrimary text-sm max-xl:text-xs">
+                      {userInfo.role}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="dark:text-whiteSecondary text-blackPrimary text-base max-xl:text-sm">
+                      Khách
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </Link>
