@@ -4,14 +4,14 @@ import { productDescriptionTabHeads } from "../../data/data";
 import Title from "../common/Title";
 import { ContentStylings } from "../../styles/styles";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import ProductDescriptionMedia from "./ProductDescriptionMedia";
 import useComment from "../../hooks/useComment";
 import { PropTypes } from "prop-types";
-import { useForm } from "react-hook-form";
+// import { useForm } from "react-hook-form";
 import formatDate from "../../utils/formatDate";
 import useProduct from "../../hooks/useProduct";
-import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+
+// import { toast } from "react-toastify";
+
 
 const DetailsContent = styled.div`
     margin-top: 60px;
@@ -131,7 +131,9 @@ const DescriptionTabsWrapper = styled.div`
 
 const ProductDescriptionTab = ({ product_id, user }) => {
     const [activeDesTab, setActiveDesTab] = useState(productDescriptionTabHeads[0].tabHead);
-    const { comments, createComments } = useComment();
+
+    const { comments} = useComment();
+
     const { products } = useProduct();
 
     const productDescription = products.find((item) => item.id == product_id);
@@ -141,16 +143,18 @@ const ProductDescriptionTab = ({ product_id, user }) => {
     };
 
     const commentUser = comments ? comments.filter((comment) => comment.product_id == product_id) : [];
-    const { register, handleSubmit } = useForm();
 
-    const onSubmit = (data) => {
-        if (!user) {
-            toast.error("You must log in to comment.");
-            return;
-        }
+    // const { register, handleSubmit } = useForm();
 
-        createComments({ ...data, product_id });
-    };
+    // const onSubmit = (data) => {
+    //     if (!user) {
+    //         toast.error("You must log in to comment.");
+    //         return;
+    //     }
+
+    //     createComments({ ...data, product_id });
+    // };
+
 
     return (
         <DetailsContent>
@@ -252,7 +256,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                 ) : (
                                     <p>No comments yet.</p>
                                 )}
-                                <form onSubmit={handleSubmit(onSubmit)} action="">
+                                {/* <form onSubmit={handleSubmit(onSubmit)} action="">
                                     <input {...register("user_id")} type="hidden" value={user?.id} />
                                     <input {...register("product_id")} type="hidden" value={product_id} />
                                     <textarea
@@ -283,7 +287,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                     >
                                         Submit
                                     </button>
-                                </form>
+                                </form> */}
                             </div>
                         </div>
                         <div className={`tabs-content content-stylings ${activeDesTab === "tabQNA" ? "show" : ""}`}>

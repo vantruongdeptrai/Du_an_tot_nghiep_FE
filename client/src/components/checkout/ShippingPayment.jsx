@@ -178,7 +178,7 @@ const ShippingPayment = () => {
                 <p className="text-base text-outerspace">All transactions are secure and encrypted.</p>
                 <form>
                     <div className="list-group">
-                        <div className={`list-group-item ${!isLoggedIn ? "disabled" : ""}`}>
+                        {/* <div className={`list-group-item ${!isLoggedIn ? "disabled" : ""}`}>
                             <div className="flex items-center list-group-item-head">
                                 <Input
                                     type="radio"
@@ -211,7 +211,7 @@ const ShippingPayment = () => {
                                     </div>
                                 ))}
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="horiz-line-separator"></div>
 

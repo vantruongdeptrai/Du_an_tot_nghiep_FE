@@ -55,7 +55,7 @@ const SignUpScreen = () => {
                                 <h3>Sign Up</h3>
                                 <p className="text-base">Sign up for free to access to in any of our products</p>
                             </FormTitle>
-                            <AuthOptions />
+                            {/* <AuthOptions /> */}
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <FormElement>
                                     <div>

@@ -79,7 +79,7 @@ const ProductsContentRight = styled.div`
     }
 
     .product-name {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         margin-bottom: 8px;
     }

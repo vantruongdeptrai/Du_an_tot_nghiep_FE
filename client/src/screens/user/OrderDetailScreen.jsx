@@ -268,7 +268,6 @@ const OrderDetailScreen = () => {
     const { users } = useUser();
     const userOrder = orders.filter((order) => order.user_id == users.id);
     const orderDetail = userOrder.find((order) => order.id == id);
-    console.log(orderDetail);
     
     if (!orderDetail) return <p>Không có đơn hàng nào</p>;
 
@@ -374,7 +373,6 @@ const OrderDetailScreen = () => {
                                     
                                     const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
                                     const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
-                                    console.log(sizeDetail);
                                     
                                     return (
                                         <div className="order-d-item grid" key={item.product_id}>

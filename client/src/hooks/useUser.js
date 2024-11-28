@@ -1,31 +1,25 @@
-import { useState, useEffect } from "react";
+import { useQuery } from '@tanstack/react-query';
 import apiClient from "../api/axiosConfig";
 
+// Function to fetch user data
+const fetchUser = async () => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.get('/user', {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+    return response.data; // Returning data from the API response
+};
 
 const useUser = () => {
-    const [users, setUsers] = useState([]);
-    const fetchUser = async () => {
-        const token = localStorage.getItem('token'); 
-      
-        try {
-          const response = await apiClient.get('/user', {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          });
-          setUsers(response.data);
-        } catch (error) {
-          console.error('Error fetching user:', error);
-        }
-      };
-
-    useEffect(() => {
-        fetchUser();
-    }, [])
+    // Using useQuery to fetch user data
+    const { data: users = [], error, isLoading } = useQuery(['users'], fetchUser);
 
     return {
-        users,
-        setUsers,
+        users,     // Data for the users
+        error,     // If there was an error
+        isLoading, // Whether the data is still loading
     };
 };
 

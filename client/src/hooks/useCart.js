@@ -14,7 +14,7 @@ const getAllCart = async (userId) => {
 };
 
 const useCart = (userId) => {
-    const { data: carts, error, isLoading } = useQuery(
+    const { data: carts = [], error, isLoading } = useQuery(
         ['cart', userId || 'guest'], // queryKey đảm bảo duy nhất
         () => getAllCart(userId),   // Gọi hàm fetch tương ứng
         {
@@ -25,7 +25,8 @@ const useCart = (userId) => {
     return {
         carts,
         isLoading,
-        error
+        error,
+        getAllCart
     };
 };
 

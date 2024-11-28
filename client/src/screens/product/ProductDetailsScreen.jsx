@@ -13,6 +13,7 @@ import { defaultTheme } from "../../styles/themes/default";
 import apiClient from "../../api/axiosConfig";
 import formatCurrency from "../../utils/formatUtils";
 import { toast } from "react-toastify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 const DetailsScreenWrapper = styled.main`
     margin: 40px 0;
 `;
@@ -254,7 +255,11 @@ const ProductDetailsScreen = () => {
     const [variantPrice, setVariantPrice] = useState(null);
     const [variantStock, setVariantStock] = useState(null);
     const [quantity, setQuantity] = useState(1);
-    
+
+    const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
+    console.log(cart);
+
+
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
         { label: "Shop", link: "" },
@@ -311,9 +316,6 @@ const ProductDetailsScreen = () => {
             setVariantPrice(product.price);
         }
     }, [selectedSize, selectedColor, variants, product]);
-
-    if (loading) return <p>Loading...</p>;
-    if (!product) return <p>Product not found</p>;
     const stars = Array.from({ length: 5 }, (_, index) => (
         <span
             key={index}
@@ -326,12 +328,32 @@ const ProductDetailsScreen = () => {
             }`}
         ></span>
     ));
+    const queryClient = useQueryClient();
+    const mutation = useMutation({
+        mutationFn: async (data) => {
+            const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: JSON.stringify(data),
+            });
+            return response.json();
+        },
+        onSuccess: () => {
+            toast.success("Product added to cart successfully!");
+            queryClient.invalidateQueries(["cart"]);
+        },
+        onError: () => {
+            toast.error("Error adding product to cart.");
+        },
+    });
     const handleAddToCart = async (productId) => {
         // if(!selectedColor && !selectedSize) {
         //     toast.warn("Please select color or size!");
         //     return;
         // }
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
         const existingProduct = cart.find((item) => item.product_id === productId);
 
         let finalPrice = product.price; // Default to base price
@@ -356,6 +378,7 @@ const ProductDetailsScreen = () => {
             }
         }
 
+        let updatedCart = [...cart];
         if (existingProduct) {
             existingProduct.quantity += quantity;
         } else {
@@ -373,56 +396,44 @@ const ProductDetailsScreen = () => {
             }
         }
 
+        setCart(updatedCart);
+        localStorage.setItem("cart", JSON.stringify(cart));
+
         if (!user) {
-            localStorage.setItem("cart", JSON.stringify(cart));
             const data = await apiClient.post(
                 "/cart/add/guest",
                 {
                     product_id: productId,
                     quantity: quantity,
-                    price: finalPrice,
-                    size: selectedSize || null,
-                    color: selectedColor || null,
+
+
                     product_variant_id: productVariantId,
                 },
-                { withCredentials: true }
             );
-            console.log(data.data.cart);
+
+            console.log(data);
+
 
             // localStorage.setItem("session_id", data.data.session_id);
             toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).");
             return;
-        } else {
-            try {
-                const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                    body: JSON.stringify({
-                        user_id: user.id,
-                        product_id: productId,
-                        quantity: quantity,
-                        price: finalPrice,
-                        size: selectedSize || null,
-                        color: selectedColor || null,
-                        product_variant_id: productVariantId, // Send variant ID to server
-                    }),
-                });
 
-                if (response.ok) {
-                    toast.success("Sản phẩm đã được thêm vào giỏ hàng (database).");
-                } else {
-                    toast.error("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-                }
-            } catch (error) {
-                console.error("Lỗi khi gửi giỏ hàng lên server:", error);
-                toast.error("Lỗi kết nối đến server.");
-            }
+        }else {
+            mutation.mutate({
+                user_id: user.id,
+                product_id: productId,
+                quantity: quantity,
+                price: finalPrice,
+                size: selectedSize || null,
+                color: selectedColor || null,
+                product_variant_id: productVariantId,
+            });
+
         }
+        
     };
-
+    if (loading) return <p>Loading...</p>;
+    if (!product) return <p>Product not found</p>;
     return (
         <DetailsScreenWrapper>
             <Container>
@@ -551,7 +562,11 @@ const ProductDetailsScreen = () => {
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
                                 <div>
                                     Price: {formatCurrency(variantPrice)}{" "}
-                                    <span style={{ opacity: 0.6 }}>({variantStock > 0 ? `${variantStock} products` : 'đã hết hàng'})</span>
+
+                                    <span style={{ opacity: 0.6 }}>
+                                        ({variantStock > 0 ? `${variantStock} products` : "đã hết hàng"})
+                                    </span>
+
                                 </div>
                             </div>
                         </div>
