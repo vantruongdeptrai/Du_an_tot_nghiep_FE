@@ -1,3 +1,4 @@
+
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
@@ -23,7 +24,9 @@ const ModalWrapper = styled.div`
         display: flex;
         flex-direction: column;
         gap: 30px;
+
         height: 700px;
+
 
         @media (max-width: ${breakpoints.sm}) {
             width: 90%;
@@ -114,6 +117,7 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
     } = useForm();
 
     const onSubmit = (data) => {
+
         const address = {
             street: data.street,
             ward: data.ward,
@@ -130,6 +134,7 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
         };
         // Gọi hàm onConfirm từ parent component với dữ liệu từ form
         onConfirm(payload);
+
     };
 
     const handleClose = () => {
@@ -154,6 +159,7 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
                         {errors.user_id && <span>{errors.user_id.message}</span>}
                     </div>
                     <div>
+
                         <label htmlFor="city">Tỉnh / Thành phố</label>
                         <input
                             id="city"
@@ -195,6 +201,7 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
                             placeholder="Địa chỉ cụ thể..."
                         />
                         {errors.street && <span>{errors.street.message}</span>}
+
                     </div>
 
                     <button className="confirm-btn" type="submit">

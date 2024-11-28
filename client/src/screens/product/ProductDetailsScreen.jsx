@@ -255,8 +255,10 @@ const ProductDetailsScreen = () => {
     const [variantPrice, setVariantPrice] = useState(null);
     const [variantStock, setVariantStock] = useState(null);
     const [quantity, setQuantity] = useState(1);
+
     const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
     console.log(cart);
+
 
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
@@ -403,14 +405,19 @@ const ProductDetailsScreen = () => {
                 {
                     product_id: productId,
                     quantity: quantity,
+
+
                     product_variant_id: productVariantId,
                 },
             );
+
             console.log(data);
+
 
             // localStorage.setItem("session_id", data.data.session_id);
             toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).");
             return;
+
         }else {
             mutation.mutate({
                 user_id: user.id,
@@ -421,6 +428,7 @@ const ProductDetailsScreen = () => {
                 color: selectedColor || null,
                 product_variant_id: productVariantId,
             });
+
         }
         
     };
@@ -554,9 +562,11 @@ const ProductDetailsScreen = () => {
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
                                 <div>
                                     Price: {formatCurrency(variantPrice)}{" "}
+
                                     <span style={{ opacity: 0.6 }}>
                                         ({variantStock > 0 ? `${variantStock} products` : "đã hết hàng"})
                                     </span>
+
                                 </div>
                             </div>
                         </div>

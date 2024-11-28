@@ -101,8 +101,10 @@ const EditOrder = () => {
         setAvailableStatuses(["Đang vận chuyển", "Giao hàng thành công"]);
         break;
       case "Giao hàng thành công":
+        setAvailableStatuses(["Giao hàng thành công"]);
+        break;
       case "Đã hủy":
-        setAvailableStatuses([]);
+        setAvailableStatuses(["Đã hủy"]);
         break;
       default:
         setAvailableStatuses([]);

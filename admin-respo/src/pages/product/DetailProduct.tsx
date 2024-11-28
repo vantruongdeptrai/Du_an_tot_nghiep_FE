@@ -11,7 +11,7 @@ const DetailProduct: React.FC = () => {
   const [colors, setColors] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  console.log(product);
+  const [editingVariant, setEditingVariant] = useState<any | null>(null);
 
   const getProductById = async (id: string | undefined) => {
     if (!id) return;
@@ -87,6 +87,92 @@ const DetailProduct: React.FC = () => {
     } catch (error) {
       console.error("Lỗi khi lấy màu sắc:", error);
       setError("Lỗi khi lấy màu sắc sản phẩm");
+    }
+  };
+
+  const handleSaveVariant = async () => {
+    if (!editingVariant || !product) return;
+
+    const {
+      price,
+      quantity,
+      sku,
+      color_name,
+      size_name,
+      sale_price,
+      sale_start,
+      sale_end,
+    } = editingVariant;
+
+    // Kiểm tra giá trị trước khi gửi yêu cầu
+    if (isNaN(price) || isNaN(quantity)) {
+      setError("Giá và số lượng phải là số hợp lệ.");
+      return;
+    }
+
+    // Kiểm tra nếu sale_price chưa có giá trị
+    if (sale_price === undefined || isNaN(sale_price)) {
+      setError("Giá bán (sale_price) là bắt buộc và phải là số hợp lệ.");
+      return;
+    }
+
+    // Kiểm tra nếu sale_start chưa có giá trị
+    if (!sale_start) {
+      setError(
+        "Ngày bắt đầu chương trình khuyến mãi (sale_start) là bắt buộc."
+      );
+      return;
+    }
+
+    // Kiểm tra nếu sale_end chưa có giá trị
+    if (!sale_end) {
+      setError("Ngày kết thúc chương trình khuyến mãi (sale_end) là bắt buộc.");
+      return;
+    }
+
+    // Chuyển sale_start và sale_end thành định dạng ngày hợp lệ (YYYY-MM-DD)
+    const formattedSaleStart = new Date(sale_start).toISOString().split("T")[0]; // Lấy phần ngày
+    const formattedSaleEnd = new Date(sale_end).toISOString().split("T")[0]; // Lấy phần ngày
+
+    // Tìm size_id và color_id tương ứng
+    const size = sizes.find((s) => s.name === size_name);
+    const color = colors.find((c) => c.name === color_name);
+
+    if (!size || !color) {
+      setError("Kích thước hoặc màu sắc không hợp lệ.");
+      return;
+    }
+
+    // Đảm bảo rằng status là một giá trị hợp lệ (ví dụ: 0 hoặc 1)
+    const status = product.status !== undefined ? product.status : 1; // Mặc định là 1 nếu không có giá trị
+
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:8000/api/product-variants/${editingVariant.id}`,
+        {
+          product_id: product.id, // Thêm product_id
+          price: price,
+          sale_price: sale_price, // Thêm sale_price vào payload
+          quantity: quantity,
+          sku: sku,
+          size_id: size.id, // Sử dụng size_id thay vì size_name
+          color_id: color.id, // Sử dụng color_id thay vì color_name
+          status: status, // Thêm status
+          sale_start: formattedSaleStart, // Thêm sale_start vào payload
+          sale_end: formattedSaleEnd, // Thêm sale_end vào payload
+        }
+      );
+
+      // Cập nhật lại danh sách biến thể sau khi sửa
+      setEditingVariant(null);
+      await getProductVariantById(product?.id);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Lỗi khi lưu biến thể:", error.response?.data);
+        setError("Lỗi khi lưu biến thể: " + error.response?.data?.message);
+      } else {
+        setError("Lỗi không xác định khi lưu biến thể");
+      }
     }
   };
 
@@ -188,6 +274,12 @@ const DetailProduct: React.FC = () => {
                           maximumFractionDigits: 0,
                         }).format(variant.price)}
                       </p>
+                      <button
+                        onClick={() => setEditingVariant(variant)}
+                        className="mt-4 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
+                      >
+                        Chỉnh sửa
+                      </button>
                     </div>
                   );
                 })}
@@ -197,13 +289,154 @@ const DetailProduct: React.FC = () => {
         </div>
       </div>
 
-      {/* Mô tả sản phẩm */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Mô tả sản phẩm:
-        </h2>
-        <p className="text-gray-700 leading-relaxed">{product.description}</p>
-      </div>
+      {/* Form chỉnh sửa biến thể */}
+      {editingVariant && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
+            <h3 className="text-2xl font-bold mb-4">Chỉnh sửa biến thể</h3>
+
+            {/* Các trường nhập thông tin khác */}
+            <div className="mb-4">
+              <label className="block text-gray-700">Giá:</label>
+              <input
+                type="number"
+                value={editingVariant.price}
+                onChange={(e) =>
+                  setEditingVariant({
+                    ...editingVariant,
+                    price: parseFloat(e.target.value),
+                  })
+                }
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700">Số lượng:</label>
+              <input
+                type="number"
+                value={editingVariant.quantity}
+                onChange={(e) =>
+                  setEditingVariant({
+                    ...editingVariant,
+                    quantity: parseInt(e.target.value),
+                  })
+                }
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700">Mã SKU:</label>
+              <input
+                type="text"
+                value={editingVariant.sku}
+                onChange={(e) =>
+                  setEditingVariant({
+                    ...editingVariant,
+                    sku: e.target.value,
+                  })
+                }
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              />
+            </div>
+
+            {/* Thêm trường sale_start */}
+            <div className="mb-4">
+              <label className="block text-gray-700">
+                Ngày bắt đầu khuyến mãi:
+              </label>
+              <input
+                type="date" // Sử dụng type date thay vì datetime-local
+                value={editingVariant.sale_start || ""}
+                onChange={(e) =>
+                  setEditingVariant({
+                    ...editingVariant,
+                    sale_start: e.target.value,
+                  })
+                }
+                className="border border-gray-300 rounded-lg p-2 w-full"
+                required
+              />
+            </div>
+
+            {/* Thêm trường sale_end */}
+            <div className="mb-4">
+              <label className="block text-gray-700">
+                Ngày kết thúc khuyến mãi:
+              </label>
+              <input
+                type="date" // Sử dụng type date thay vì datetime-local
+                value={editingVariant.sale_end || ""}
+                onChange={(e) =>
+                  setEditingVariant({
+                    ...editingVariant,
+                    sale_end: e.target.value,
+                  })
+                }
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              />
+            </div>
+
+            {/* Các trường lựa chọn màu sắc và kích thước */}
+            <div className="mb-4">
+              <label className="block text-gray-700">Màu sắc:</label>
+              <select
+                value={editingVariant.color_name}
+                onChange={(e) =>
+                  setEditingVariant({
+                    ...editingVariant,
+                    color_name: e.target.value,
+                  })
+                }
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              >
+                {colors.map((color) => (
+                  <option key={color.id} value={color.name}>
+                    {color.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-gray-700">Kích thước:</label>
+              <select
+                value={editingVariant.size_name}
+                onChange={(e) =>
+                  setEditingVariant({
+                    ...editingVariant,
+                    size_name: e.target.value,
+                  })
+                }
+                className="border border-gray-300 rounded-lg p-2 w-full"
+              >
+                {sizes.map((size) => (
+                  <option key={size.id} value={size.name}>
+                    {size.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Nút Lưu và Hủy */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleSaveVariant}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Lưu
+              </button>
+              <button
+                onClick={() => setEditingVariant(null)}
+                className="ml-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+              >
+                Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

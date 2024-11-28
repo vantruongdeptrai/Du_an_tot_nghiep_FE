@@ -1,7 +1,8 @@
-// src/App.tsx
-
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-
+import {
+  RouterProvider,
+  createBrowserRouter,
+  Navigate,
+} from "react-router-dom";
 import {
   Categories,
   CreateCategory,
@@ -39,6 +40,17 @@ import CreateOperatingCost from "./pages/operating_costs/CreateOperatingCost";
 import EditOperatingCost from "./pages/operating_costs/EditOperatingCost";
 import DetailProduct from "./pages/product/DetailProduct";
 
+// Kiểm tra trạng thái đăng nhập qua localStorage
+const isAuthenticated = () => !!localStorage.getItem("token");
+
+// Component bảo vệ route
+function ProtectedRoute({ children }: { children: JSX.Element }) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
 const router = createBrowserRouter([
   {
     path: "/login",
@@ -50,7 +62,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
-    element: <HomeLayout />,
+    element: (
+      <ProtectedRoute>
+        <HomeLayout />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,

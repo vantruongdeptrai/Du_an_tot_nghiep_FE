@@ -9,7 +9,9 @@ import { PropTypes } from "prop-types";
 // import { useForm } from "react-hook-form";
 import formatDate from "../../utils/formatDate";
 import useProduct from "../../hooks/useProduct";
+
 // import { toast } from "react-toastify";
+
 
 const DetailsContent = styled.div`
     margin-top: 60px;
@@ -129,7 +131,9 @@ const DescriptionTabsWrapper = styled.div`
 
 const ProductDescriptionTab = ({ product_id, user }) => {
     const [activeDesTab, setActiveDesTab] = useState(productDescriptionTabHeads[0].tabHead);
+
     const { comments} = useComment();
+
     const { products } = useProduct();
 
     const productDescription = products.find((item) => item.id == product_id);
@@ -139,6 +143,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
     };
 
     const commentUser = comments ? comments.filter((comment) => comment.product_id == product_id) : [];
+
     // const { register, handleSubmit } = useForm();
 
     // const onSubmit = (data) => {
@@ -149,6 +154,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
 
     //     createComments({ ...data, product_id });
     // };
+
 
     return (
         <DetailsContent>

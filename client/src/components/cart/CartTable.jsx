@@ -14,10 +14,12 @@ const Table = styled.table`
         padding: 12px;
         border: none;
         text-align: left;
+
         height: 100px;
         word-wrap: break-word; /* Bọc từ dài */
         word-break: break-word; /* Chia từ nếu cần */
         white-space: normal; /* Cho phép xuống dòng */
+
     }
     th {
         background-color: #f4f4f4;
@@ -54,11 +56,13 @@ const Table = styled.table`
         &:hover {
             background-color: #0056b3;
             transform: scale(1.05); // Thêm hiệu ứng phóng to khi hover
+
         }
 
         &:focus {
             outline: none; // Loại bỏ outline khi nút được nhấn
         }
+
 
         margin: 0 6px;
     }
@@ -73,10 +77,12 @@ const Table = styled.table`
     }
 
     .product-name {
+
         white-space: normal; /* Cho phép xuống dòng */
         word-wrap: break-word; /* Bọc từ nếu quá dài */
         word-break: break-word; /* Chia nhỏ từ nếu cần */
         max-width: 150px; /* Giới hạn chiều rộng */
+
     }
 `;
 
