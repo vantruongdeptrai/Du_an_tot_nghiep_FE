@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import useComment from "../../hooks/useComment";
+import { toast } from "react-toastify";
+import apiClient from "../../api/axiosConfig";
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -23,7 +26,7 @@ const ModalWrapper = styled.div`
         display: flex;
         flex-direction: column;
         gap: 30px;
-        height: 700px;
+        height: 500px;
 
         @media (max-width: ${breakpoints.sm}) {
             width: 90%;
@@ -48,17 +51,25 @@ const ModalWrapper = styled.div`
                 color: ${defaultTheme.color_gray_dark};
             }
 
-            input {
+            textarea {
                 width: 100%;
                 padding: 12px;
                 font-size: 16px;
                 border: 1px solid ${defaultTheme.color_gray_light};
                 border-radius: 6px;
                 outline: none;
-                transition: border-color 0.2s;
+                resize: vertical;
+                min-height: 120px;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
                 &:focus {
                     border-color: ${defaultTheme.color_primary};
+                    box-shadow: 0 0 5px ${defaultTheme.color_primary};
+                }
+
+                &::placeholder {
+                    color: ${defaultTheme.color_gray};
+                    font-style: italic;
                 }
             }
 
@@ -104,32 +115,29 @@ const ModalWrapper = styled.div`
     }
 `;
 
-const AddressModal = ({ isOpen, onClose, onConfirm }) => {
+const ModalComment = ({ product, isOpen, onClose, onConfirm }) => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
+
     const {
         register,
         handleSubmit,
         reset,
         formState: { errors },
     } = useForm();
+    console.log(product);
 
-    const onSubmit = (data) => {
-        const address = {
-            street: data.street,
-            ward: data.ward,
-            district: data.district,
-            city: data.city,
-            country: data.country,
-            is_default: 0,
-        };
+    const onSubmit = async (data) => {
+        const productId = product?.id;
 
-        // Gọi hàm onConfirm từ parent component với dữ liệu từ form
-        const payload = {
-            user_id: user?.id, // lấy user_id từ localStorage hoặc dữ liệu đã có
-            addresses: [address], // Mảng địa chỉ (có thể mở rộng thêm nếu cần)
-        };
-        // Gọi hàm onConfirm từ parent component với dữ liệu từ form
-        onConfirm(payload);
+        if (!productId) {
+            toast.error("Sản phẩm không hợp lệ.");
+            return;
+        }
+
+        const response = await apiClient.post(`/products/${productId}/comments`, data);
+        onConfirm(response.data);
+
+        toast.success("Đánh giá sản phẩm thành công.");
     };
 
     const handleClose = () => {
@@ -142,63 +150,21 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
     return (
         <ModalWrapper>
             <div className="modal-content">
-                <div className="modal-header">Thêm Địa Chỉ</div>
+                <div className="modal-header">Đánh giá sản phẩm</div>
                 <form onSubmit={handleSubmit(onSubmit)} className="modal-body">
                     <div>
-                        <input
-                            value={user?.id}
-                            id="user_id"
-                            type="hidden"
-                            {...register("user_id", { required: "User ID is required" })}
-                        />
-                        {errors.user_id && <span>{errors.user_id.message}</span>}
-                    </div>
-                    <div>
-                        <label htmlFor="city">Tỉnh / Thành phố</label>
-                        <input
-                            id="city"
-                            type="text"
-                            {...register("city", { required: "Không được bỏ trống!" })}
-                            placeholder="Tỉnh / Thành phố..."
-                        />
-                        {errors.city && <span>{errors.city.message}</span>}
-                    </div>
-
-                    <div>
-                        <label htmlFor="district">Quận / Huyện</label>
-                        <input
-                            id="district"
-                            type="text"
-                            {...register("district", { required: "Không được bỏ trống!" })}
-                            placeholder="Quận / Huyện..."
-                        />
-                        {errors.district && <span>{errors.district.message}</span>}{" "}
-                    </div>
-
-                    <div>
-                        <label htmlFor="ward">Xã / Phường</label>
-                        <input
-                            id="ward"
-                            type="text"
-                            {...register("ward", { required: "Không được bỏ trống!" })}
-                            placeholder="Xã / Phường..."
+                        <input {...register("user_id")} type="hidden" value={user?.id} />
+                        <input {...register("product_id")} type="hidden" value={product?.id} />
+                        <label htmlFor="ward">Bình luận</label>
+                        <textarea
+                            {...register("comment", { required: "Không được bỏ trống!" })}
+                            placeholder="Mời đánh giá sản phẩm..."
                         />
                         {errors.ward && <span>{errors.ward.message}</span>}
                     </div>
 
-                    <div>
-                        <label htmlFor="street">Địa chỉ cụ thể</label>
-                        <input
-                            id="street"
-                            type="text"
-                            {...register("street", { required: "Không được bỏ trống!" })}
-                            placeholder="Địa chỉ cụ thể..."
-                        />
-                        {errors.street && <span>{errors.street.message}</span>}
-                    </div>
-
                     <button className="confirm-btn" type="submit">
-                        Xác nhận
+                        Đánh giá
                     </button>
                 </form>
 
@@ -212,4 +178,4 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
     );
 };
 
-export default AddressModal;
+export default ModalComment;

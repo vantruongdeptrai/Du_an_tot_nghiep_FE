@@ -4,13 +4,12 @@ import PropTypes from "prop-types";
 import formatCurrency from "../../utils/formatUtils";
 import { BaseLinkGreen } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import useUser from "../../hooks/useUser";
-import { useNavigate } from "react-router-dom";
 import useProductVariant from "../../hooks/useProductVariant";
 import { useColors, useSizes } from "../../hooks/useAtribute";
 import useProduct from "../../hooks/useProduct";
 import Modals from "../modals/Modals";
 import useOrder from "../../hooks/useOrder";
+import ModalComment from "../modals/ModalComment";
 
 const OrderItemWrapper = styled.div`
     margin: 30px 0;
@@ -96,6 +95,8 @@ const OrderItemWrapper = styled.div`
             }
         }
     }
+
+    .button-rate,
     .button-delete {
         width: 120px;
         border-radius: 5px;
@@ -106,6 +107,10 @@ const OrderItemWrapper = styled.div`
         background-color: ${defaultTheme.color_red};
         color: ${defaultTheme.color_white};
     }
+    .button-rate:hover button {
+        background-color: ${defaultTheme.color_sea_green_v1};
+        color: ${defaultTheme.color_white};
+    }
 `;
 
 const OrderItem = ({ order, guestOrder }) => {
@@ -113,11 +118,12 @@ const OrderItem = ({ order, guestOrder }) => {
     const { colors } = useColors();
     const { sizes } = useSizes();
     const { products } = useProduct();
-    const { deleteOrderReason, deleteOrder } = useOrder();
+    const { deleteOrderReason } = useOrder();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    console.log(order);
+    const [isModalCommentOpen, setIsModalCommentOpen] = useState(false);
+    const [hasReviewed, setHasReviewed] = useState(false);
 
-    const nav = useNavigate();
+    // const nav = useNavigate();
     const users = localStorage.getItem("userInfo");
 
     // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
@@ -128,6 +134,13 @@ const OrderItem = ({ order, guestOrder }) => {
         console.log("Payload gửi lên:", { cancel_reason: reason });
         await deleteOrderReason(order.id, { cancel_reason: reason });
         setIsModalOpen(false); // Close modal after confirmation
+    };
+
+    const handleComment = (data) => {
+        if (data) {
+            setHasReviewed(true); // Set review status to true after comment
+        }
+        setIsModalCommentOpen(false);
     };
 
     return (
@@ -222,9 +235,18 @@ const OrderItem = ({ order, guestOrder }) => {
                         className="flex"
                     >
                         <h3 className="text-x order-item-title">Order no: {currentOrder.id}</h3>
-                        {order.status_order === "Đã hủy" || order.status_order === "Đã giao hàng thành công" ? (
+                        {/* {["Đã xác nhận", "Đang chuẩn bị", "Đang vận chuyển"].includes(
+                            order.status_order
+                        ) ? null : order.status_order === "Đã hủy" ||
+                          order.status_order === "Đã giao hàng thành công" ? (
                             <div className="button-delete">
-                                <button onClick={() => deleteOrder(order.id)} className="button-delete" style={{ fontSize: 16, fontWeight: 500, border: "none" }}>Xóa đơn hàng</button>
+                                <button
+                                    onClick={() => deleteOrder(order.id)}
+                                    className="button-delete"
+                                    style={{ fontSize: 16, fontWeight: 500, border: "none" }}
+                                >
+                                    Xóa đơn hàng
+                                </button>
                             </div>
                         ) : (
                             <div className="button-delete">
@@ -236,7 +258,18 @@ const OrderItem = ({ order, guestOrder }) => {
                                     Hủy đơn hàng
                                 </button>
                             </div>
-                        )}
+                        )} */}
+                        {order.status_order === "Chờ xác nhận" ? (
+                            <div className="button-delete">
+                                <button
+                                    onClick={() => setIsModalOpen(true)}
+                                    style={{ fontSize: 16, fontWeight: 500, border: "none" }}
+                                    className="button-delete"
+                                >
+                                    Hủy đơn hàng
+                                </button>
+                            </div>
+                        ) : null}
                     </div>
                     <div className="order-info-group flex flex-wrap">
                         <div className="order-info-item">
@@ -309,6 +342,33 @@ const OrderItem = ({ order, guestOrder }) => {
                                         </ul>
                                     </div>
                                 </div>
+                                {order.status_order === "Giao hàng thành công" && !hasReviewed ? (
+                                    <div className="button-rate">
+                                        <button
+                                            onClick={() => setIsModalCommentOpen(true)}
+                                            style={{ fontSize: 16, fontWeight: 500, border: "none" }}
+                                            className="button-rate"
+                                        >
+                                            Đánh giá
+                                        </button>
+                                    </div>
+                                ) : hasReviewed ? (
+                                    <div className="button-rate">
+                                        <button
+                                            style={{ fontSize: 16, fontWeight: 500, border: "none" }}
+                                            className="button-rate"
+                                            disabled
+                                        >
+                                            Đã đánh giá
+                                        </button>
+                                    </div>
+                                ) : null}
+                                <ModalComment
+                                    onConfirm={handleComment}
+                                    product={product}
+                                    isOpen={isModalCommentOpen}
+                                    onClose={() => setIsModalCommentOpen(false)}
+                                />
                             </div>
                         );
                     })}

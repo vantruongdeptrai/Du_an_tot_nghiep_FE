@@ -28,7 +28,13 @@ const useComment = () => {
         }
     };
     const queryClient = useQueryClient();
-    const { data: comments, error, isLoading } = useQuery(["comments"], getAllComments);
+    const {
+        data: comments,
+        error,
+        isLoading,
+    } = useQuery(["comments", id], getAllComments, {
+        enabled: !!id, // Chỉ gọi API khi id có giá trị hợp lệ
+    });
 
     // Hàm tạo bình luận mới
     const { mutate: createComments } = useMutation(createComment, {

@@ -13,7 +13,7 @@ const getAllCategories = async () => {
 };
 
 const useCategory = () => {
-    const { data: categories, error, isLoading } = useQuery(
+    const { data: categories = [], error, isLoading } = useQuery(
         ['categories'], // queryKey, phải duy nhất
         getAllCategories
     );

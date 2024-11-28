@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { toast } from "react-toastify";
 
 const ModalWrapper = styled.div`
   position: fixed;
@@ -89,6 +90,7 @@ const Modals = ({ isOpen, onClose, onConfirm }) => {
 
   const handleConfirm = () => {
     onConfirm(cancelReason);
+    toast.success("Hủy đơn hàng thành công.");
     setCancelReason(""); // Reset the reason after confirming
   };
 

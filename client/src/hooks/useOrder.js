@@ -1,11 +1,10 @@
 import apiClient from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 const useOrder = () => {
     const [orders, setOrders] = useState([]);
-    const { id } = useParams();
+
     const getAllOrders = async () => {
         try {
             const response = await apiClient.get("/orders");
@@ -28,8 +27,6 @@ const useOrder = () => {
             // }, 0);
             const couponNames = [...new Set(orderItems.map((item) => item.coupon_name))];
             const couponName = couponNames.length > 0 ? couponNames[0] : null;
-
-            console.log(couponName);
 
             const orderData = {
                 user_id: id,
@@ -71,6 +68,8 @@ const useOrder = () => {
                 return vnpayResponse;
             } else {
                 const response = await apiClient.post(endPoint, orderData);
+                console.log(response.data);
+                
                 toast.success("Order created successfully!");
             }
         } catch (error) {
@@ -82,8 +81,6 @@ const useOrder = () => {
         try {
             await apiClient.post(`/orders/cancel/${id}`, data);
             setOrders((prevOrders) => prevOrders.filter((order) => order.id !== id));
-            toast.success("Order canceled successfully!");
-            window.location.reload();
         } catch (error) {
             toast.error("error");
             console.log(error);

@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSearch from "../../../hooks/search";
 import useCart from "../../hooks/useCart";
+import { useQuery } from "@tanstack/react-query";
 
 const NavigationAndSearchWrapper = styled.div`
     column-gap: 20px;
@@ -126,8 +127,11 @@ const Header = () => {
     const navigate = useNavigate();
     const { keyword, setKeyword } = useSearch();
     const user = JSON.parse(localStorage.getItem("userInfo"));
-    const {carts} = useCart(user?.id);
-    const filteredCartItems = carts?.cart.filter(item => item.deleted_at == null);
+    const userId = user?.id; 
+    const { carts = { cart: [] } } = useCart(userId);
+    console.log(carts);
+
+    const filteredCartItems = carts?.cart?.filter((item) => item.deleted_at == null);
     const cartLocalStorage = JSON.parse(localStorage.getItem("cart"));
     const cartLength = user ? filteredCartItems?.length : cartLocalStorage?.length;
     const handleSubmit = (e) => {
@@ -202,9 +206,7 @@ const Header = () => {
                             style={{ position: "relative" }}
                             to={"/cart"}
                             className={`icon-link ${
-                                location.pathname === "/cart"
-                                    ? "active"
-                                    : ""
+                                location.pathname === "/cart" ? "active" : ""
                             } inline-flex items-center justify-center`}
                         >
                             <img src={staticImages.cart} alt="" />

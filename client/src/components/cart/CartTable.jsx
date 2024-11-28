@@ -1,8 +1,8 @@
-import React from "react";
+
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import formatCurrency from "../../utils/formatUtils";
-import { products } from "../../data/data";
+
 
 const Table = styled.table`
     width: 100%;
@@ -12,11 +12,13 @@ const Table = styled.table`
     th,
     td {
         padding: 12px;
-        border: 1px solid #ddd;
-        text-align: left;
         border: none;
+        text-align: left;
+        height: 100px;
+        word-wrap: break-word; /* Bọc từ dài */
+        word-break: break-word; /* Chia từ nếu cần */
+        white-space: normal; /* Cho phép xuống dòng */
     }
-
     th {
         background-color: #f4f4f4;
     }
@@ -71,10 +73,10 @@ const Table = styled.table`
     }
 
     .product-name {
-        white-space: nowrap; /* Không cho phép xuống dòng */
-        overflow: hidden; /* Ẩn phần văn bản vượt ra ngoài */
-        text-overflow: ellipsis; /* Hiển thị dấu ba chấm '...' khi văn bản quá dài */
-        max-width: 180px; /* Giới hạn chiều rộng của cột tên sản phẩm */
+        white-space: normal; /* Cho phép xuống dòng */
+        word-wrap: break-word; /* Bọc từ nếu quá dài */
+        word-break: break-word; /* Chia nhỏ từ nếu cần */
+        max-width: 150px; /* Giới hạn chiều rộng */
     }
 `;
 
@@ -127,12 +129,7 @@ const CartTable = ({
                                     <input type="checkbox" checked={isSelected} onChange={() => onSelectItem(item)} />
                                 </td>
                                 <td
-                                    style={{
-                                        whiteSpace: "nowrap",
-                                        width: 50,
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                    }}
+                                    
                                     className="product-name"
                                 >
                                     {item.name || item.product_name}

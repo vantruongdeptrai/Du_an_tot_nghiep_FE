@@ -2,12 +2,11 @@ import styled from "styled-components";
 import { FormGridWrapper, FormTitle } from "../../styles/form_grid";
 import { Container } from "../../styles/styles";
 import { staticImages } from "../../utils/images";
-import AuthOptions from "../../components/auth/AuthOptions";
 import { FormElement } from "../../styles/form";
 import { Form, Link } from "react-router-dom";
 import { BaseButtonBlack } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import useLogin from "./../../../hooks/account";
+import useLogin from "../../../hooks/account";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -40,12 +39,19 @@ const SignInScreenWrapper = styled.section`
         margin-top: -16px;
         display: block;
     }
+
+    .error-message {
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+    }
 `;
 
 const SignInScreen = () => {
     const { handleLogin, loading, error } = useLogin();
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
+    const [formError, setFormError] = useState(null); // To manage form-level errors
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -54,7 +60,7 @@ const SignInScreen = () => {
             const userData = JSON.parse(storedUser);
             if (userData.role_id === 1) {
                 localStorage.removeItem("userInfo");
-                toast.error("đăng nhập không thành công");
+                toast.error("Đăng nhập không thành công");
             } else {
                 navigate("/account");
             }
@@ -64,12 +70,21 @@ const SignInScreen = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Check if both fields are filled
+        if (!identifier || !password) {
+            setFormError("Both fields are required.");
+            return; // Prevent form submission if fields are empty
+        }
+
+        // Reset error if fields are filled
+        setFormError(null);
+
         const userData = await handleLogin(identifier, password);
         console.log(userData);
 
         if (userData) {
             if (userData.role_id === 1) {
-                toast.error("đăng nhập không thành công");
+                toast.error("Đăng nhập không thành công");
                 return;
             }
 
@@ -95,15 +110,8 @@ const SignInScreen = () => {
                         <div className="form-grid-right">
                             <FormTitle>
                                 <h3>Sign In</h3>
+                                <p className="text-base">Sign in for free to access to any of our products</p>
                             </FormTitle>
-                            {/* <AuthOptions /> */}
-                            {/* <div className="form-separator flex items-center justify-center">
-                                <span className="separator-line"></span>
-                                <span className="separator-text inline-flex items-center justify-center text-white">
-                                    OR
-                                </span>
-                                <span className="separator-line"></span>
-                            </div> */}
 
                             <form onSubmit={handleSubmit}>
                                 <FormElement>
@@ -115,9 +123,11 @@ const SignInScreen = () => {
                                         placeholder="Nhập email hoặc số điện thoại"
                                         value={identifier}
                                         onChange={(e) => setIdentifier(e.target.value)}
-                                        required
                                         className="form-elem-control"
                                     />
+                                    {formError && !identifier && (
+                                        <span className="error-message">This field is required</span>
+                                    )}
                                 </FormElement>
                                 <FormElement>
                                     <label htmlFor="" className="form-elem-label">
@@ -128,24 +138,25 @@ const SignInScreen = () => {
                                         placeholder="Nhập mật khẩu"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        required
                                         autoComplete="current-password"
                                         className="form-elem-control"
                                     />
+                                    {formError && !password && (
+                                        <span className="error-message">This field is required</span>
+                                    )}
                                 </FormElement>
                                 <Link to="/reset" className="form-elem-text text-end font-medium">
                                     Forgot your password?
                                 </Link>
-                                <BaseButtonBlack type="submit" disabled={loading}>
-                                    {loading ? "Đang đăng nhập..." : "Đăng Nhập"}
+                                <BaseButtonBlack type="submit" className="form-submit-btn">
+                                    Sign in
                                 </BaseButtonBlack>
                             </form>
                             <p className="flex flex-wrap account-rel-text">
-                                Don&apos;t have a account?
+                                Don&apos;t have an account?
                                 <Link to="/sign_up" className="font-medium">
                                     Sign Up
                                 </Link>
-                                `
                             </p>
                         </div>
                     </div>
