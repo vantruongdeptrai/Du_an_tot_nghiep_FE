@@ -41,8 +41,10 @@ const breadcrumbItems = [
 const OrderListScreen = () => {
     const [activeTab, setActiveTab] = useState("active"); // state để lưu tab đang được chọn
     const { orders } = useOrder();
-    const { users } = useUser();
-    const userOrders = orders.filter((item) => item.user_id == users.id);
+    const { user } = useUser();
+    console.log(user);
+    
+    const userOrders = orders.filter((item) => item.user_id == user?.id);
     const guestOrder = JSON.parse(localStorage.getItem('guestOrder'));
     
     return (

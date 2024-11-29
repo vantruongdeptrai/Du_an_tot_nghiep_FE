@@ -1,8 +1,8 @@
-
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import formatCurrency from "../../utils/formatUtils";
-
+import useCart from "../../hooks/useCart";
+import { toast } from "react-toastify";
 
 const Table = styled.table`
     width: 100%;
@@ -90,6 +90,12 @@ const CartTable = ({
     colors,
     isLoggedIn,
 }) => {
+    const { deleteItem } = useCart();
+    const handleDelete = (id) => {
+        deleteItem(id); 
+        toast.success("Delete cart successfully.");
+      };
+
     const getColorName = (colorId) => {
         const color = colors?.find((color) => color.id === colorId); // Tìm màu sắc tương ứng
         return color ? color.name : colorId; // Nếu tìm thấy, trả về name, nếu không thì trả về id
@@ -99,6 +105,7 @@ const CartTable = ({
         const size = sizes?.find((size) => size.id === sizeId); // Tìm size tương ứng
         return size ? size.name : sizeId; // Nếu tìm thấy, trả về name, nếu không thì trả về id
     };
+    
 
     return (
         <Table>
@@ -128,12 +135,7 @@ const CartTable = ({
                                 <td>
                                     <input type="checkbox" checked={isSelected} onChange={() => onSelectItem(item)} />
                                 </td>
-                                <td
-                                    
-                                    className="product-name"
-                                >
-                                    {item.name || item.product_name}
-                                </td>
+                                <td className="product-name">{item.name || item.product_name}</td>
                                 <td>
                                     <img
                                         src={item.product_image || item.image}
@@ -173,7 +175,7 @@ const CartTable = ({
                                 <td>
                                     <button
                                         className="delete-button"
-                                        onClick={() => handleDelete(item.product_id, item.size, item.color)}
+                                        onClick={() => handleDelete(item.cart_id)}
                                     >
                                         Xóa
                                     </button>

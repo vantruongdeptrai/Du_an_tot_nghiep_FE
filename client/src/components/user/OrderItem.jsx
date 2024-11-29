@@ -125,6 +125,8 @@ const OrderItem = ({ order, guestOrder }) => {
 
     // const nav = useNavigate();
     const users = localStorage.getItem("userInfo");
+    console.log(users);
+    
 
     // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
     const currentOrder = users ? order : guestOrder;

@@ -7,6 +7,7 @@ import Catalog from "../../components/home/Catalog";
 import Brands from "../../components/home/Brands";
 import Feedback from "../../components/home/Feedback";
 import useProduct from "../../hooks/useProduct";
+import Loader from "../../components/loader/loader";
 
 const HomeScreenWrapper = styled.main``;
 
@@ -14,7 +15,12 @@ const HomeScreen = () => {
     // const { products } = useProduct();
     const { products, isLoading, isError } = useProduct();
 
-    if (isLoading) return <p>Loading products...</p>;
+    if (isLoading)
+        return (
+            <div>
+                <Loader></Loader>
+            </div>
+        );
     if (isError) return <p>Failed to load products.</p>;
     console.log(products);
 

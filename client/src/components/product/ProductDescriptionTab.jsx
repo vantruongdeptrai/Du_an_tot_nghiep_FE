@@ -129,7 +129,7 @@ const DescriptionTabsWrapper = styled.div`
 
 const ProductDescriptionTab = ({ product_id, user }) => {
     const [activeDesTab, setActiveDesTab] = useState(productDescriptionTabHeads[0].tabHead);
-    const { comments} = useComment();
+    const { comments } = useComment();
     const { products } = useProduct();
 
     const productDescription = products.find((item) => item.id == product_id);
@@ -157,6 +157,9 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                 <DescriptionTabsWrapper>
                     <div className="tabs-heads flex items-center flex-wrap">
                         {productDescriptionTabHeads.map((tab) => {
+                            if (!user) {
+                                return null;
+                            }
                             return (
                                 <button
                                     key={tab.id}
@@ -218,24 +221,33 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                     activeDesTab === "tabComments" ? "show" : ""
                                 }`}
                             >
+                                
                                 <h2>Comments</h2>
                                 <hr />
                                 {commentUser.length > 0 ? (
                                     commentUser.map((comment) => (
                                         <div key={comment.id} style={{ gap: 20, marginTop: 20 }} className="flex">
                                             <img
-                                                src="anh1.png"
+                                                src={
+                                                    comment?.image ||
+                                                    "https://chiemtaimobile.vn/images/companies/1/%E1%BA%A2nh%20Blog/avatar-facebook-dep/Anh-avatar-hoat-hinh-de-thuong-xinh-xan.jpg?1704788263223"
+                                                }
                                                 alt="hello"
-                                                style={{ height: 20, width: 50, borderRadius: "100%" }}
+                                                style={{
+                                                    height: 50,
+                                                    width: 50,
+                                                    borderRadius: "50%",
+                                                    objectFit: "cover",
+                                                }}
                                             />
                                             <div style={{ gap: 10 }} className="flex flex-col">
                                                 <div
                                                     style={{
-                                                        background: "#ccc",
+                                                        background: "#e5e5e5",
                                                         border: "1px solid #ccc",
                                                         width: "100%",
                                                         borderRadius: 10,
-                                                        padding: 5,
+                                                        padding: "5px 15px",
                                                     }}
                                                 >
                                                     <div style={{ fontSize: 16, fontWeight: 600 }}>{user?.name}</div>

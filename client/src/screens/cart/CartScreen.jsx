@@ -90,7 +90,7 @@ const CartScreen = () => {
         };
 
         fetchCartItems();
-    }, []);
+    }, [cartItems]);
 
     // Hàm tăng số lượng sản phẩm
     const handleIncreaseQuantity = (productId, size, color) => {

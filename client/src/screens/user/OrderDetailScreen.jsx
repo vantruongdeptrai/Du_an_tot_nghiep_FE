@@ -265,8 +265,8 @@ const OrderDetailScreen = () => {
     const { sizes } = useSizes();
     const { products } = useProduct();
     const { orders } = useOrder();
-    const { users } = useUser();
-    const userOrder = orders.filter((order) => order.user_id == users.id);
+    const { user } = useUser();
+    const userOrder = orders.filter((order) => order.user_id == user.id);
     const orderDetail = userOrder.find((order) => order.id == id);
     
     if (!orderDetail) return <p>Không có đơn hàng nào</p>;

@@ -16,8 +16,6 @@ const useProduct = () => {
         isLoading,
         isError,
     } = useQuery(["products"], getAllProducts, {
-        staleTime: 5 * 60 * 1000, // Cache dữ liệu trong 5 phút
-        retry: 3, // Tự động thử lại tối đa 3 lần nếu thất bại
         onError: (error) => {
             toast.error(`Failed to fetch products: ${error.message}`);
         },
