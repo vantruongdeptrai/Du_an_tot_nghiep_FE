@@ -14,6 +14,7 @@ import apiClient from "../../api/axiosConfig";
 import formatCurrency from "../../utils/formatUtils";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Loader from "../../components/loader/loader"
 const DetailsScreenWrapper = styled.main`
     margin: 40px 0;
 `;
@@ -259,12 +260,10 @@ const ProductDetailsScreen = () => {
     const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
     console.log(cart);
 
-
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
-        { label: "Shop", link: "" },
-        { label: "Women", link: "" },
-        { label: "Top", link: "" },
+        { label: "Trang chủ", link: "/" },
+        { label: "Chi tiết sản phẩm", link: "" },
     ];
     useEffect(() => {
         const fetchProductData = async () => {
@@ -400,25 +399,19 @@ const ProductDetailsScreen = () => {
         localStorage.setItem("cart", JSON.stringify(cart));
 
         if (!user) {
-            const data = await apiClient.post(
-                "/cart/add/guest",
-                {
-                    product_id: productId,
-                    quantity: quantity,
+            const data = await apiClient.post("/cart/add/guest", {
+                product_id: productId,
+                quantity: quantity,
 
-
-                    product_variant_id: productVariantId,
-                },
-            );
+                product_variant_id: productVariantId,
+            });
 
             console.log(data);
-
 
             // localStorage.setItem("session_id", data.data.session_id);
             toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).");
             return;
-
-        }else {
+        } else {
             mutation.mutate({
                 user_id: user.id,
                 product_id: productId,
@@ -428,21 +421,20 @@ const ProductDetailsScreen = () => {
                 color: selectedColor || null,
                 product_variant_id: productVariantId,
             });
-
         }
-        
     };
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <p>
+        <Loader></Loader>
+    </p>;
     if (!product) return <p>Product not found</p>;
     return (
         <DetailsScreenWrapper>
             <Container>
-                
+                <Breadcrumb items={breadcrumbItems} />
                 <DetailsContent className="grid">
                     <ProductPreview previewImagesVariant={variants} previewImages={product.image_url || []} />
                     <ProductDetailsWrapper>
                         <h2 className="prod-title">{product.name}</h2>
-                        
 
                         {/* Hiển thị size và màu */}
                         {sizes.length > 0 && (
@@ -508,7 +500,7 @@ const ProductDetailsScreen = () => {
                             <div className="prod-size-top flex items-center flex-wrap">
                                 <p className="text-lg font-semibold text-outerspace">Chọn số lượng</p>
                             </div>
-                            <div className="flex btn-and-price">
+                            <div style={{gap: 10, marginLeft: 20}} className="flex btn-and-price">
                                 <button
                                     style={{ height: 25, fontSize: 25 }}
                                     className="prod-add-btn"
@@ -549,7 +541,6 @@ const ProductDetailsScreen = () => {
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
                                 <div>
                                     Price: {formatCurrency(variantPrice)}{" "}
-
                                     <span style={{ opacity: 0.6 }}>
                                         ({variantStock > 0 ? `${variantStock} products` : "đã hết hàng"})
                                     </span>

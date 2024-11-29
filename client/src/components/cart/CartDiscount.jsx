@@ -53,7 +53,7 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
          // Kiểm tra mã giảm giá có bị trống không
          const trimmedCouponCode = couponCode.trim();
          if (!trimmedCouponCode) {
-             toast.warn("Please enter a coupon code!");
+             toast.warn("Vui lòng điền mã giảm giá!");
              return;
          }
          console.log(couponCode);
@@ -62,46 +62,46 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
          const coupon = coupons.find((coupon) => coupon.name === trimmedCouponCode);
          
          if (!coupon) {
-             toast.error("Invalid coupon code!");
+             toast.error("Mã giảm giá không hợp lệ!");
              return;
          }
  
          if (selectedItems.length === 0) {
-             toast.warn("Please select at least one product to apply the coupon!");
+             toast.warn("Vui lòng chọn ít nhất 1 sản phẩm để sử dụng mã giảm giá!");
              return;
          }
  
          const subTotal = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
  
          if (subTotal < coupon.min_order_value) {
-             toast.warn(`Your total must be at least ${formatCurrency(coupon.min_order_value)} to apply a coupon.`);
+             toast.warn(`Số tiền tối thiểu của bạn phải là ${formatCurrency(coupon.min_order_value)} để sử dụng mã giảm giá.`);
              return;
          }
  
          // Nếu mã giảm giá hợp lệ, cập nhật trạng thái
          setAppliedCoupon(coupon);
-         toast.success("Coupon applied successfully!");
+         toast.success("Áp mã giảm giá thành công.");
     };
     return (
         <CartDiscountWrapper>
-            <h3 className="text-xxl text-outerspace">Discount Codes</h3>
-            <p className="text-base text-gray">Enter your coupon code if you have one.</p>
+            <h3 className="text-xxl text-outerspace">Mã giảm giá</h3>
+            <p className="text-base text-gray">Nhập mã giảm giá (Nếu có)</p>
             <form action="" onSubmit={handleApplyCoupon}>
                 <div className="coupon-group flex">
                     <Input
                         type="text"
                         className="coupon-input w-full"
-                        placeholder="Search"
+                        placeholder="Mời nhập..."
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value)}
                     />
                     <BaseButtonOuterspace type="submit" className="coupon-btn no-wrap h-full">
-                        Apply Coupon
+                        Áp mã giảm giá
                     </BaseButtonOuterspace>
                 </div>
             </form>
             <BaseLinkOutlinePlatinum as={BaseLinkOutlinePlatinum} to="/" className="contd-shop-btn w-full text-gray">
-                continue shopping
+                Tiếp tục mua hàng
             </BaseLinkOutlinePlatinum>
         </CartDiscountWrapper>
     );

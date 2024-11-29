@@ -70,11 +70,11 @@ const CartSummary = ({ selectedItems, appliedCoupon }) => {
     // Hàm xử lý khi người dùng nhấn nút "Proceed To CheckOut"
     const handleProceedToCheckout = () => {
         if (selectedItems.length === 0) {
-            toast.warn("Please select a new item!");
+            toast.warn("Vui lòng chọn 1 sản phẩm muốn mua!");
             return;
         }
         if (!isDiscountValid) {
-            toast.warn("Your order does not meet the minimum amount for the discount!");
+            toast.warn("Đơn đặt hàng của bạn không đáp ứng số tiền tối thiểu để được giảm giá!");
             return;
         }
         const orderItems = selectedItems.map((item) => ({
@@ -104,24 +104,24 @@ const CartSummary = ({ selectedItems, appliedCoupon }) => {
         <CartSummaryWrapper>
             <ul className="summary-list">
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Sub Total</span>
+                    <span className="font-medium text-outerspace">Tổng phụ</span>
                     <span className="font-medium text-outerspace">{formatCurrency(subTotal)}</span>
                 </li>
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Saving</span>
+                    <span className="font-medium text-outerspace">Tiết kiệm</span>
                     <span className="font-medium text-outerspace">{formatCurrency(discount)}</span>
                 </li>
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Shipping</span>
+                    <span className="font-medium text-outerspace">Phí ship</span>
                     <span className="font-medium text-outerspace">{formatCurrency(SHIPPING_FEE)}</span>
                 </li>
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Grand Total</span>
+                    <span className="font-medium text-outerspace">Tổng tiền</span>
                     <span className="summary-item-value font-bold text-outerspace">{formatCurrency(grandTotal)}</span>
                 </li>
             </ul>
             <BaseButtonGreen type="submit" className="checkout-btn" onClick={handleProceedToCheckout}>
-                Proceed To CheckOut
+                Thanh toán
             </BaseButtonGreen>
         </CartSummaryWrapper>
     );

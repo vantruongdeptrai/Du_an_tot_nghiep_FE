@@ -236,12 +236,9 @@ const ProductFilter = ({
                                 <label
                                     htmlFor={`color-${color.id}`}
                                     className=""
-                                    style={{ backgroundColor: color.name }} // Dùng color.name làm background
+                                    style={{ backgroundColor: color.name, border: "1px solid #ccc", padding: "15px 20px" }} // Dùng color.name làm background
                                 >
-                                    {/* Hiển thị tên màu bên trong label */}
-                                    <span style={{ padding: "0 20px"}} className="text-white text-lg font-semibold">
-                                        
-                                    </span>
+                                    
                                 </label>
                             </div>
                         ))}

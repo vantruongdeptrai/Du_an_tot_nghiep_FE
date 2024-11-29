@@ -33,7 +33,7 @@ const UserTable = () => {
   }, []);
 
   if (loading) {
-    return <div className="text-center py-4">Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   return (

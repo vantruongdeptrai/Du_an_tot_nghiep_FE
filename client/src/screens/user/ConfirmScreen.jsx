@@ -36,9 +36,9 @@ const ConfirmScreen = () => {
           </div>
           <div className="confirm-msg w-full flex flex-col justify-center items-center">
             <p className="text-4xl font-semibold text-outerspace">
-              Your Order is Confirmed
+              Đặt hàng thành công.
             </p>
-            <BaseLinkGreen to="/">Continue Shopping</BaseLinkGreen>
+            <BaseLinkGreen to="/">Tiếp tục mua hàng</BaseLinkGreen>
           </div>
         </div>
       </Container>

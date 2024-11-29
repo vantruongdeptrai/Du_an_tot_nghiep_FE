@@ -52,8 +52,8 @@ const CartContent = styled.div`
 
 const CartScreen = () => {
     const breadcrumbItems = [
-        { label: "Home", link: "/" },
-        { label: "Cart", link: "" },
+        { label: "Trang chủ", link: "/" },
+        { label: "Giỏ hàng", link: "" },
     ];
 
     const [cartItems, setCartItems] = useState([]);

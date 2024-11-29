@@ -127,7 +127,7 @@ const Header = () => {
     const navigate = useNavigate();
     const { keyword, setKeyword } = useSearch();
     const user = JSON.parse(localStorage.getItem("userInfo"));
-    const userId = user?.id; 
+    const userId = user?.id;
     const { carts = { cart: [] } } = useCart(userId);
     console.log(carts);
 
@@ -143,7 +143,9 @@ const Header = () => {
             <Container className="container">
                 <div className="header-wrap flex items-center justify-between">
                     <div className="flex items-center">
-                        
+                        <button type="button" className="sidebar-toggler" onClick={() => dispatch(toggleSidebar())}>
+                            <i className="bi bi-list"></i>
+                        </button>
                         <SiteBrandWrapper to="/" className="inline-flex">
                             <div className="brand-img-wrap flex items-center justify-center">
                                 <img className="site-brand-img" src={staticImages.logo} alt="site logo" />

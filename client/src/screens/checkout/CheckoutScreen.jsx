@@ -63,7 +63,7 @@ const CheckoutScreen = () => {
                         <div className="horiz-line-separator w-full"></div>
                         <ShippingPayment />
                         <BaseButtonGreen type="submit" className="pay-now-btn">
-                            Pay Now
+                            Thanh toán ngay
                         </BaseButtonGreen>
                     </form>
                 </FormProvider>

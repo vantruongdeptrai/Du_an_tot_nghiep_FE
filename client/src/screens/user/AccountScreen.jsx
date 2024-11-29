@@ -101,20 +101,16 @@ const AccountScreenWrapper = styled.main`
 
 const breadcrumbItems = [
     {
-        label: "Home",
+        label: "Trang chủ",
         link: "/",
     },
-    { label: "Account", link: "/account" },
+    { label: "Tài khoản", link: "/account" },
 ];
 
 const AccountScreen = () => {
     const { user, updateUser } = useUser();
     // Khởi tạo useForm từ React Hook Form
-    const {
-        register,
-        handleSubmit,
-        setValue,
-    } = useForm();
+    const { register, handleSubmit, setValue } = useForm();
 
     useEffect(() => {
         // Giả sử đây là dữ liệu bạn nhận được từ API hoặc từ trạng thái trước đó
@@ -153,12 +149,12 @@ const AccountScreen = () => {
     return (
         <AccountScreenWrapper className="page-py-spacing">
             <Container>
-                
+                <Breadcrumb items={breadcrumbItems} />
                 <UserDashboardWrapper>
                     <UserMenu />
                     <UserContent>
-                        <Title titleText={"My Account"} />
-                        <h4 className="title-sm">Contact Details</h4>
+                        <Title titleText={"Tài khoản của tôi"} />
+                        <h4 className="title-sm">Thông tin</h4>
                         <form onSubmit={handleSubmit(handleFormSubmit)}>
                             <div className="">
                                 <Input
@@ -168,7 +164,7 @@ const AccountScreen = () => {
                                 />
                                 {/* Trường ảnh đại diện */}
                                 <FormElement className="form-elem">
-                                    <label className="form-label font-semibold text-base">Profile Picture</label>
+                                    <label className="form-label font-semibold text-base">Ảnh cá nhân</label>
                                     {/* <div style={{ marginTop: 10 }} className=" flex items-center">
                                         <img
                                             src={
@@ -195,7 +191,7 @@ const AccountScreen = () => {
                                 {/* Trường tên người dùng */}
                                 <FormElement className="form-elem">
                                     <label htmlFor="name" className="form-label font-semibold text-base">
-                                        Your Name
+                                        Tên tài khoản
                                     </label>
                                     <div style={{ marginTop: 10 }} className=" flex items-center">
                                         <Input
@@ -209,7 +205,7 @@ const AccountScreen = () => {
                                 {/* Trường email */}
                                 <FormElement className="form-elem">
                                     <label htmlFor="email" className="form-label font-semibold text-base">
-                                        Email Address
+                                        Địa chỉ Email
                                     </label>
                                     <div style={{ marginTop: 10 }} className=" flex items-center">
                                         <Input
@@ -223,7 +219,7 @@ const AccountScreen = () => {
                                 {/* Trường số điện thoại */}
                                 <FormElement className="form-elem">
                                     <label htmlFor="phone" className="form-label font-semibold text-base">
-                                        Phone Number
+                                        Số điện thoại
                                     </label>
                                     <div style={{ marginTop: 10 }} className=" flex items-center">
                                         <Input
