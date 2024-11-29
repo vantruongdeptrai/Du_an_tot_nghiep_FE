@@ -19,7 +19,7 @@ const Products = () => {
           <div className="px-4 sm:px-6 lg:px-8 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <div className="flex flex-col gap-3">
               <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                All products
+                Tất Cả Sản Phẩm
               </h2>
               <p className="dark:text-whiteSecondary text-blackPrimary text-base font-normal flex items-center">
                 {/* <span>Dashboard</span> <HiOutlineChevronRight className="text-lg" />{" "} */}

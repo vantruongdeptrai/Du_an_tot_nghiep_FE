@@ -19,7 +19,7 @@ const Coupon = () => {
           <div className="px-4 sm:px-6 lg:px-8 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <div className="flex flex-col gap-3">
               <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                All Coupon
+                Tất Cả Các Mã Giảm Giá
               </h2>
               {/* <p className="dark:text-whiteSecondary text-blackPrimary text-base font-normal flex items-center">
                 <span>Dashboard</span>{" "}
@@ -36,7 +36,7 @@ const Coupon = () => {
               </button> */}
               <WhiteButton
                 link="/coupons/create-coupon"
-                text="Add a coupon"
+                text="Thêm Mã Giảm Giá"
                 textSize="lg"
                 py="2"
                 width="48"
