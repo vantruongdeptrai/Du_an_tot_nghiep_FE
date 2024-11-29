@@ -143,9 +143,7 @@ const Header = () => {
             <Container className="container">
                 <div className="header-wrap flex items-center justify-between">
                     <div className="flex items-center">
-                        <button type="button" className="sidebar-toggler" onClick={() => dispatch(toggleSidebar())}>
-                            <i className="bi bi-list"></i>
-                        </button>
+                        
                         <SiteBrandWrapper to="/" className="inline-flex">
                             <div className="brand-img-wrap flex items-center justify-center">
                                 <img className="site-brand-img" src={staticImages.logo} alt="site logo" />
@@ -178,7 +176,7 @@ const Header = () => {
                                 <Input
                                     type="text"
                                     className="input-control w-full"
-                                    placeholder="Search"
+                                    placeholder="Tìm kiếm tên sản phẩm"
                                     onChange={(e) => setKeyword(e.target.value)}
                                 />
                             </InputGroupWrapper>

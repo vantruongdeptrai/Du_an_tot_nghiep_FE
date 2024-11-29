@@ -627,24 +627,17 @@ const productDescriptionTabHeads = [
   {
     id: "tab-description",
     tabHead: "tabDescription",
-    tabText: "Description",
+    tabText: "Mô tả về sản phẩm",
     badgeValue: null,
     badgeColor: "",
   },
   {
     id: "tab-comments",
     tabHead: "tabComments",
-    tabText: "User Comments",
+    tabText: "Các bình luận",
     badgeValue: 10,
     badgeColor: "purple",
-  },
-  {
-    id: "tab-QNA",
-    tabHead: "tabQNA",
-    tabText: "Question & Answer",
-    badgeValue: 4,
-    badgeColor: "outerspace",
-  },
+  }
 ];
 
 const orderData = [
