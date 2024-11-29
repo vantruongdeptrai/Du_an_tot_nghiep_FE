@@ -8,7 +8,7 @@ const BaseLayout = () => {
   return (
     <PageWrapper>
       <Header />
-      <Sidebar />
+      
       <div
         style={{
           minHeight: "calc(100vh - 545px)",

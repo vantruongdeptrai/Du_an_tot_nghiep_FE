@@ -143,14 +143,12 @@ const Header = () => {
             <Container className="container">
                 <div className="header-wrap flex items-center justify-between">
                     <div className="flex items-center">
-                        <button type="button" className="sidebar-toggler" onClick={() => dispatch(toggleSidebar())}>
-                            <i className="bi bi-list"></i>
-                        </button>
+                        
                         <SiteBrandWrapper to="/" className="inline-flex">
                             <div className="brand-img-wrap flex items-center justify-center">
                                 <img className="site-brand-img" src={staticImages.logo} alt="site logo" />
                             </div>
-                            <span className="site-brand-text text-outerspace">achats.</span>
+                            <span className="site-brand-text text-outerspace">DANDAN</span>
                         </SiteBrandWrapper>
                     </div>
                     <NavigationAndSearchWrapper className="flex items-center">
@@ -178,7 +176,7 @@ const Header = () => {
                                 <Input
                                     type="text"
                                     className="input-control w-full"
-                                    placeholder="Search"
+                                    placeholder="Tìm kiếm tên sản phẩm"
                                     onChange={(e) => setKeyword(e.target.value)}
                                 />
                             </InputGroupWrapper>
@@ -186,14 +184,14 @@ const Header = () => {
                     </NavigationAndSearchWrapper>
 
                     <IconLinksWrapper className="flex items-center">
-                        <Link
+                        {/* <Link
                             to="/wishlist"
                             className={`icon-link ${
                                 location.pathname === "/wishlist" ? "active" : ""
                             } inline-flex items-center justify-center`}
                         >
                             <img src={staticImages.heart} alt="" />
-                        </Link>
+                        </Link> */}
                         <Link
                             to="/sign_in"
                             className={`icon-link ${

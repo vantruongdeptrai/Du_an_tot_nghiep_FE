@@ -167,7 +167,7 @@ const Footer = () => {
               );
             })}
           </div>
-          <div className="ftr-app-links">
+          {/* <div className="ftr-app-links">
             <p className="app-links-title text-white text-xl font-semibold text-lg">
               Donwload the App
             </p>
@@ -179,17 +179,17 @@ const Footer = () => {
                 <img src={staticImages.app_store} alt="" />
               </Link>
             </div>
-          </div>
+          </div> */}
         </div>
-        <div className="footer-bottom text-center">
+        {/* <div className="footer-bottom text-center">
           <p className="text-base text-white">
-            Copyright &copy; 2023 &nbsp;
+            Copyright &copy; 2024 &nbsp;
             <Link to="/" className="text-white">
-              Achats site
+              Túi xách DANDAN
             </Link>
-            &nbsp;. All rights reserved.
+            &nbsp;
           </p>
-        </div>
+        </div> */}
       </Container>
     </FooterWrapper>
   );
