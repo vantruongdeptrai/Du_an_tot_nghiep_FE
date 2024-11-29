@@ -52,7 +52,7 @@ const OrderListScreen = () => {
                 <UserDashboardWrapper>
                     <UserMenu />
                     <UserContent>
-                        <Title titleText={"My Orders"} />
+                        <Title titleText={"Đơn hàng của tôi"} />
                         <div className="order-tabs">
                             <div className="order-tabs-heads">
                                 {/* Các nút Tab */}
@@ -63,7 +63,7 @@ const OrderListScreen = () => {
                                     }`}
                                     onClick={() => setActiveTab("active")}
                                 >
-                                    Active
+                                    Đang chờ xác nhận
                                 </button>
                                 <button
                                     type="button"
@@ -72,7 +72,7 @@ const OrderListScreen = () => {
                                     }`}
                                     onClick={() => setActiveTab("cancelled")}
                                 >
-                                    Cancelled
+                                    Đã hủy
                                 </button>
                                 <button
                                     type="button"
@@ -81,7 +81,7 @@ const OrderListScreen = () => {
                                     }`}
                                     onClick={() => setActiveTab("completed")}
                                 >
-                                    Completed
+                                    Hoàn thành
                                 </button>
                             </div>
 
@@ -94,12 +94,12 @@ const OrderListScreen = () => {
                                 )}
                                 {activeTab === "cancelled" && (
                                     <div className="order-tabs-content" id="cancelled">
-                                        Cancelled content
+                                        
                                     </div>
                                 )}
                                 {activeTab === "completed" && (
                                     <div className="order-tabs-content" id="completed">
-                                        Completed content
+                                        
                                     </div>
                                 )}
                             </div>
