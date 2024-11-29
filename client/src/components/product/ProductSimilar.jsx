@@ -13,7 +13,7 @@ const ProductSimilar = ({ product }) => {
     
     return (
         <Section>
-            <Title titleText={"Similar Products"} />
+            <Title titleText={"Sản phẩm tương tự"} />
             <ProductList productSeller={similarProduct.slice(0, 4)} />
         </Section>
     );

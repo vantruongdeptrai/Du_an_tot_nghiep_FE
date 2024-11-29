@@ -158,7 +158,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
 
     return (
         <DetailsContent>
-            <Title titleText={"Product Description"} />
+            <Title titleText={"Mô tả sản phẩm"} />
             <div className="details-content-wrapper grid">
                 <DescriptionTabsWrapper>
                     <div className="tabs-heads flex items-center flex-wrap">
@@ -185,36 +185,13 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                         })}
                     </div>
                     <div className="tabs-contents">
+                        {/* Mô tả sản phẩm */}
                         <div className={`tabs-content ${activeDesTab === "tabDescription" ? "show" : ""}`}>
                             <ContentStylings>
                                 <p>
                                     <p>{productDescription?.description}</p>
                                 </p>
-                                <h4>Specifications:</h4>
-                                <ul>
-                                    <li>Fabric: Bio-washed Cotton</li>
-                                    <li>Pattern: Printed</li>
-                                    <li>Fit: Regular-fit</li>
-                                    <li>Nect: Round Neck</li>
-                                    <li>Sleeve: Half-sleeves</li>
-                                    <li>Style: Casual Wear</li>
-                                </ul>
-                                <p>
-                                    *Important: Please make sure that the mobile number is filled Lorem ipsum dolor sit
-                                    amet consectetur adipisicing elit. Provident, blanditiis.
-                                </p>
-                                <h4>Why should you shop at Outfit store?</h4>
-                                <ul>
-                                    <li>Guranteed Good material quality</li>
-                                    <li>Rate convection stitsching.</li>
-                                </ul>
-                                <p>
-                                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae ipsam nostrum
-                                    praesentium nulla deleniti, facere mollitia dolore laboriosam, non iure deserunt
-                                    alias repellat perspiciatis asperiores ab quia nam tenetur voluptate sint animi!
-                                    Vitae aliquam cupiditate iste fuga expedita? Odio, impedit?
-                                </p>
-                                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Pariatur, fugiat.</p>
+                                
                             </ContentStylings>
                         </div>
                         <div>
@@ -224,7 +201,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                     activeDesTab === "tabComments" ? "show" : ""
                                 }`}
                             >
-                                <h2>Comments</h2>
+                                <h2>Bình luận về sản phẩm</h2>
                                 <hr />
                                 {commentUser.length > 0 ? (
                                     commentUser.map((comment) => (
@@ -254,7 +231,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                         </div>
                                     ))
                                 ) : (
-                                    <p>No comments yet.</p>
+                                    <p>Chưa có bình luận</p>
                                 )}
                                 {/* <form onSubmit={handleSubmit(onSubmit)} action="">
                                     <input {...register("user_id")} type="hidden" value={user?.id} />
