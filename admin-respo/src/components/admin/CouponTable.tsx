@@ -6,7 +6,7 @@ const CouponTable = () => {
   const { coupons, deleteCoupon } = useCoupon();
 
   // Hàm định dạng giá trị tiền tệ sang VNĐ
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: any) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
@@ -14,85 +14,160 @@ const CouponTable = () => {
   };
 
   return (
-    <table className="mt-6 w-full whitespace-nowrap text-left max-lg:block max-lg:overflow-x-scroll">
-      <colgroup>
-        <col className="w-full sm:w-4/12" />
-        <col className="lg:w-4/12" />
-        <col className="lg:w-2/12" />
-        <col className="lg:w-2/12" />
-        <col className="lg:w-1/12" />
-        <col className="lg:w-1/12" />
-        <col className="lg:w-1/12" />
-        <col className="lg:w-1/12" />
-      </colgroup>
-      <thead className="border-b dark:border-white/10 border-black/10 text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
-        <tr>
-          <th className="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">Tên</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Mô tả</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Chiết khấu</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Đơn hàng tối thiểu</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Giới hạn sử dụng</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Trạng thái</th>
-          {/* <th className="py-2 pl-0 pr-8 font-semibold">Ngày bắt đầu</th>
-          <th className="py-2 pl-0 pr-8 font-semibold">Ngày kết thúc</th> */}
-          <th className="py-2 pl-0 pr-4 text-right font-semibold">Hành động</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-white/5">
-        {coupons.map((item) => (
-          <tr key={item.id}>
-            <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">{item.name}</td>
-            <td className="py-4 pl-0 pr-8">{item.description}</td>
-            <td className="py-4 pl-0 pr-8">
-              {formatCurrency(item.discount_amount)}
-            </td>
-            <td className="py-4 pl-0 pr-8">
-              {formatCurrency(item.min_order_value)}
-            </td>
-            <td className="py-4 pl-0 pr-8">{item.usage_limit}</td>
-            <td className="py-4 pl-0 pr-8">
-              <span
-                className={`px-2 py-1 text-xs font-semibold rounded ${
-                  item.is_active
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }`}
-              >
-                {item.is_active ? "Hoạt động" : "Không hoạt động"}
-              </span>
-            </td>
-            {/* <td className="py-4 pl-0 pr-8">
-              {new Date(item.start_date).toLocaleDateString("vi-VN")}
-            </td>
-            <td className="py-4 pl-0 pr-8">
-              {new Date(item.end_date).toLocaleDateString("vi-VN")}
-            </td> */}
-            <td className="py-4 pl-0 text-right pr-6 lg:pr-8">
-              <div className="flex gap-x-1 justify-end">
-                <Link
-                  to={`/coupons/${item.id}`}
-                  className="dark:bg-blackPrimary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                >
-                  <HiOutlinePencil className="text-lg" />
-                </Link>
-                <Link
-                  to={`/coupons/${item.id}`}
-                  className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                >
-                  <HiOutlineEye className="text-lg" />
-                </Link>
-                <button
-                  onClick={() => deleteCoupon(`${item.id}`)}
-                  className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                >
-                  <HiOutlineTrash className="text-lg" />
-                </button>
-              </div>
-            </td>
+    <div
+      style={{
+        overflowX: "auto",
+        maxWidth: "100%",
+      }}
+    >
+      <table
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          fontSize: "14px",
+        }}
+        className="mt-6 whitespace-nowrap text-left"
+      >
+        <colgroup>
+          <col style={{ width: "100%" }} />
+          <col style={{ width: "33.33%" }} />
+          <col style={{ width: "16.66%" }} />
+          <col style={{ width: "16.66%" }} />
+          <col style={{ width: "8.33%" }} />
+          <col style={{ width: "8.33%" }} />
+          <col style={{ width: "8.33%" }} />
+        </colgroup>
+        <thead
+          style={{
+            backgroundColor: "#f9f9f9",
+            borderBottom: "2px solid #ddd",
+            color: "#333",
+          }}
+          className="text-sm leading-6"
+        >
+          <tr>
+            <th style={{ padding: "8px", textAlign: "left" }}>Tên</th>
+            <th style={{ padding: "8px", textAlign: "left" }}>Mô tả</th>
+            <th style={{ padding: "8px", textAlign: "left" }}>Chiết khấu</th>
+            <th style={{ padding: "8px", textAlign: "left" }}>
+              Đơn hàng tối thiểu
+            </th>
+            <th style={{ padding: "8px", textAlign: "left" }}>
+              Giới hạn sử dụng
+            </th>
+            <th style={{ padding: "8px", textAlign: "left" }}>Trạng thái</th>
+            <th style={{ padding: "8px", textAlign: "right" }}>Hành động</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {coupons.map((item, index) => (
+            <tr
+              key={item.id}
+              style={{
+                backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white",
+                transition: "background-color 0.3s ease",
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#eaeaea")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor =
+                  index % 2 === 0 ? "#f5f5f5" : "white")
+              }
+            >
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {item.name}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {item.description}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {formatCurrency(item.discount_amount)}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {formatCurrency(item.min_order_value)}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {item.usage_limit}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                <span
+                  style={{
+                    display: "inline-block",
+                    padding: "4px 8px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    color: item.is_active ? "#007f00" : "#a10000",
+                    backgroundColor: item.is_active ? "#d6f5d6" : "#ffd6d6",
+                    borderRadius: "4px",
+                  }}
+                >
+                  {item.is_active ? "Hoạt động" : "Không hoạt động"}
+                </span>
+              </td>
+              <td
+                style={{
+                  padding: "8px",
+                  borderBottom: "1px solid #ddd",
+                  textAlign: "right",
+                }}
+              >
+                <div
+                  style={{ display: "flex", gap: "8px", justifyContent: "end" }}
+                >
+                  <Link
+                    to={`/coupons/${item.id}`}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "32px",
+                      height: "32px",
+                      border: "1px solid #999",
+                      borderRadius: "4px",
+                      color: "#333",
+                    }}
+                  >
+                    <HiOutlinePencil />
+                  </Link>
+                  <Link
+                    to={`/coupons/${item.id}`}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "32px",
+                      height: "32px",
+                      border: "1px solid #999",
+                      borderRadius: "4px",
+                      color: "#333",
+                    }}
+                  >
+                    <HiOutlineEye />
+                  </Link>
+                  <button
+                    onClick={() => deleteCoupon(`${item.id}`)}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      width: "32px",
+                      height: "32px",
+                      border: "1px solid #999",
+                      borderRadius: "4px",
+                      color: "#333",
+                      backgroundColor: "transparent",
+                    }}
+                  >
+                    <HiOutlineTrash />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
