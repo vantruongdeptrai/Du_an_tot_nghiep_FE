@@ -5,27 +5,7 @@ const navMenuData = [
     id: "nav-menu-1",
     menuLink: "/product",
     menuText: "Shop",
-  },
-  {
-    id: "nav-menu-2",
-    menuLink: "/product/vi-cam-tay",
-    menuText: "Men",
-  },
-  {
-    id: "nav-menu-3",
-    menuLink: "/",
-    menuText: "Women",
-  },
-  {
-    id: "nav-menu-4",
-    menuLink: "/",
-    menuText: "Combos",
-  },
-  {
-    id: "nav-menu-5",
-    menuLink: "/",
-    menuText: "Fashion",
-  },
+  }
 ];
 
 const sideMenuData = [
@@ -41,12 +21,7 @@ const sideMenuData = [
     menuText: "Products",
     iconName: "grid-fill",
   },
-  {
-    id: "side-menu-3",
-    menuLink: "/wishlist",
-    menuText: "Wishlist",
-    iconName: "heart",
-  },
+  
   {
     id: "side-menu-4",
     menuLink: "/account",
@@ -652,24 +627,17 @@ const productDescriptionTabHeads = [
   {
     id: "tab-description",
     tabHead: "tabDescription",
-    tabText: "Description",
+    tabText: "Mô tả về sản phẩm",
     badgeValue: null,
     badgeColor: "",
   },
   {
     id: "tab-comments",
     tabHead: "tabComments",
-    tabText: "User Comments",
+    tabText: "Các bình luận",
     badgeValue: 10,
     badgeColor: "purple",
-  },
-  {
-    id: "tab-QNA",
-    tabHead: "tabQNA",
-    tabText: "Question & Answer",
-    badgeValue: 4,
-    badgeColor: "outerspace",
-  },
+  }
 ];
 
 const orderData = [

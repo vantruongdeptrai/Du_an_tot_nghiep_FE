@@ -63,10 +63,8 @@ const Brands = () => {
       <Container>
         <BrandsContent className="bg-outerspace">
           <StyledSectionTitle className="text-white text-center justify-center flex-col">
-            <h3>Top Brands Deal</h3>
-            <p className="text-xxl text-white">
-              Up to <span className="text-yellow">60%</span> off on brands.
-            </p>
+            <h3>Top nhãn hiệu</h3>
+            
           </StyledSectionTitle>
           <BrandsListWrapper className="flex items-center flex-wrap justify-center">
             {brandsData?.map((brand) => {

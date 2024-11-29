@@ -33,7 +33,11 @@ const Login: React.FC = () => {
 
   useEffect(() => {
     if (isLoggedIn && user?.role_id === 1) {
-      navigate("/profile");
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("token", user.token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      navigate("/");
     }
   }, [isLoggedIn, user, navigate]);
 
@@ -105,16 +109,6 @@ const Login: React.FC = () => {
             Nhấn vào đây
           </a>
         </p>
-        {/* Nút chuyển sang trang đăng ký
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Chưa có tài khoản?{" "}
-          <button
-            onClick={() => navigate("/register")}
-            className="text-blue-600 hover:text-blue-700 font-medium"
-          >
-            Đăng ký ngay
-          </button>
-        </p> */}
       </div>
     </div>
   );

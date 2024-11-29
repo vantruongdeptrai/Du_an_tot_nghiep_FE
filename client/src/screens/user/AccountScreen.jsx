@@ -153,7 +153,7 @@ const AccountScreen = () => {
     return (
         <AccountScreenWrapper className="page-py-spacing">
             <Container>
-                <Breadcrumb items={breadcrumbItems} />
+                
                 <UserDashboardWrapper>
                     <UserMenu />
                     <UserContent>

@@ -255,8 +255,10 @@ const ProductDetailsScreen = () => {
     const [variantPrice, setVariantPrice] = useState(null);
     const [variantStock, setVariantStock] = useState(null);
     const [quantity, setQuantity] = useState(1);
+
     const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
     console.log(cart);
+
 
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
@@ -403,14 +405,19 @@ const ProductDetailsScreen = () => {
                 {
                     product_id: productId,
                     quantity: quantity,
+
+
                     product_variant_id: productVariantId,
                 },
             );
+
             console.log(data);
+
 
             // localStorage.setItem("session_id", data.data.session_id);
             toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).");
             return;
+
         }else {
             mutation.mutate({
                 user_id: user.id,
@@ -421,6 +428,7 @@ const ProductDetailsScreen = () => {
                 color: selectedColor || null,
                 product_variant_id: productVariantId,
             });
+
         }
         
     };
@@ -429,31 +437,18 @@ const ProductDetailsScreen = () => {
     return (
         <DetailsScreenWrapper>
             <Container>
-                <Breadcrumb items={breadcrumbItems} />
+                
                 <DetailsContent className="grid">
                     <ProductPreview previewImagesVariant={variants} previewImages={product.image_url || []} />
                     <ProductDetailsWrapper>
                         <h2 className="prod-title">{product.name}</h2>
-                        <div className="flex items-center rating-and-comments flex-wrap">
-                            <div className="prod-rating flex items-center">
-                                {stars}
-                                <span className="text-gray text-xs">{product.rating}</span>
-                            </div>
-                            <div className="prod-comments flex items-start">
-                                <span className="prod-comment-icon text-gray">
-                                    <i className="bi bi-chat-left-text"></i>
-                                </span>
-                                <span className="prod-comment-text text-sm text-gray">
-                                    {product.comments_count} comment(s)
-                                </span>
-                            </div>
-                        </div>
+                        
 
                         {/* Hiển thị size và màu */}
                         {sizes.length > 0 && (
                             <ProductSizeWrapper>
                                 <div className="prod-size-top flex items-center flex-wrap">
-                                    <p className="text-lg font-semibold text-outerspace">Select size</p>
+                                    <p className="text-lg font-semibold text-outerspace">Size</p>
                                 </div>
                                 <div className="prod-size-list flex items-center" style={{ margin: "10px 20px" }}>
                                     {sizes.map((size, index) => (
@@ -478,7 +473,7 @@ const ProductDetailsScreen = () => {
                         {colors.length > 0 && (
                             <ProductColorWrapper>
                                 <div className="prod-colors-top flex items-center flex-wrap">
-                                    <p className="text-lg font-semibold text-outerspace">Colours Available</p>
+                                    <p className="text-lg font-semibold text-outerspace">Màu sắc</p>
                                 </div>
                                 <div className="prod-colors-list flex items-center">
                                     {colors.map((color, index) => (
@@ -511,7 +506,7 @@ const ProductDetailsScreen = () => {
 
                         <IncreaAndDecreaWrapper>
                             <div className="prod-size-top flex items-center flex-wrap">
-                                <p className="text-lg font-semibold text-outerspace">Select quantity</p>
+                                <p className="text-lg font-semibold text-outerspace">Chọn số lượng</p>
                             </div>
                             <div className="flex btn-and-price">
                                 <button
@@ -548,19 +543,19 @@ const ProductDetailsScreen = () => {
                                     <i className={variantStock === 0 ? "bi bi-cart-x" : "bi bi-cart2"}></i>
                                 </div>
                                 <div className="prod-add-btn-text">
-                                    {variantStock === 0 ? "Out of stock" : "Add to cart"}
+                                    {variantStock === 0 ? "Sản phẩm đã hết hàng" : "Thêm vào giỏ hàng"}
                                 </div>
                             </button>
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
                                 <div>
                                     Price: {formatCurrency(variantPrice)}{" "}
+
                                     <span style={{ opacity: 0.6 }}>
                                         ({variantStock > 0 ? `${variantStock} products` : "đã hết hàng"})
                                     </span>
                                 </div>
                             </div>
                         </div>
-                        <ProductServices />
                     </ProductDetailsWrapper>
                 </DetailsContent>
                 <ProductDescriptionTab product_id={id} user={user} />

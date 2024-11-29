@@ -282,17 +282,17 @@ const OrderDetailScreen = () => {
                             <Link to="/order" className="btn-go-back inline-flex items-center justify-center text-xxl">
                                 <i className="bi bi-chevron-left"></i>
                             </Link>
-                            <Title titleText={"Order Details"} />
+                            <Title titleText={"Đơn hàng đã đặt"} />
                         </div>
 
                         <div className="order-d-wrapper">
                             <div className="order-d-top flex justify-between items-start">
                                 <div className="order-d-top-l">
-                                    <h4 className="text-3xl order-d-no">Order no: {orderDetail.id}</h4>
+                                    <h4 className="text-3xl order-d-no">Mã đơn hàng: {orderDetail.id}</h4>
                                     <p className="text-lg font-medium text-gray">{orderDetail.created_at}</p>
                                 </div>
                                 <div className="order-d-top-r text-xxl text-gray font-semibold">
-                                    Total: <span className="text-outerspace">{formatCurrency(orderDetail.total_price)}</span>
+                                    Tổng giá tiền: <span className="text-outerspace">{formatCurrency(orderDetail.total_price)}</span>
                                 </div>
                             </div>
 
@@ -356,12 +356,12 @@ const OrderDetailScreen = () => {
                                 </div>
                             </OrderDetailStatusWrapper>
 
-                            <OrderDetailMessageWrapper className="order-message flex items-center justify-start">
+                            {/* <OrderDetailMessageWrapper className="order-message flex items-center justify-start">
                                 <p className="font-semibold text-gray">
                                     8 June 2023 3:40 PM &nbsp;
                                     <span className="text-outerspace">Your order has been successfully verified.</span>
                                 </p>
-                            </OrderDetailMessageWrapper>
+                            </OrderDetailMessageWrapper> */}
 
                             <OrderDetailListWrapper className="order-d-list">
                                 {orderDetail.order_items?.map((item) => {
@@ -382,7 +382,7 @@ const OrderDetailScreen = () => {
                                             <div className="order-d-item-info">
                                                 <p className="text-xl font-bold">{product?.name}</p>
                                                 <p className="text-md font-bold">
-                                                    Color: &nbsp;
+                                                    Màu: &nbsp;
                                                     <span className="font-medium text-gray">{colorDetail?.name || "Không có màu"}</span>
                                                 </p>
                                                 <p className="text-md font-bold">
@@ -392,11 +392,11 @@ const OrderDetailScreen = () => {
                                             </div>
                                             <div className="order-d-item-calc">
                                                 <p className="font-bold text-lg">
-                                                    Quantity: &nbsp;
+                                                    Số lượng: &nbsp;
                                                     <span className="text-gray">{item?.quantity}</span>
                                                 </p>
                                                 <p className="font-bold text-lg">
-                                                    Price: &nbsp;
+                                                    Giá tiền: &nbsp;
                                                     <span className="text-gray">{formatCurrency(productVariant?.price)}</span>
                                                 </p>
                                             </div>

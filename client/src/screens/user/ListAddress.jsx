@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
@@ -8,6 +10,7 @@ import Title from "../../components/common/Title";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useAddress from "../../hooks/useAddress";
 import AddressModal from "../../components/modals/ModalAdd";
+
 import { toast } from "react-toastify";
 
 // Styled components
@@ -35,21 +38,26 @@ const AccountScreenWrapper = styled.main`
         font-weight: bold;
         border: 1px solid red;
         padding: 2px 5px;
+
     }
 
     .button-update {
         background-color: ${defaultTheme.color_yellow};
         color: ${defaultTheme.color_white};
+
         width: 120px;
         height: 35px;
         font-size: 16px;
+
         border-radius: 8px;
         border: none;
         cursor: pointer;
         transition: background-color 0.3s ease;
+
         &:hover {
             background-color: ${defaultTheme.color_yellow_green};
             transform: scale(1.1);
+
         }
     }
 
@@ -63,6 +71,7 @@ const AccountScreenWrapper = styled.main`
         border: none;
         cursor: pointer;
         transition: background-color 0.3s ease;
+
         &:hover {
             background-color: ${defaultTheme.color_dim_gray};
             transform: scale(1.1);
@@ -88,16 +97,19 @@ const AccountScreenWrapper = styled.main`
         border: 1px solid #ccc;
         padding: 4px 6px;
         font-size: 16px;
+
     }
 `;
 
 const ListAddressScreen = () => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const [isModalOpen, setIsModalOpen] = useState(false);
+
     const { addresses, createAddress, setDefaultAddress } = useAddress();
 
     const addressByUser = Array.isArray(addresses) ? addresses.filter((address) => address.id == user.id) : [];
     console.log(addressByUser);
+
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -106,6 +118,7 @@ const ListAddressScreen = () => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
+
 
     const handleAddAddress = async (addressData) => {
         await createAddress(addressData);
@@ -116,6 +129,7 @@ const ListAddressScreen = () => {
     const handleSetDefaultAddress = (addressId) => {
         setDefaultAddress(addressId); // Assume this function sets the default address in the state or backend
     };
+
 
     if (!user) {
         return <p>User not found. Please log in again.</p>;
@@ -134,16 +148,19 @@ const ListAddressScreen = () => {
                     <UserMenu />
                     <UserContent>
                         <Title titleText={"My Address"} />
+
                         <div>
                             <button className="button-add" onClick={handleOpenModal}>
                                 Thêm Địa Chỉ
                             </button>
+
                             <AddressModal
                                 isOpen={isModalOpen}
                                 onClose={handleCloseModal}
                                 onConfirm={handleAddAddress}
                             />
                         </div>
+
                         <h2 style={{ marginTop: 20 }}>Địa chỉ</h2>
                         <div className="address-list">
                             {addressByUser.length === 0 ? (
@@ -228,6 +245,7 @@ const ListAddressScreen = () => {
                                 ))
                             )}
                         </div>
+
                     </UserContent>
                 </UserDashboardWrapper>
             </Container>
