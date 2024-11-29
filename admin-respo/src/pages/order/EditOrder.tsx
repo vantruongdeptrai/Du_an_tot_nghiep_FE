@@ -15,6 +15,7 @@ const EditOrder = () => {
     statusOrder: "",
     paymentType: "",
     shippingAddress: "",
+    cancel_reason: "", // Thêm trường lý do hủy
   });
 
   const [loading, setLoading] = useState(true);
@@ -70,6 +71,7 @@ const EditOrder = () => {
           statusOrder: data.order.status_order,
           paymentType: data.order.payment_type,
           shippingAddress: data.order.shipping_address,
+          cancel_reason: data.order.cancel_reason || "", // Lấy lý do hủy
         });
 
         // Cập nhật các trạng thái có thể chọn
@@ -100,6 +102,9 @@ const EditOrder = () => {
       case "Đang vận chuyển":
         setAvailableStatuses(["Đang vận chuyển", "Giao hàng thành công"]);
         break;
+      case "Chờ xác nhận hủy":
+        setAvailableStatuses(["Chờ xác nhận hủy", "Chờ xác nhận", "Đã hủy"]);
+        break;
       case "Giao hàng thành công":
         setAvailableStatuses(["Giao hàng thành công"]);
         break;
@@ -124,12 +129,15 @@ const EditOrder = () => {
         },
         body: JSON.stringify({
           status_order: inputObject.statusOrder,
+          cancel_reason:
+            inputObject.statusOrder === "Chờ xác nhận hủy"
+              ? inputObject.cancel_reason
+              : null, // Chỉ gửi lý do hủy khi cần
         }),
       });
 
       if (response.ok) {
         const data = await response.json();
-
         setInputObject((prevState) => ({
           ...prevState,
           statusOrder: data.order.new_status_order,
@@ -139,7 +147,7 @@ const EditOrder = () => {
         throw new Error("Cập nhật thất bại.");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Lỗi khi cập nhật trạng thái:", error);
     }
   };
 
@@ -234,9 +242,21 @@ const EditOrder = () => {
                       </select>
                     </td>
                   </tr>
+                  {inputObject.statusOrder === "Chờ xác nhận hủy" && (
+                    <tr className="border-b hover:bg-gray-100">
+                      <td className="font-semibold text-gray-700 py-2 px-4">
+                        Lý do hủy:
+                      </td>
+                      <td className="text-gray-600 py-2 px-4">
+                        {inputObject.cancel_reason ||
+                          "Không có lý do được cung cấp"}
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
+
             <div className="border p-6 rounded-lg shadow-md bg-gray-50">
               <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mb-4">
                 Sản phẩm trong đơn hàng
@@ -283,14 +303,12 @@ const EditOrder = () => {
                               style: "currency",
                               currency: "VND",
                             }).format(item.variant_price)}{" "}
-                            {/* Hiển thị giá của biến thể */}
                           </td>
                           <td className="py-3 px-4 text-right">
                             {new Intl.NumberFormat("vi-VN", {
                               style: "currency",
                               currency: "VND",
                             }).format(item.total_item_price)}{" "}
-                            {/* Hiển thị tổng giá của biến thể */}
                           </td>
                         </tr>
                       ))}
@@ -315,7 +333,34 @@ const EditOrder = () => {
               </div>
             </div>
           </div>
-
+          <div style={{ marginLeft: 35 }}>
+            {inputObject.statusOrder === "Chờ xác nhận hủy" && (
+              <div className="flex gap-4 ">
+                <button
+                  onClick={() =>
+                    setInputObject((prev) => ({
+                      ...prev,
+                      statusOrder: "Đã hủy",
+                    }))
+                  }
+                  className="bg-red-600 text-white py-2 px-4 rounded-md shadow-lg hover:bg-red-700 transition"
+                >
+                  Xác nhận hủy
+                </button>
+                <button
+                  onClick={() =>
+                    setInputObject((prev) => ({
+                      ...prev,
+                      statusOrder: "Chờ xác nhận",
+                    }))
+                  }
+                  className="bg-gray-600 text-white py-2 px-4 rounded-md shadow-lg hover:bg-gray-700 transition"
+                >
+                  Từ chối hủy
+                </button>
+              </div>
+            )}
+          </div>
           {/* Nút lưu */}
           <div className="flex justify-end mt-6">
             <button
