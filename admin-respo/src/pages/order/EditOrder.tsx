@@ -358,17 +358,17 @@ const EditOrder = () => {
                 >
                   Từ chối hủy
                 </button>
-                <div style={{ marginLeft: 770 }}>
-                  <button
-                    onClick={updateOrderStatus}
-                    className="bg-blue-600 text-white py-3 px-6 rounded-md shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center gap-x-2 transition"
-                  >
-                    <AiOutlineSave className="text-lg" />
-                    Lưu
-                  </button>
-                </div>
               </div>
             )}
+            <div style={{ marginLeft: 1050 }}>
+              <button
+                onClick={updateOrderStatus}
+                className="bg-blue-600 text-white py-3 px-6 rounded-md shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center gap-x-2 transition"
+              >
+                <AiOutlineSave className="text-lg" />
+                Lưu
+              </button>
+            </div>
           </div>
         </div>
       </div>
