@@ -100,7 +100,7 @@ const UserMenu = () => {
                             <span className="text-base font-semibold nav-link-text no-wrap">My orders</span>
                         </Link>
                     </li>
-                    <li className="nav-menu-item">
+                    {/* <li className="nav-menu-item">
                         <Link
                             to="/wishlist"
                             className={`nav-menu-link flex items-center ${
@@ -114,7 +114,7 @@ const UserMenu = () => {
                             </span>
                             <span className="text-base font-semibold nav-link-text no-wrap">Wishlist</span>
                         </Link>
-                    </li>
+                    </li> */}
                     <li className="nav-menu-item">
                         <Link
                             to="/account"

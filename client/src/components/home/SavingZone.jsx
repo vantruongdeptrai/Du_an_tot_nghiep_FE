@@ -111,7 +111,7 @@ const SavingZone = () => {
   return (
     <Section>
       <Container>
-        <Title titleText={"Big Saving Zone"} />
+        <Title titleText={"Ưu đãi giảm giá"} />
         <ProductGridWrapper className="grid">
           {savingZoneData?.map((savingZone) => {
             return (
