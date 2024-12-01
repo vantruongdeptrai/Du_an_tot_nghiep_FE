@@ -67,6 +67,7 @@ const NavMenuWrapper = styled.nav`
 const UserMenu = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem('userInfo'));
 
     const handleLogout = () => {
         // Xóa thông tin người dùng khỏi localStorage
@@ -82,8 +83,8 @@ const UserMenu = () => {
 
     return (
         <div>
-            <Title titleText={"Hello Richard"} />
-            <p className="text-base font-light italic">Welcome to your account.</p>
+            <Title titleText={`Xin chào, ${user.name}`} />
+            <p className="text-base font-light italic">Chào mừng đến với tài khoản của bạn</p>
 
             <NavMenuWrapper>
                 <ul className="nav-menu-list grid">
@@ -97,7 +98,7 @@ const UserMenu = () => {
                             <span className="nav-link-icon flex items-center justify-center">
                                 <img src="./assets/icons/ac_orders.svg" alt="" />
                             </span>
-                            <span className="text-base font-semibold nav-link-text no-wrap">My orders</span>
+                            <span className="text-base font-semibold nav-link-text no-wrap">Đơn hàng của tôi</span>
                         </Link>
                     </li>
                     {/* <li className="nav-menu-item">
@@ -125,7 +126,7 @@ const UserMenu = () => {
                             <span className="nav-link-icon flex items-center justify-center">
                                 <img src="./assets/icons/ac_user.svg" alt="" />
                             </span>
-                            <span className="text-base font-semibold nav-link-text no-wrap">My Account</span>
+                            <span className="text-base font-semibold nav-link-text no-wrap">Tài khoản</span>
                         </Link>
                     </li>
                     <li className="nav-menu-item">
@@ -138,7 +139,7 @@ const UserMenu = () => {
                             <span className="nav-link-icon flex items-center justify-center">
                                 <img src="./assets/icons/ac_user.svg" alt="" />
                             </span>
-                            <span className="text-base font-semibold nav-link-text no-wrap">My address</span>
+                            <span className="text-base font-semibold nav-link-text no-wrap">Địa chỉ của tôi</span>
                         </Link>
                     </li>
                     <li className="nav-menu-item">
@@ -147,7 +148,7 @@ const UserMenu = () => {
                             <span className="nav-link-icon flex items-center justify-center">
                                 <img src="./assets/icons/ac_sign_out.svg" alt="" />
                             </span>
-                            <span className="text-base font-semibold nav-link-text no-wrap">Sign out</span>
+                            <span className="text-base font-semibold nav-link-text no-wrap">Đăng xuất</span>
                         </button>
                     </li>
                 </ul>

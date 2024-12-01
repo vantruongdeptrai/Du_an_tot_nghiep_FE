@@ -8,11 +8,9 @@ const getAllOrders = async () => {
     return response.data;
 };
 
-
 const useOrder = () => {
     // Fetch all orders with useQuery
     const { data: orders = [] } = useQuery(["orders"], getAllOrders);
-
 
     const createOrder = async (data, id, orderItems, paymentMethod) => {
         try {
@@ -21,8 +19,6 @@ const useOrder = () => {
 
             const couponNames = [...new Set(orderItems.map((item) => item.coupon_name))];
             const couponName = couponNames.length > 0 ? couponNames[0] : null;
-
-
 
             const orderData = {
                 user_id: id,
@@ -70,10 +66,12 @@ const useOrder = () => {
         }
     };
 
+    const queryClient = useQueryClient();
+
     const deleteOrderReason = async (id, data) => {
         try {
             await apiClient.post(`/orders/cancel/${id}`, data);
-            window.location.reload();
+            queryClient.invalidateQueries(["orders"]); // Làm mới dữ liệu
         } catch (error) {
             toast.error("Error cancelling order.");
             console.log(error);

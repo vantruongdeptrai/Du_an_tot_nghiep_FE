@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import formatCurrency from "../../utils/formatUtils";
+import useProductVariant from "../../hooks/useProductVariant";
 
 const CartSummaryWrapper = styled.div`
     background-color: ${defaultTheme.color_flash_white};
@@ -42,6 +43,7 @@ const SHIPPING_FEE = 0;
 
 const CartSummary = ({ selectedItems, appliedCoupon }) => {
     const navigate = useNavigate();
+    const { productVariants } = useProductVariant();
 
     const [subTotal, setSubtotal] = useState(0);
     const [grandTotal, setGrandTotal] = useState(0);
@@ -77,6 +79,20 @@ const CartSummary = ({ selectedItems, appliedCoupon }) => {
             toast.warn("Đơn đặt hàng của bạn không đáp ứng số tiền tối thiểu để được giảm giá!");
             return;
         }
+
+        for (const item of selectedItems) {
+            const variant = productVariants.find((pv) => pv.id === item.product_variant_id);
+            if (!variant) {
+                toast.error(`Không tìm thấy thông tin biến thể cho sản phẩm: ${item.product_name}`);
+                return;
+            }
+            if (item.quantity > variant.quantity) {
+                toast.error(
+                    `Sản phẩm "${item.product_name}" chỉ còn ${variant.quantity} sản phẩm, vui lòng giảm số lượng.`
+                );
+                return;
+            }
+        }
         const orderItems = selectedItems.map((item) => ({
             product_id: item.product_id,
             product_variant_id: item.product_variant_id,
@@ -85,9 +101,9 @@ const CartSummary = ({ selectedItems, appliedCoupon }) => {
             size: item.size,
             color: item.color,
             discount: discount,
-            coupon_name: appliedCoupon?.name
+            coupon_name: appliedCoupon?.name,
         }));
-        console.log(orderItems);
+        
 
         const isUserLoggedIn = !!localStorage.getItem("userInfo"); // Hoặc kiểm tra token/cookie
 

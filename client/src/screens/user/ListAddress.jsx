@@ -147,7 +147,7 @@ const ListAddressScreen = () => {
                 <UserDashboardWrapper>
                     <UserMenu />
                     <UserContent>
-                        <Title titleText={"My Address"} />
+                        <Title titleText={"Địa chỉ của tôi"} />
 
                         <div>
                             <button className="button-add" onClick={handleOpenModal}>
@@ -164,7 +164,7 @@ const ListAddressScreen = () => {
                         <h2 style={{ marginTop: 20 }}>Địa chỉ</h2>
                         <div className="address-list">
                             {addressByUser.length === 0 ? (
-                                <div>No addresses added yet.</div>
+                                <div>Chưa có địa chỉ nào.</div>
                             ) : (
                                 addressByUser.map((address, index) => (
                                     <div key={index} className="address-item">
@@ -213,7 +213,7 @@ const ListAddressScreen = () => {
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                <div
+                                                                {/* <div
                                                                     style={{
                                                                         display: "flex",
                                                                         flexDirection: "column",
@@ -234,7 +234,7 @@ const ListAddressScreen = () => {
                                                                     >
                                                                         Thiết lập mặc định
                                                                     </button>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         </div>
                                                     ); // Thêm return vào đây

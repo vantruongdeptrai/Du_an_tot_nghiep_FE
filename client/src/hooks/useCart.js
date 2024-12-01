@@ -38,7 +38,8 @@ const useCart = (userId) => {
     );
     const deleteItemMutation = useMutation(deleteCart, {
         onSuccess: () => {
-            queryClient.invalidateQueries(["cart"]);
+            queryClient.invalidateQueries(["cart", userId || "guest"]);
+            toast.success("Delete cart successfully.");
         },
         onError: (error) => {
             toast.error(`Failed to delete item: ${error.message}`);

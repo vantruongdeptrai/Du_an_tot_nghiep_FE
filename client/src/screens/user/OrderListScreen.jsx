@@ -67,7 +67,7 @@ const OrderListScreen = () => {
                                 >
                                     Đang chờ xác nhận
                                 </button>
-                                <button
+                                {/* <button
                                     type="button"
                                     className={`order-tabs-head text-xl italic ${
                                         activeTab === "cancelled" ? "order-tabs-head-active" : ""
@@ -84,7 +84,7 @@ const OrderListScreen = () => {
                                     onClick={() => setActiveTab("completed")}
                                 >
                                     Hoàn thành
-                                </button>
+                                </button> */}
                             </div>
 
                             {/* Nội dung của các tab */}
@@ -94,7 +94,7 @@ const OrderListScreen = () => {
                                         <OrderItemList orders={userOrders} guestOrders={guestOrder} />
                                     </div>
                                 )}
-                                {activeTab === "cancelled" && (
+                                {/* {activeTab === "cancelled" && (
                                     <div className="order-tabs-content" id="cancelled">
                                         
                                     </div>
@@ -103,7 +103,7 @@ const OrderListScreen = () => {
                                     <div className="order-tabs-content" id="completed">
                                         
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         </div>
                     </UserContent>

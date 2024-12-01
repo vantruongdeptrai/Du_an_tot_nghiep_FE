@@ -156,9 +156,9 @@ const Header = () => {
                     <NavigationAndSearchWrapper className="flex items-center">
                         <NavigationMenuWrapper>
                             <ul className="nav-menu-list flex items-center">
-                                {navMenuData?.map((menu) => {
+                                {navMenuData?.map((menu, index) => {
                                     return (
-                                        <li className="nav-menu-item" key={menu.id}>
+                                        <li className="nav-menu-item" key={index}>
                                             <Link
                                                 to={menu.menuLink}
                                                 className="nav-menu-link text-base font-medium text-gray"

@@ -21,13 +21,13 @@ const Stats = ({ totalRevenue = { total_revenue: "0" }, bestSellers = { success:
       <div className="flex justify-start gap-x-20 max-[1800px]:flex-wrap gap-y-10 mr-1 max-[1352px]:gap-x-10 max-[1050px]:mr-5">
         {/* Hiển thị doanh thu */}
         <SingleStats
-          title="Revenue"
+          title="Tổng doanh thu"
           value={<CountUp start={0} end={revenueNumber} duration={2.5} suffix=" VNĐ" separator="," />}
         />
 
         {/* Hiển thị tổng số lượng sản phẩm bán chạy */}
         <SingleStats
-          title="Best Sellers"
+          title="Sản phẩm bán chạy"
           value={<CountUp start={0} end={totalBestSellers} duration={1} suffix=" sản phẩm" separator="," />}
         />
       </div>
