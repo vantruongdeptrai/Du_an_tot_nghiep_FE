@@ -267,6 +267,9 @@ const EditOrder = () => {
                     <thead>
                       <tr className="bg-blue-100 text-gray-800 border-b border-gray-300">
                         <th className="text-left py-3 px-4 font-semibold">
+                          Ảnh sản phẩm
+                        </th>
+                        <th className="text-left py-3 px-4 font-semibold">
                           Tên sản phẩm
                         </th>
                         <th className="text-left py-3 px-4 font-semibold">
@@ -291,6 +294,17 @@ const EditOrder = () => {
                             index % 2 === 0 ? "bg-gray-50" : "bg-gray-100"
                           } border-b hover:bg-blue-50`}
                         >
+                          <td className="py-3 px-4">
+                            {item.image_url ? (
+                              <img
+                                src={item.image_url}
+                                alt={item.product_name}
+                                className="w-16 h-16 object-cover rounded"
+                              />
+                            ) : (
+                              <span>Không có ảnh</span>
+                            )}
+                          </td>
                           <td className="py-3 px-4">{item.product_name}</td>
                           <td className="py-3 px-4">
                             {item.variant_name || "Không có"}
