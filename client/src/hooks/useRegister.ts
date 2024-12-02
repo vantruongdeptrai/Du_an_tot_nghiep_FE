@@ -4,13 +4,6 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import apiClient from '../api/axiosConfig';
 
-// Định nghĩa interface cho thông tin đăng nhập
-interface LoginInfo {
-  email?: string;
-  phone?: string;
-  password: string;
-}
-
 // interface RegisterInput {
 //   name: string;
 //   email: string;

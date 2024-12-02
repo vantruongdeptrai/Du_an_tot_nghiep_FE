@@ -12,8 +12,10 @@ import { Link } from "react-router-dom";
 const ProductCardBoxWrapper = styled.div`
     ${commonCardStyles}
     .product-img {
-        height: 262px;
-        width: 262px;
+        width: 100%; /* Chiều rộng chiếm toàn bộ không gian cha */
+        height: 300px; /* Giữ nguyên tỷ lệ khung hình */
+        object-fit: cover; /* Cắt bớt nếu cần để lấp đầy vùng chứa */
+        border-radius: 8px; /* Tạo góc bo tròn (tuỳ chọn) */
     }
 
     @media (max-width: ${breakpoints.sm}) {
@@ -74,7 +76,11 @@ const NewArrival = () => {
                                             <img className="object-fit-cover" src={newArrival.image_url} />
                                         </div>
                                         <div className="product-info">
-                                            <p className="font-semibold text-xl">{newArrival.name.length > 20 ? newArrival.name.substring(0, 20) + '...' : newArrival.name}</p>
+                                            <p className="font-semibold text-xl">
+                                                {newArrival.name.length > 20
+                                                    ? newArrival.name.substring(0, 20) + "..."
+                                                    : newArrival.name}
+                                            </p>
                                         </div>
                                     </Link>
                                 </ProductCardBoxWrapper>

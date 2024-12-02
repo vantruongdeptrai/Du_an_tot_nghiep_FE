@@ -291,11 +291,11 @@ const Billing = () => {
                             )}
                         </div>
                     </div>
-                    <h4 className="text-xxl font-bold text-outerspace">Billing Details</h4>
+                    <h4 className="text-xxl font-bold text-outerspace">Thông tin chi tiết</h4>
                     <form className="checkout-form">
                         <div className="input-elem">
                             <label htmlFor="" className="text-base text-outerspace font-semibold">
-                                Full name *
+                                Họ và tên *
                             </label>
                             <Input {...register("name_order")} type="text" placeholder="Full name" />
                         </div>
@@ -310,13 +310,13 @@ const Billing = () => {
                         </div>
                         <div className="input-elem">
                             <label htmlFor="" className="text-base text-outerspace font-semibold">
-                                Phone number *
+                                Số điện thoại *
                             </label>
                             <Input {...register("phone_order")} type="text" placeholder="Phone number" />
                         </div>
                         <div className="input-elem">
                             <label htmlFor="" className="text-base text-outerspace font-semibold">
-                                Note *
+                                Ghi chú *
                             </label>
                             <textarea
                                 {...register("user_note")}
@@ -329,11 +329,11 @@ const Billing = () => {
                 </BillingDetailsWrapper>
             ) : (
                 <BillingDetailsWrapper>
-                    <h4 className="text-xxl font-bold text-outerspace">Billing Details</h4>
+                    <h4 className="text-xxl font-bold text-outerspace">Thông tin chi tiết</h4>
                     <form className="checkout-form">
                         <div className="input-elem">
                             <label htmlFor="" className="text-base text-outerspace font-semibold">
-                                Full name *
+                                Họ và tên *
                             </label>
                             <Input {...register("name_order")} type="text" placeholder="Full name" />
                         </div>
@@ -351,13 +351,13 @@ const Billing = () => {
                         </div>
                         <div className="input-elem">
                             <label htmlFor="" className="text-base text-outerspace font-semibold">
-                                Phone number *
+                                Số điện thoại *
                             </label>
                             <Input {...register("phone_order")} type="text" placeholder="Phone number" />
                         </div>
                         <div className="input-elem">
                             <label htmlFor="" className="text-base text-outerspace font-semibold">
-                                Note *
+                                Ghi chú *
                             </label>
                             <textarea
                                 {...register("user_note")}

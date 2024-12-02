@@ -137,14 +137,14 @@ const SavingZone = () => {
                     {savingZone.description}
                   </p>
                   <p className="discount-text text-bold text-xxl uppercase">
-                    upto {savingZone.discount}% off
+                    Giảm {savingZone.discount}% 
                   </p>
                   <div className="info-arrow flex items-center justify-center text-xxl">
                     <i className="bi bi-arrow-down"></i>
                   </div>
                   <BaseLinkOutlineWhite
                     as={BaseLinkOutlineWhite}
-                    to="/"
+                    to="/product"
                     className="uppercase"
                   >
                     shop now

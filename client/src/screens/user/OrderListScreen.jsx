@@ -41,8 +41,10 @@ const breadcrumbItems = [
 const OrderListScreen = () => {
     const [activeTab, setActiveTab] = useState("active"); // state để lưu tab đang được chọn
     const { orders } = useOrder();
-    const { users } = useUser();
-    const userOrders = orders.filter((item) => item.user_id == users.id);
+    const { user } = useUser();
+    console.log(user);
+    
+    const userOrders = orders.filter((item) => item.user_id == user?.id);
     const guestOrder = JSON.parse(localStorage.getItem('guestOrder'));
     
     return (
@@ -65,7 +67,7 @@ const OrderListScreen = () => {
                                 >
                                     Đang chờ xác nhận
                                 </button>
-                                <button
+                                {/* <button
                                     type="button"
                                     className={`order-tabs-head text-xl italic ${
                                         activeTab === "cancelled" ? "order-tabs-head-active" : ""
@@ -82,7 +84,7 @@ const OrderListScreen = () => {
                                     onClick={() => setActiveTab("completed")}
                                 >
                                     Hoàn thành
-                                </button>
+                                </button> */}
                             </div>
 
                             {/* Nội dung của các tab */}
@@ -92,7 +94,7 @@ const OrderListScreen = () => {
                                         <OrderItemList orders={userOrders} guestOrders={guestOrder} />
                                     </div>
                                 )}
-                                {activeTab === "cancelled" && (
+                                {/* {activeTab === "cancelled" && (
                                     <div className="order-tabs-content" id="cancelled">
                                         
                                     </div>
@@ -101,7 +103,7 @@ const OrderListScreen = () => {
                                     <div className="order-tabs-content" id="completed">
                                         
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         </div>
                     </UserContent>

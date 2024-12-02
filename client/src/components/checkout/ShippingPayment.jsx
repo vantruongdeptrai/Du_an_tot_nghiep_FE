@@ -174,8 +174,8 @@ const ShippingPayment = () => {
     return (
         <ShippingPaymentWrapper>
             <div className="payment-method">
-                <h3 className="text-xxl payment-method-title">Payment Method</h3>
-                <p className="text-base text-outerspace">All transactions are secure and encrypted.</p>
+                <h3 className="text-xxl payment-method-title">Phương thức thanh toán</h3>
+                <p className="text-base text-outerspace">Tất cả các giao dịch đều được bảo mật và mã hóa.</p>
                 <form>
                     <div className="list-group">
                         {/* <div className={`list-group-item ${!isLoggedIn ? "disabled" : ""}`}>
@@ -223,9 +223,9 @@ const ShippingPayment = () => {
                                 value={"COD"}
                             />
                             <p className="font-semibod text-lg">
-                                Cash on delivery (COD)
+                                Tiền mặt khi giao hàng (COD)
                                 <span className="flex text-base font-medium text-gray">
-                                    Pay with cash upon delivery.
+                                    Thanh toán bằng tiền mặt khi giao hàng.
                                 </span>
                             </p>
                         </div>
@@ -243,7 +243,7 @@ const ShippingPayment = () => {
                             />
                             <p className="font-semibod text-lg">
                                 NCB
-                                <span className="flex text-base font-medium text-gray">Pay with NCB</span>
+                                <span className="flex text-base font-medium text-gray">Thanh toán bằng ngân hàng NCB</span>
                             </p>
                         </div>
                     </div>

@@ -95,7 +95,7 @@ const CheckoutSummary = () => {
 
     return (
         <CheckoutSummaryWrapper>
-            <h4 className="text-xxl font-bold text-outersapce">Checkout Order Summary</h4>
+            <h4 className="text-xxl font-bold text-outersapce">Thông tin đơn hàng</h4>
             <div className="order-list grid">
                 {checkoutSummary.map((order) => {
                     // Lấy dữ liệu từ `orderItems` tương ứng với sản phẩm
@@ -123,13 +123,13 @@ const CheckoutSummary = () => {
                                         </p>
                                         {item.color && item.color !== "N/A" && (
                                             <p className="text-base font-bold text-outerspace">
-                                                Color: &nbsp;
+                                                Màu: &nbsp;
                                                 <span className="text-gray font-normal">{detailColor ? detailColor.name : item.color}</span>
                                             </p>
                                         )}
                                         {item.size && item.size !== "N/A" && (
                                             <p className="text-base font-bold text-outerspace">
-                                                Size: &nbsp;
+                                                Kích cỡ: &nbsp;
                                                 <span className="text-gray font-normal">{detailSize ? detailSize.name : item.size}</span>
                                             </p>
                                         )}
@@ -147,21 +147,21 @@ const CheckoutSummary = () => {
             <ul className="order-info">
                 <li className="flex items-center justify-between">
                     <span className="text-outerspace font-bold text-lg">
-                        Subtotal <span className="text-gray font-semibold">({data.length} items)</span>
+                        Tổng phụ <span className="text-gray font-semibold">({data.length} items)</span>
                     </span>
                     <span className="text-outerspace font-bold text-lg">{formatCurrency(subtotal)}</span>
                 </li>
                 <li className="flex items-center justify-between">
-                    <span className="text-outerspace font-bold text-lg">Savings</span>
+                    <span className="text-outerspace font-bold text-lg">Tiết kiệm</span>
                     <span className="text-outerspace font-bold text-lg">{formatCurrency(totalDiscount[0])}</span>
                 </li>
                 <li className="flex items-center justify-between">
-                    <span className="text-outerspace font-bold text-lg">Shipping</span>
+                    <span className="text-outerspace font-bold text-lg">Phí ship</span>
                     <span className="text-outerspace font-bold text-lg">{formatCurrency(0)}</span>
                 </li>
                 <li className="list-separator"></li>
                 <li className="flex items-center justify-between">
-                    <span className="text-outerspace font-bold text-lg">Total</span>
+                    <span className="text-outerspace font-bold text-lg">Tổng tiền</span>
                     <span className="text-outerspace font-bold text-lg">{formatCurrency(subtotal - totalDiscount[0])}</span>
                 </li>
             </ul>

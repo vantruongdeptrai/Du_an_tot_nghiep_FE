@@ -1,8 +1,10 @@
-
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import formatCurrency from "../../utils/formatUtils";
-
+import useCart from "../../hooks/useCart";
+import { toast } from "react-toastify";
+import { defaultTheme } from "../../styles/themes/default";
+import Loader from "../../components/loader/loader";
 
 const Table = styled.table`
     width: 100%;
@@ -14,12 +16,10 @@ const Table = styled.table`
         padding: 12px;
         border: none;
         text-align: left;
-
         height: 100px;
         word-wrap: break-word; /* Bọc từ dài */
         word-break: break-word; /* Chia từ nếu cần */
         white-space: normal; /* Cho phép xuống dòng */
-
     }
     th {
         background-color: #f4f4f4;
@@ -45,24 +45,22 @@ const Table = styled.table`
     }
 
     .quantity-button {
-        background-color: #007bff;
+        background-color: ${defaultTheme.color_sea_green};
         color: white;
-        border: 1px solid #0056b3; // Thêm border cho nút
+        border: 1px solid ${defaultTheme.color_sea_green}; // Thêm border cho nút
         border-radius: 6px; // Thêm bo góc cho nút
         padding: 6px 16px; // Làm cho nút rộng ra
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.2s; // Thêm hiệu ứng khi hover
 
         &:hover {
-            background-color: #0056b3;
+            background-color: ${defaultTheme.color_sea_green_v1};
             transform: scale(1.05); // Thêm hiệu ứng phóng to khi hover
-
         }
 
         &:focus {
             outline: none; // Loại bỏ outline khi nút được nhấn
         }
-
 
         margin: 0 6px;
     }
@@ -77,12 +75,10 @@ const Table = styled.table`
     }
 
     .product-name {
-
         white-space: normal; /* Cho phép xuống dòng */
         word-wrap: break-word; /* Bọc từ nếu quá dài */
         word-break: break-word; /* Chia nhỏ từ nếu cần */
         max-width: 150px; /* Giới hạn chiều rộng */
-
     }
 `;
 
@@ -96,6 +92,17 @@ const CartTable = ({
     colors,
     isLoggedIn,
 }) => {
+    const { deleteItem } = useCart();
+    const handleDelete = (id) => {
+        if (selectedItems.some((item) => item.cart_id === id)) {
+            toast.warn("Không thể xóa sản phẩm đã chọn.");
+            return;
+        }
+        if (window.confirm("Bạn thực sự muốn xóa giỏ?")) {
+            deleteItem(id);
+        }
+    };
+
     const getColorName = (colorId) => {
         const color = colors?.find((color) => color.id === colorId); // Tìm màu sắc tương ứng
         return color ? color.name : colorId; // Nếu tìm thấy, trả về name, nếu không thì trả về id
@@ -134,12 +141,7 @@ const CartTable = ({
                                 <td>
                                     <input type="checkbox" checked={isSelected} onChange={() => onSelectItem(item)} />
                                 </td>
-                                <td
-                                    
-                                    className="product-name"
-                                >
-                                    {item.name || item.product_name}
-                                </td>
+                                <td className="product-name">{item.name || item.product_name}</td>
                                 <td>
                                     <img
                                         src={item.product_image || item.image}
@@ -169,7 +171,14 @@ const CartTable = ({
                                     {item.quantity}
                                     <button
                                         className="quantity-button"
-                                        onClick={() => handleIncreaseQuantity(item.product_id, item.size, item.color)}
+                                        onClick={() =>
+                                            handleIncreaseQuantity(
+                                                item.product_id,
+                                                item.size,
+                                                item.color,
+                                                item.quantity
+                                            )
+                                        }
                                         disabled={isSelected}
                                     >
                                         +
@@ -177,10 +186,7 @@ const CartTable = ({
                                 </td>
                                 <td>{formatCurrency((item.price || 0) * item.quantity)}</td>
                                 <td>
-                                    <button
-                                        className="delete-button"
-                                        onClick={() => handleDelete(item.product_id, item.size, item.color)}
-                                    >
+                                    <button className="delete-button" onClick={() => handleDelete(item.cart_id)}>
                                         Xóa
                                     </button>
                                 </td>
@@ -188,9 +194,7 @@ const CartTable = ({
                         );
                     })
                 ) : (
-                    <tr>
-                        <td colSpan="6">Giỏ hàng của bạn hiện đang trống.</td>
-                    </tr>
+                    <div></div>
                 )}
             </tbody>
         </Table>

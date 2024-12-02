@@ -33,8 +33,8 @@ const ProductPreviewWrapper = styled.div`
     }
 
     .preview-item {
-        width: 70px;
-        height: 70px;
+        width: 100px;
+        height: auto;
         overflow: hidden;
         border-radius: 8px;
         cursor: pointer;

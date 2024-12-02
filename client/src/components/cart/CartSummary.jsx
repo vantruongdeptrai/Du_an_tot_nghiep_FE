@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import formatCurrency from "../../utils/formatUtils";
+import useProductVariant from "../../hooks/useProductVariant";
 
 const CartSummaryWrapper = styled.div`
     background-color: ${defaultTheme.color_flash_white};
@@ -42,6 +43,7 @@ const SHIPPING_FEE = 0;
 
 const CartSummary = ({ selectedItems, appliedCoupon }) => {
     const navigate = useNavigate();
+    const { productVariants } = useProductVariant();
 
     const [subTotal, setSubtotal] = useState(0);
     const [grandTotal, setGrandTotal] = useState(0);
@@ -70,12 +72,26 @@ const CartSummary = ({ selectedItems, appliedCoupon }) => {
     // Hàm xử lý khi người dùng nhấn nút "Proceed To CheckOut"
     const handleProceedToCheckout = () => {
         if (selectedItems.length === 0) {
-            toast.warn("Please select a new item!");
+            toast.warn("Vui lòng chọn 1 sản phẩm muốn mua!");
             return;
         }
         if (!isDiscountValid) {
-            toast.warn("Your order does not meet the minimum amount for the discount!");
+            toast.warn("Đơn đặt hàng của bạn không đáp ứng số tiền tối thiểu để được giảm giá!");
             return;
+        }
+
+        for (const item of selectedItems) {
+            const variant = productVariants.find((pv) => pv.id === item.product_variant_id);
+            if (!variant) {
+                toast.error(`Không tìm thấy thông tin biến thể cho sản phẩm: ${item.product_name}`);
+                return;
+            }
+            if (item.quantity > variant.quantity) {
+                toast.error(
+                    `Sản phẩm "${item.product_name}" chỉ còn ${variant.quantity} sản phẩm, vui lòng giảm số lượng.`
+                );
+                return;
+            }
         }
         const orderItems = selectedItems.map((item) => ({
             product_id: item.product_id,
@@ -85,9 +101,9 @@ const CartSummary = ({ selectedItems, appliedCoupon }) => {
             size: item.size,
             color: item.color,
             discount: discount,
-            coupon_name: appliedCoupon?.name
+            coupon_name: appliedCoupon?.name,
         }));
-        console.log(orderItems);
+        
 
         const isUserLoggedIn = !!localStorage.getItem("userInfo"); // Hoặc kiểm tra token/cookie
 
@@ -104,24 +120,24 @@ const CartSummary = ({ selectedItems, appliedCoupon }) => {
         <CartSummaryWrapper>
             <ul className="summary-list">
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Sub Total</span>
+                    <span className="font-medium text-outerspace">Tổng phụ</span>
                     <span className="font-medium text-outerspace">{formatCurrency(subTotal)}</span>
                 </li>
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Saving</span>
+                    <span className="font-medium text-outerspace">Tiết kiệm</span>
                     <span className="font-medium text-outerspace">{formatCurrency(discount)}</span>
                 </li>
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Shipping</span>
+                    <span className="font-medium text-outerspace">Phí ship</span>
                     <span className="font-medium text-outerspace">{formatCurrency(SHIPPING_FEE)}</span>
                 </li>
                 <li className="summary-item flex justify-between">
-                    <span className="font-medium text-outerspace">Grand Total</span>
+                    <span className="font-medium text-outerspace">Tổng tiền</span>
                     <span className="summary-item-value font-bold text-outerspace">{formatCurrency(grandTotal)}</span>
                 </li>
             </ul>
             <BaseButtonGreen type="submit" className="checkout-btn" onClick={handleProceedToCheckout}>
-                Proceed To CheckOut
+                Thanh toán
             </BaseButtonGreen>
         </CartSummaryWrapper>
     );

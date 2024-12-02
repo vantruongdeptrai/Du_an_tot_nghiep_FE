@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
 import ProductPreview from "../../components/product/ProductPreview";
 import ProductDescriptionTab from "../../components/product/ProductDescriptionTab";
 import ProductSimilar from "../../components/product/ProductSimilar";
-import ProductServices from "../../components/product/ProductServices";
+
 import { breakpoints } from "../../styles/themes/default";
 import { defaultTheme } from "../../styles/themes/default";
 import apiClient from "../../api/axiosConfig";
 import formatCurrency from "../../utils/formatUtils";
 import { toast } from "react-toastify";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Loader from "../../components/loader/loader";
+import { useSizes, useColors } from "../../hooks/useAtribute";
+import useProduct from "../../hooks/useProduct";
+import useProductVariant from "../../hooks/useProductVariant";
 const DetailsScreenWrapper = styled.main`
     margin: 40px 0;
 `;
@@ -246,12 +250,17 @@ const IncreaAndDecreaWrapper = styled.div`
 const ProductDetailsScreen = () => {
     const { id } = useParams();
     const [product, setProduct] = useState([]);
+    const { products } = useProduct();
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState(null);
     const [selectedColor, setSelectedColor] = useState(null);
-    const [sizes, setSizes] = useState([]);
-    const [colors, setColors] = useState([]);
+    const [size, setSize] = useState([]);
+    const { sizes } = useSizes();
+
+    const [color, setColor] = useState([]);
+    const { colors } = useColors();
     const [variants, setVariants] = useState([]);
+    const { productVariants } = useProductVariant();
     const [variantPrice, setVariantPrice] = useState(null);
     const [variantStock, setVariantStock] = useState(null);
     const [quantity, setQuantity] = useState(1);
@@ -259,39 +268,29 @@ const ProductDetailsScreen = () => {
     const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
     console.log(cart);
 
-
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const breadcrumbItems = [
-        { label: "Shop", link: "" },
-        { label: "Women", link: "" },
-        { label: "Top", link: "" },
+        { label: "Trang chủ", link: "/" },
+        { label: "Chi tiết sản phẩm", link: "" },
     ];
     useEffect(() => {
         const fetchProductData = async () => {
             try {
                 // Lấy thông tin sản phẩm
-                const productResponse = await axios.get("http://127.0.0.1:8000/api/products");
-                const productData = productResponse.data.find((prod) => prod.id === parseInt(id));
+                const productData = products.find((prod) => prod.id === parseInt(id));
                 setProduct(productData);
                 setVariantPrice(productData ? productData.price : null);
 
                 // Lấy thông tin biến thể của sản phẩm
-                const variantsResponse = await axios.get("http://127.0.0.1:8000/api/product-variants");
-                const productVariants = variantsResponse.data.filter((variant) => variant.product_id === parseInt(id));
-                setVariants(productVariants);
+                const productVariant = productVariants.filter((variant) => variant.product_id === parseInt(id));
+                setVariants(productVariant);
 
-                // Nếu sản phẩm có biến thể, lấy màu và kích thước
-                if (productVariants.length > 0) {
-                    const sizeIds = [...new Set(productVariants.map((v) => v.size_id))];
-                    const colorIds = [...new Set(productVariants.map((v) => v.color_id))];
+                // Lấy size và màu có sẵn từ các biến thể của sản phẩm
+                const sizeIds = [...new Set(productVariant.map((v) => v.size_id))];
+                const colorIds = [...new Set(productVariant.map((v) => v.color_id))];
 
-                    // Gọi API để lấy thông tin size và color
-                    const sizesResponse = await axios.get("http://127.0.0.1:8000/api/sizes");
-                    const colorsResponse = await axios.get("http://127.0.0.1:8000/api/colors");
-
-                    setSizes(sizesResponse.data.filter((size) => sizeIds.includes(size.id)));
-                    setColors(colorsResponse.data.filter((color) => colorIds.includes(color.id)));
-                }
+                setSize(sizes.filter((size) => sizeIds.includes(size.id)));
+                setColor(colors.filter((color) => colorIds.includes(color.id)));
 
                 setLoading(false);
             } catch (error) {
@@ -301,33 +300,41 @@ const ProductDetailsScreen = () => {
         };
 
         fetchProductData();
-    }, [id]);
+    }, [id, products, productVariants, sizes, colors]);
 
     useEffect(() => {
         if (selectedSize && selectedColor) {
+            // Tìm kiếm biến thể với size và color đã chọn
             const selectedVariant = variants.find(
                 (variant) => variant.size_id === selectedSize && variant.color_id === selectedColor
             );
             if (selectedVariant) {
+                // Nếu tìm thấy biến thể, cập nhật giá và số lượng
                 setVariantPrice(selectedVariant.price);
                 setVariantStock(selectedVariant.quantity);
+            } else {
+                // Nếu không tìm thấy biến thể, đặt lại giá và số lượng về mặc định hoặc giá trị hợp lý
+                setVariantPrice(product ? product.price : 0);  // Đặt lại giá mặc định nếu không chọn biến thể
+                setVariantStock(0);  // Không có số lượng nếu không chọn biến thể hợp lệ
             }
-        } else if (product) {
-            setVariantPrice(product.price);
+        } else {
+            // Nếu không chọn size hoặc color, đặt lại giá và số lượng về mặc định
+            setVariantPrice(product ? product.price : 0);
+            setVariantStock(0);
         }
     }, [selectedSize, selectedColor, variants, product]);
-    const stars = Array.from({ length: 5 }, (_, index) => (
-        <span
-            key={index}
-            className={`text-yellow ${
-                index < Math.floor(product.rating)
-                    ? "bi bi-star-fill"
-                    : index + 0.5 === product.rating
-                    ? "bi bi-star-half"
-                    : "bi bi-star"
-            }`}
-        ></span>
-    ));
+    // const stars = Array.from({ length: 5 }, (_, index) => (
+    //     <span
+    //         key={index}
+    //         className={`text-yellow ${
+    //             index < Math.floor(product.rating)
+    //                 ? "bi bi-star-fill"
+    //                 : index + 0.5 === product.rating
+    //                 ? "bi bi-star-half"
+    //                 : "bi bi-star"
+    //         }`}
+    //     ></span>
+    // ));
     const queryClient = useQueryClient();
     const mutation = useMutation({
         mutationFn: async (data) => {
@@ -370,10 +377,14 @@ const ProductDetailsScreen = () => {
             );
             if (selectedVariant) {
                 finalPrice = selectedVariant.price;
-                productVariantId = selectedVariant.id; // Capture product_variant_id
+                productVariantId = selectedVariant.id;
             }
             if (!selectedVariant || selectedVariant.quantity <= 0) {
                 toast.error("Sản phẩm đã hết hàng, không thể thêm vào giỏ.");
+                return;
+            }
+            if (!selectedVariant || selectedVariant.quantity < quantity) {
+                toast.error("Số lượng không thể quá số lượng có trong sản phẩm!");
                 return;
             }
         }
@@ -400,25 +411,19 @@ const ProductDetailsScreen = () => {
         localStorage.setItem("cart", JSON.stringify(cart));
 
         if (!user) {
-            const data = await apiClient.post(
-                "/cart/add/guest",
-                {
-                    product_id: productId,
-                    quantity: quantity,
+            const data = await apiClient.post("/cart/add/guest", {
+                product_id: productId,
+                quantity: quantity,
 
-
-                    product_variant_id: productVariantId,
-                },
-            );
+                product_variant_id: productVariantId,
+            });
 
             console.log(data);
-
 
             // localStorage.setItem("session_id", data.data.session_id);
             toast.success("Sản phẩm đã được thêm vào giỏ hàng (local storage).");
             return;
-
-        }else {
+        } else {
             mutation.mutate({
                 user_id: user.id,
                 product_id: productId,
@@ -428,30 +433,31 @@ const ProductDetailsScreen = () => {
                 color: selectedColor || null,
                 product_variant_id: productVariantId,
             });
-
         }
-        
     };
-    if (loading) return <p>Loading...</p>;
-    if (!product) return <p>Product not found</p>;
+    if (loading)
+        return (
+            <p>
+                <Loader></Loader>
+            </p>
+        );
     return (
         <DetailsScreenWrapper>
             <Container>
-                
+                <Breadcrumb items={breadcrumbItems} />
                 <DetailsContent className="grid">
-                    <ProductPreview previewImagesVariant={variants} previewImages={product.image_url || []} />
+                    <ProductPreview previewImagesVariant={variants} previewImages={product?.image_url || []} />
                     <ProductDetailsWrapper>
-                        <h2 className="prod-title">{product.name}</h2>
-                        
+                        <h2 className="prod-title">{product?.name}</h2>
 
                         {/* Hiển thị size và màu */}
-                        {sizes.length > 0 && (
+                        {size.length > 0 && (
                             <ProductSizeWrapper>
                                 <div className="prod-size-top flex items-center flex-wrap">
                                     <p className="text-lg font-semibold text-outerspace">Size</p>
                                 </div>
                                 <div className="prod-size-list flex items-center" style={{ margin: "10px 20px" }}>
-                                    {sizes.map((size, index) => (
+                                    {size.map((size, index) => (
                                         <div className="prod-size-item" key={index}>
                                             <input
                                                 type="radio"
@@ -470,13 +476,13 @@ const ProductDetailsScreen = () => {
                             </ProductSizeWrapper>
                         )}
 
-                        {colors.length > 0 && (
+                        {color.length > 0 && (
                             <ProductColorWrapper>
                                 <div className="prod-colors-top flex items-center flex-wrap">
                                     <p className="text-lg font-semibold text-outerspace">Màu sắc</p>
                                 </div>
                                 <div className="prod-colors-list flex items-center">
-                                    {colors.map((color, index) => (
+                                    {color.map((color, index) => (
                                         <div className="prod-colors-item" style={{ margin: "10px 20px" }} key={index}>
                                             <input
                                                 style={{ width: "60px", height: "35px" }}
@@ -508,7 +514,7 @@ const ProductDetailsScreen = () => {
                             <div className="prod-size-top flex items-center flex-wrap">
                                 <p className="text-lg font-semibold text-outerspace">Chọn số lượng</p>
                             </div>
-                            <div className="flex btn-and-price">
+                            <div style={{ gap: 10, marginLeft: 20 }} className="flex btn-and-price">
                                 <button
                                     style={{ height: 25, fontSize: 25 }}
                                     className="prod-add-btn"
@@ -548,11 +554,12 @@ const ProductDetailsScreen = () => {
                             </button>
                             <div style={{}} className="prod-price text-xl font-bold text-outerspace">
                                 <div>
-                                    Price: {formatCurrency(variantPrice)}{" "}
-
-                                    <span style={{ opacity: 0.6 }}>
-                                        ({variantStock > 0 ? `${variantStock} products` : "đã hết hàng"})
-                                    </span>
+                                    Giá tiền: {formatCurrency(variantPrice)}{" "}
+                                    {selectedColor && selectedSize && (
+                                        <span style={{ opacity: 0.6 }}>
+                                            ({variantStock > 0 ? `${variantStock} sản phẩm` : "đã hết hàng"})
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>

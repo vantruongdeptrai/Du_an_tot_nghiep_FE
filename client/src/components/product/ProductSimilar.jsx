@@ -8,7 +8,7 @@ const ProductSimilar = ({ product }) => {
     const { products } = useProduct();
 
     const similarProduct = products.filter(
-        (item) => item.category_name == product.category_name && item.id !== product.id
+        (item) => item.category_name == product?.category_name && item.id !== product.id
     );
     
     return (

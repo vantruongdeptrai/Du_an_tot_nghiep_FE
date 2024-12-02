@@ -8,6 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { BaseButtonGreen } from "../../styles/button";
 import useOrder from "../../hooks/useOrder";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CheckoutScreenWrapper = styled.main`
     padding: 48px 0;
@@ -32,15 +33,20 @@ const CheckoutScreen = () => {
     // Hàm xử lý submit khi người dùng ấn "Pay Now"
     const handleSubmitOrder = async (data) => {
         const paymentType = data.payment_type;
-        
+
+        if (!paymentType) {
+            toast.warn("Vui lòng chọn phương thức thanh toán."); // Hoặc xử lý thông báo lỗi khác
+            return;
+        }
+
         const userId = user ? user.id : null;
 
         if (paymentType == "NCB") {
             // Nếu chọn thanh toán VNPay, gọi API tạo URL thanh toán
             const response = await createOrder(data, userId, orderItems, paymentType);
             console.log(response);
-            
-            localStorage.removeItem('orderItems')
+
+            localStorage.removeItem("orderItems");
             if (response?.data) {
                 // Chuyển hướng đến URL thanh toán VNPay
                 window.location.href = response.data.payment_url;
@@ -49,7 +55,7 @@ const CheckoutScreen = () => {
             }
         } else {
             // Nếu không phải VNPay, gọi hàm tạo đơn hàng bình thường
-            await createOrder(data, userId, orderItems);    
+            await createOrder(data, userId, orderItems);
             nav("/confirm");
         }
     };
@@ -63,7 +69,7 @@ const CheckoutScreen = () => {
                         <div className="horiz-line-separator w-full"></div>
                         <ShippingPayment />
                         <BaseButtonGreen type="submit" className="pay-now-btn">
-                            Pay Now
+                            Thanh toán ngay
                         </BaseButtonGreen>
                     </form>
                 </FormProvider>

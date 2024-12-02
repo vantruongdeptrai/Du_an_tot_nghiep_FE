@@ -68,10 +68,10 @@ const ProductsContentRight = styled.div`
     }
 
     .product-image {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        width: 100%; /* Chiều rộng chiếm toàn bộ không gian cha */
+        height: 370px; /* Giữ nguyên tỷ lệ khung hình */
+        object-fit: cover; /* Cắt bớt nếu cần để lấp đầy vùng chứa */
+        border-radius: 8px; /* Tạo góc bo tròn (tuỳ chọn) */
     }
 
     .product-info {

@@ -125,6 +125,8 @@ const OrderItem = ({ order, guestOrder }) => {
 
     // const nav = useNavigate();
     const users = localStorage.getItem("userInfo");
+    console.log(users);
+    
 
     // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
     const currentOrder = users ? order : guestOrder;
@@ -374,7 +376,7 @@ const OrderItem = ({ order, guestOrder }) => {
                     })}
                     <div style={{ gap: 30 }} className="flex flex-col">
                         <BaseLinkGreen style={{ fontSize: 18 }} to={`/order_detail/${currentOrder.id}`}>
-                            View Detail
+                            Xem chi tiết
                         </BaseLinkGreen>
                     </div>
                     {/* Kiểm tra nếu trạng thái là "Đã hủy" thì hiển thị nút Xóa */}
