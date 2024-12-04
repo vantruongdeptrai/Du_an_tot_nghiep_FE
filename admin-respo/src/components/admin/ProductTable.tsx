@@ -88,8 +88,13 @@ const ProductTable = () => {
                     alt=""
                     className="h-8 w-8 rounded-full bg-gray-800"
                   />
-                  <div className="truncate text-sm font-medium leading-6 dark:text-whiteSecondary text-blackPrimary">
-                    {item.name}
+                  <div
+                    className="break-words text-sm font-medium leading-6 dark:text-whiteSecondary text-blackPrimary"
+                    style={{ maxWidth: "30ch" }}
+                  >
+                    {item.name.length > 30
+                      ? `${item.name.slice(0, 30)}...` // Giới hạn hiển thị tối đa 50 ký tự
+                      : item.name}
                   </div>
                 </div>
               </td>
