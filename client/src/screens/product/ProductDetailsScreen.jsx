@@ -66,17 +66,31 @@ const ProductDetailsWrapper = styled.div`
         justify-content: space-around;
         align-items: center;
         border: 1px solid;
-        min-width: 80px;
+        min-width: 70px;
         column-gap: 8px;
+        background-color: ${defaultTheme.color_sea_green};
+        color: ${defaultTheme.color_white};
         border-radius: 5px;
         &-text {
             margin-top: 2px;
         }
         &:hover {
-            background-color: ${defaultTheme.color_sea_green}; /* Màu nền khi hover (ví dụ màu xanh dương) */
-            border-color: ${defaultTheme.color_sea_green}; /* Màu viền khi hover */
-            color: ${defaultTheme.color_white}; /* Màu chữ khi hover */
+            background-color: #68d8d6; /* Màu sea green sáng hơn */
+            border-color: #68d8d6;
+            color: #9ceaef; /* Màu chữ khi hover */
         }
+    }
+
+    prod-quantity {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border: 1px solid;
+        min-width: 70px;
+        column-gap: 8px;
+        background-color: ${defaultTheme.color_sea_green};
+        color: ${defaultTheme.color_white};
+        border-radius: 5px;
     }
 
     .btn-and-price {
@@ -314,8 +328,8 @@ const ProductDetailsScreen = () => {
                 setVariantStock(selectedVariant.quantity);
             } else {
                 // Nếu không tìm thấy biến thể, đặt lại giá và số lượng về mặc định hoặc giá trị hợp lý
-                setVariantPrice(product ? product.price : 0);  // Đặt lại giá mặc định nếu không chọn biến thể
-                setVariantStock(0);  // Không có số lượng nếu không chọn biến thể hợp lệ
+                setVariantPrice(product ? product.price : 0); // Đặt lại giá mặc định nếu không chọn biến thể
+                setVariantStock(0); // Không có số lượng nếu không chọn biến thể hợp lệ
             }
         } else {
             // Nếu không chọn size hoặc color, đặt lại giá và số lượng về mặc định
@@ -435,6 +449,13 @@ const ProductDetailsScreen = () => {
             });
         }
     };
+    const handleSizeSelect = (sizeId) => {
+        setSelectedSize((prev) => (prev === sizeId ? null : sizeId));
+    };
+
+    const handleColorSelect = (colorId) => {
+        setSelectedColor((prev) => (prev === colorId ? null : colorId));
+    };
     if (loading)
         return (
             <p>
@@ -463,9 +484,7 @@ const ProductDetailsScreen = () => {
                                                 type="radio"
                                                 name="size"
                                                 checked={selectedSize === size.id}
-                                                onChange={() =>
-                                                    setSelectedSize((prev) => (prev === size.id ? null : size.id))
-                                                }
+                                                onClick={() => handleSizeSelect(size.id)}
                                             />
                                             <span className="flex items-center justify-center font-medium text-outerspace text-sm">
                                                 {size.name}
@@ -489,9 +508,7 @@ const ProductDetailsScreen = () => {
                                                 type="radio"
                                                 name="colors"
                                                 checked={selectedColor === color.id}
-                                                onChange={() =>
-                                                    setSelectedColor((prev) => (prev === color.id ? null : color.id))
-                                                }
+                                                onClick={() => handleColorSelect(color.id)}
                                             />
                                             <span
                                                 className=" flex items-center justify-center font-medium text-outerspace text-sm"

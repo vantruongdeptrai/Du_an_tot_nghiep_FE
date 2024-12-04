@@ -10,7 +10,7 @@ const getAllOrders = async () => {
 
 const useOrder = () => {
     // Fetch all orders with useQuery
-    const { data: orders = [] } = useQuery(["orders"], getAllOrders);
+    const { data: orders = [], isLoading, isError } = useQuery(["orders"], getAllOrders);
 
     const createOrder = async (data, id, orderItems, paymentMethod) => {
         try {
@@ -34,10 +34,10 @@ const useOrder = () => {
                 coupon_name: couponName,
             };
 
-            if (paymentMethod === "NCB") {
+            if (paymentMethod === "VNPAY") {
                 const vnpayResponse = await apiClient.post("/create-payment", {
                     user_id: id,
-                    payment_type: "NCB",
+                    payment_type: "VNPAY",
                     shipping_address: orderData.shipping_address,
                     coupon_id: null,
                     phone_order: orderData.phone_order,
@@ -55,14 +55,30 @@ const useOrder = () => {
                     }),
                 });
                 console.log(vnpayResponse);
-                return vnpayResponse;
+                return vnpayResponse.data.payment_url;
             } else {
                 const response = await apiClient.post(endPoint, orderData);
-                toast.success("Order created successfully!");
+                toast.success("Thanh toán thành công.");
             }
         } catch (error) {
             console.log(error);
             toast.error("Error creating order.");
+        }
+    };
+
+    // Hàm gửi email đơn hàng
+    const sendInvoice = async (orderId, email) => {
+        try {
+            const response = await apiClient.post(
+                `http://127.0.0.1:8000/api/order/${orderId}/send-invoice?email_order=${email}`
+            );
+            console.log("Invoice sent successfully", response.data);
+            toast.success("Invoice has been sent successfully!");
+            return response.data;
+        } catch (error) {
+            console.error("Error sending invoice", error);
+            toast.error("Error sending invoice.");
+            throw error;
         }
     };
 
@@ -95,6 +111,9 @@ const useOrder = () => {
         createOrder,
         deleteOrderReason,
         deleteOrder,
+        sendInvoice,
+        isLoading,
+        isError,
     };
 };
 

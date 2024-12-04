@@ -3,6 +3,11 @@ import apiClient from "../api/axiosConfig";
 
 // Hàm lấy thông tin người dùng
 const fetchUser = async () => {
+    const response = await apiClient.get("/users");
+    return response.data; // Trả về dữ liệu người dùng từ API
+};
+
+const getAllUser = async () => {
     const token = localStorage.getItem("token");
     const response = await apiClient.get("/user", {
         headers: {
@@ -11,11 +16,6 @@ const fetchUser = async () => {
     });
     return response.data; // Trả về dữ liệu người dùng từ API
 };
-
-// const getAllUser = async () => {
-//     const response = await apiClient.get("/users");
-//     return response.data; // Trả về dữ liệu người dùng từ API
-// };
 
 // Hàm cập nhật thông tin người dùng bao gồm ảnh
 const updateUser = async (userData) => {
@@ -44,7 +44,8 @@ const updateUser = async (userData) => {
 const useUser = () => {
     // Sử dụng useQuery để lấy thông tin người dùng
     // const queryClient = useQueryClient();
-    const { data: user = [], error, isLoading } = useQuery(["user"], fetchUser);
+    const { data: users = [], error, isLoading } = useQuery(["users"], fetchUser);
+    const { data: user = []} = useQuery(["user"], getAllUser);
     // const { data: users = []} = useQuery(["user"], getAllUser);
 
     // Sử dụng useMutation để cập nhật thông tin người dùng
@@ -63,7 +64,8 @@ const useUser = () => {
     // });
 
     return {
-        user, // Thông tin người dùng
+        user,
+        users, // Thông tin người dùng
         error, // Lỗi khi lấy thông tin người dùng
         isLoading, // Trạng thái đang tải thông tin người dùng
         updateUser // Hàm cập nhật người dùng

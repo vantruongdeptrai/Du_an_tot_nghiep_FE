@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
-import useComment from "../../hooks/useComment";
 import { toast } from "react-toastify";
 import apiClient from "../../api/axiosConfig";
+import { useState } from "react";
+import React from "react";
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -26,7 +27,7 @@ const ModalWrapper = styled.div`
         display: flex;
         flex-direction: column;
         gap: 30px;
-        height: 500px;
+        height: auto;
 
         @media (max-width: ${breakpoints.sm}) {
             width: 90%;
@@ -115,6 +116,48 @@ const ModalWrapper = styled.div`
     }
 `;
 
+const StarContainer = styled.div`
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    .rate {
+        float: left;
+        height: auto;
+    }
+    .rate:not(:checked) > input {
+        position: absolute;
+        top: -9999px;
+    }
+    .rate:not(:checked) > label {
+        float: right;
+        width: 1em;
+        overflow: hidden;
+        white-space: nowrap;
+        cursor: pointer;
+        font-size: 30px;
+        color: #ccc;
+    }
+    .rate:not(:checked) > label:before {
+        content: "★ ";
+    }
+    .rate > input:checked ~ label {
+        color: #ffc700;
+    }
+    .rate:not(:checked) > label:hover,
+    .rate:not(:checked) > label:hover ~ label {
+        color: #deb217;
+    }
+    .rate > input:checked + label:hover,
+    .rate > input:checked + label:hover ~ label,
+    .rate > input:checked ~ label:hover,
+    .rate > input:checked ~ label:hover ~ label,
+    .rate > label:hover ~ input:checked ~ label {
+        color: #c59b08;
+    }
+`;
+// Nếu dùng toast để hiển thị thông báo
+
 const ModalComment = ({ product, isOpen, onClose, onConfirm }) => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
 
@@ -123,25 +166,32 @@ const ModalComment = ({ product, isOpen, onClose, onConfirm }) => {
         handleSubmit,
         reset,
         formState: { errors },
+        watch,
     } = useForm();
-    console.log(product);
+
+    const ratingValue = watch("rating"); // Theo dõi giá trị rating
 
     const onSubmit = async (data) => {
         const productId = product?.id;
+        console.log(data);
 
         if (!productId) {
             toast.error("Sản phẩm không hợp lệ.");
             return;
         }
 
-        const response = await apiClient.post(`/products/${productId}/comments`, data);
-        onConfirm(response.data);
-
-        toast.success("Đánh giá sản phẩm thành công.");
+        try {
+            const response = await apiClient.post(`/products/${productId}/comments`, data);
+            onConfirm(response.data);
+            toast.success("Đánh giá sản phẩm thành công.");
+            handleClose();
+        } catch (error) {
+            toast.error("Đã có lỗi xảy ra.");
+        }
     };
 
     const handleClose = () => {
-        reset(); // Đảm bảo reset form khi đóng modal
+        reset(); // Reset form khi đóng modal
         onClose();
     };
 
@@ -152,16 +202,36 @@ const ModalComment = ({ product, isOpen, onClose, onConfirm }) => {
             <div className="modal-content">
                 <div className="modal-header">Đánh giá sản phẩm</div>
                 <form onSubmit={handleSubmit(onSubmit)} className="modal-body">
-                    <div>
-                        <input {...register("user_id")} type="hidden" value={user?.id} />
-                        <input {...register("product_id")} type="hidden" value={product?.id} />
-                        <label htmlFor="ward">Bình luận</label>
-                        <textarea
-                            {...register("comment", { required: "Không được bỏ trống!" })}
-                            placeholder="Mời đánh giá sản phẩm..."
-                        />
-                        {errors.ward && <span>{errors.ward.message}</span>}
-                    </div>
+                    <input {...register("user_id")} type="hidden" value={user?.id} />
+                    <input {...register("product_id")} type="hidden" value={product?.id} />
+
+                    <label htmlFor="comment">Bình luận</label>
+                    <textarea
+                        {...register("comment", { required: "Không được bỏ trống!" })}
+                        placeholder="Mời đánh giá sản phẩm..."
+                    />
+                    {errors.comment && <span>{errors.comment.message}</span>}
+
+                    {/* Star Rating */}
+                    <label htmlFor="">Đánh giá sao</label>
+                    <StarContainer>
+                        <div className="rate">
+                            {[5, 4, 3, 2, 1].map((star) => (
+                                <React.Fragment key={star}>
+                                    <input
+                                        {...register("rating", { required: "Chưa chọn số sao!" })}
+                                        type="radio"
+                                        id={`star${star}`}
+                                        value={star}
+                                    />
+                                    <label htmlFor={`star${star}`} title={`${star} sao`}>
+                                        {star} sao
+                                    </label>
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </StarContainer>
+                    {errors.rating && <span>{errors.rating.message}</span>}
 
                     <button className="confirm-btn" type="submit">
                         Đánh giá

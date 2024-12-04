@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { Container } from "../../styles/styles";
 import Breadcrumb from "../../components/common/Breadcrumb";
@@ -9,6 +9,7 @@ import CartSummary from "../../components/cart/CartSummary";
 import { useColors, useSizes } from "../../hooks/useAtribute";
 import useCoupons from "../../hooks/useCoupons";
 import useCart from "../../hooks/useCart";
+import Loader from "../../components/loader/loader";
 
 const CartPageWrapper = styled.main`
     padding: 48px 0;
@@ -63,7 +64,7 @@ const CartScreen = () => {
 
     const { colors } = useColors();
     const { sizes } = useSizes();
-    const { carts } = useCart(user?.id);
+    const { carts, updateCart, isLoading } = useCart(user?.id);
     const { coupons } = useCoupons();
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     //     if (user) {
@@ -87,24 +88,56 @@ const CartScreen = () => {
         }
     }, [carts]);
 
-    // Hàm tăng số lượng sản phẩm
-    const handleIncreaseQuantity = (productId, size, color) => {
-        const updatedItems = cartItems.map((item) =>
-            item.product_id === productId && item.size === size && item.color === color
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
-        );
-        setCartItems(updatedItems); // Cập nhật lại cartItems sau khi thay đổi
+    // Sử dụng useRef để lưu trữ timeout
+    const debounceRef = useRef(null);
+
+    const handleIncreaseQuantity = (cartId, size, color, productVariantId, quantity) => {
+        // Cập nhật số lượng bằng cách sử dụng callback để lấy giá trị quantity hiện tại
+        const updatedQuantity = quantity + 1;
+
+        // Cập nhật ngay lập tức số lượng trên UI
+        setCartItems((prevItems) => {
+            return prevItems.map((item) =>
+                item.cartId === cartId &&
+                item.size === size &&
+                item.color === color &&
+                item.productVariantId === productVariantId
+                    ? { ...item, quantity: updatedQuantity }
+                    : item
+            );
+        });
+
+        // Hủy timeout trước đó nếu có
+        clearTimeout(debounceRef.current);
+
+        // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
+        debounceRef.current = setTimeout(() => {
+            updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        }, 500);
     };
 
-    // Hàm giảm số lượng sản phẩm
-    const handleDecreaseQuantity = (productId, size, color) => {
-        const updatedItems = cartItems.map((item) =>
-            item.product_id === productId && item.size === size && item.color === color
-                ? { ...item, quantity: Math.max(item.quantity - 1, 1) }
-                : item
-        );
-        setCartItems(updatedItems); // Cập nhật lại cartItems sau khi thay đổi
+    const handleDecreaseQuantity = (cartId, size, color, productVariantId, quantity) => {
+        const updatedQuantity = Math.max(quantity - 1, 1);
+
+        // Cập nhật số lượng bằng cách sử dụng callback để lấy giá trị quantity hiện tại
+        setCartItems((prevItems) => {
+            return prevItems.map((item) =>
+                item.cartId === cartId &&
+                item.size === size &&
+                item.color === color &&
+                item.productVariantId === productVariantId
+                    ? { ...item, quantity: updatedQuantity }
+                    : item
+            );
+        });
+
+        // Hủy timeout trước đó nếu có
+        clearTimeout(debounceRef.current);
+
+        // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
+        debounceRef.current = setTimeout(() => {
+            updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        }, 500);
     };
 
     // Hàm xử lý chọn hoặc bỏ chọn từng sản phẩm
@@ -124,6 +157,13 @@ const CartScreen = () => {
         });
     };
     const isLoggedIn = Boolean(localStorage.getItem("userInfo"));
+    if (isLoading) {
+        return (
+            <p>
+                <Loader />
+            </p>
+        );
+    }
 
     return (
         <CartPageWrapper>

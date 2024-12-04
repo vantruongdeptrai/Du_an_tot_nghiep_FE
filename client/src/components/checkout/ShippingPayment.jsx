@@ -238,12 +238,12 @@ const ShippingPayment = () => {
                                 {...register("payment_type")}
                                 type="radio"
                                 className="list-group-item-check"
-                                value="NCB"
+                                value="VNPAY"
                                 disabled={!isLoggedIn}
                             />
                             <p className="font-semibod text-lg">
-                                NCB
-                                <span className="flex text-base font-medium text-gray">Thanh toán bằng ngân hàng NCB</span>
+                                VNPAY
+                                <span className="flex text-base font-medium text-gray">Thanh toán bằng ngân hàng VNPAY</span>
                             </p>
                         </div>
                     </div>
