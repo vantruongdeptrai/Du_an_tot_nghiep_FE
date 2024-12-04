@@ -192,11 +192,11 @@ const CreateProduct: React.FC = () => {
   return (
     <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
       <Sidebar />
-      <div className="hover:bg-blackPrimary bg-whiteSecondary w-full">
+      <div className="w-full hover:bg-blackPrimary bg-whiteSecondary">
         <div className="dark:bg-blackPrimary bg-whiteSecondary py-10">
           <div className="px-4 sm:px-6 lg:px-8 pb-8 border-b border-gray-800 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-              Add New Product
+              Thêm sản phẩm mới
             </h2>
           </div>
 
@@ -210,7 +210,7 @@ const CreateProduct: React.FC = () => {
                 <div className="mt-4 flex flex-col gap-5">
                   <InputWithLabel label="Tên sản phẩm">
                     <input
-                      className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                      className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                       {...registerBasic("name")}
                       type="text"
                       placeholder="Nhập tên sản phẩm..."
@@ -224,7 +224,7 @@ const CreateProduct: React.FC = () => {
 
                   <InputWithLabel label="Số lượng">
                     <input
-                      className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                      className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                       {...registerBasic("quantity")}
                       type="text"
                       placeholder="Nhập số lượng..."
@@ -238,11 +238,10 @@ const CreateProduct: React.FC = () => {
 
                   <InputWithLabel label="Mô tả">
                     <textarea
-                      className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-40 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 py-2"
+                      className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-40 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                       {...registerBasic("description")}
                       placeholder="Nhập mô tả sản phẩm..."
                       rows={4}
-                      cols={50}
                     />
                   </InputWithLabel>
                   {errors.description && (
@@ -254,7 +253,7 @@ const CreateProduct: React.FC = () => {
                   <InputWithLabel label="Image">
                     <label
                       htmlFor="category-image"
-                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer dark:bg-blackPrimary bg-whiteSecondary dark:hover:border-gray-600 hover:border-gray-500"
+                      className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer dark:bg-blackPrimary bg-whiteSecondary dark:hover:border-gray-600 hover:border-gray-500 transition-all"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         <svg
@@ -302,7 +301,7 @@ const CreateProduct: React.FC = () => {
                   <InputWithLabel label="Danh mục">
                     <select
                       {...registerBasic("category_id")}
-                      className="w-full h-10 dark:bg-blackPrimary bg-white border border-gray-600 dark:text-whiteSecondary text-blackPrimary outline-0 pl-3 pr-8 cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
+                      className="w-full h-12 px-4 py-2 rounded-lg border border-gray-600 dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary outline-none dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-500 hover:border-gray-400 transition-all"
                     >
                       <option value="">Danh muc</option>
                       {categories.map((cat, index) => (
@@ -323,7 +322,7 @@ const CreateProduct: React.FC = () => {
                       <InputWithLabel label="Giá cơ bản">
                         {!hasVariants ? (
                           <input
-                            className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                            className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                             type="number"
                             placeholder="Nhập giá cơ bản sản phẩm..."
                             {...registerBasic("price")}
@@ -331,7 +330,7 @@ const CreateProduct: React.FC = () => {
                         ) : (
                           <input
                             disabled
-                            className={`dark:bg-blackPrimary bg-[#ccc] dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                            className="dark:bg-blackPrimary bg-[#ccc] dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                             type="number"
                             placeholder="Nhập giá cơ bản sản phẩm..."
                           />
@@ -348,7 +347,7 @@ const CreateProduct: React.FC = () => {
                       <InputWithLabel label="Giá khuyến mãi">
                         <input
                           type="number"
-                          className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
+                          className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                           placeholder="Nhập giá khuyến mãi..."
                           {...registerBasic("sale_price")}
                         />
@@ -362,18 +361,18 @@ const CreateProduct: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5">
-                    <InputWithLabel label="Ngày bắt đầu khuyến mãi">
+                    <InputWithLabel label="Ngày bắt đầu">
                       <input
-                        className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
                         type="date"
+                        className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                         {...registerBasic("sale_start")}
                       />
                     </InputWithLabel>
 
-                    <InputWithLabel label="Ngày kết thúc khuyến mãi">
+                    <InputWithLabel label="Ngày kết thúc">
                       <input
-                        className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
                         type="date"
+                        className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 py-2 rounded-lg border border-gray-700 dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400 transition-all"
                         {...registerBasic("sale_end")}
                       />
                     </InputWithLabel>
