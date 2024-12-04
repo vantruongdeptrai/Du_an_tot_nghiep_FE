@@ -7,6 +7,7 @@ import { useFormContext } from "react-hook-form";
 import { toast } from "react-toastify";
 import ModalAddress from "../../components/modals/ModalAddress";
 import useAddress from "../../hooks/useAddress";
+import useUser from "../../hooks/useUser";
 
 const BillingOrderWrapper = styled.div`
     gap: 60px;
@@ -177,6 +178,9 @@ const Billing = () => {
     const { register, setValue } = useFormContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const user = JSON.parse(localStorage.getItem("userInfo"));
+    const {users} = useUser();
+    const userBilling = users.find(users => users.id == user.id);
+    
     const [addressToUpdate, setAddressToUpdate] = useState(null);
     const { addresses } = useAddress();
 
@@ -190,14 +194,13 @@ const Billing = () => {
 
     useEffect(() => {
         // Lấy thông tin user từ localStorage
-        const storedUserInfo = localStorage.getItem("userInfo");
-        if (storedUserInfo) {
+        // const storedUserInfo = localStorage.getItem("userInfo");
+        if (userBilling) {
             try {
-                const user = JSON.parse(storedUserInfo);
                 // Điền giá trị vào form nếu user tồn tại
-                setValue("name_order", user.name || "");
-                setValue("email_order", user.email || "");
-                setValue("phone_order", user.phone || "");
+                setValue("name_order", userBilling.name || "");
+                setValue("email_order", userBilling.email || "");
+                setValue("phone_order", userBilling.phone || "");
                 if (addressToUpdate) {
                     setValue("shipping_address", addressToUpdate.full_address);
                 } else if (defaultAddress.length > 0) {
@@ -207,7 +210,7 @@ const Billing = () => {
                 console.error("Failed to parse userInfo from localStorage:", error);
             }
         }
-    }, [setValue, addressToUpdate]);
+    }, [setValue, addressToUpdate, userBilling, defaultAddress]);
     const handleOpenModal = (address) => {
         setAddressToUpdate(address);
         setIsModalOpen(true); // Mở modal

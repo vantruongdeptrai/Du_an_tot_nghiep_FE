@@ -54,8 +54,8 @@ const OrderDetailStatusWrapper = styled.div`
     .order-status {
         height: 4px;
         margin: 50px 0;
-        max-width: 580px;
-        width: 500px;
+        max-width: 650px;
+        width: 600px;
         margin-left: auto;
         margin-right: auto;
         position: relative;
@@ -79,13 +79,16 @@ const OrderDetailStatusWrapper = styled.div`
             }
 
             &:nth-child(2) {
-                left: calc(33.3333% - 10px);
+                left: calc(25% - 10px);
             }
 
             &:nth-child(3) {
-                left: calc(66.6666% - 10px);
+                left: calc(50% - 10px);
             }
             &:nth-child(4) {
+                left: calc(75% - 10px);
+            }
+            &:nth-child(5) {
                 right: 0;
             }
 
@@ -268,7 +271,8 @@ const OrderDetailScreen = () => {
     const { user } = useUser();
     const userOrder = orders.filter((order) => order.user_id == user.id);
     const orderDetail = userOrder.find((order) => order.id == id);
-    
+    console.log(orderDetail);
+
     if (!orderDetail) return <p>Không có đơn hàng nào</p>;
 
     return (
@@ -292,7 +296,8 @@ const OrderDetailScreen = () => {
                                     <p className="text-lg font-medium text-gray">{orderDetail.created_at}</p>
                                 </div>
                                 <div className="order-d-top-r text-xxl text-gray font-semibold">
-                                    Tổng giá tiền: <span className="text-outerspace">{formatCurrency(orderDetail.total_price)}</span>
+                                    Tổng giá tiền:{" "}
+                                    <span className="text-outerspace">{formatCurrency(orderDetail.total_price)}</span>
                                 </div>
                             </div>
 
@@ -303,6 +308,7 @@ const OrderDetailScreen = () => {
                                         className={`order-status-dot ${
                                             orderDetail.status_order === "Chờ xác nhận" ||
                                             orderDetail.status_order === "Đã xác nhận" ||
+                                            orderDetail.status_order === "Đang chuẩn bị" ||
                                             orderDetail.status_order === "Đang vận chuyển" ||
                                             orderDetail.status_order === "Giao thành công"
                                                 ? "status-done"
@@ -318,6 +324,7 @@ const OrderDetailScreen = () => {
                                     <div
                                         className={`order-status-dot ${
                                             orderDetail.status_order === "Đã xác nhận" ||
+                                            orderDetail.status_order === "Đang chuẩn bị" ||
                                             orderDetail.status_order === "Đang vận chuyển" ||
                                             orderDetail.status_order === "Giao thành công"
                                                 ? "status-done"
@@ -326,6 +333,20 @@ const OrderDetailScreen = () => {
                                     >
                                         <span className="order-status-text font-semibold text-center no-wrap text-silver">
                                             Đã xác nhận
+                                        </span>
+                                    </div>
+
+                                    <div
+                                        className={`order-status-dot ${
+                                            orderDetail.status_order === "Đang chuẩn bị" ||
+                                            orderDetail.status_order === "Đang vận chuyển" ||
+                                            orderDetail.status_order === "Giao thành công"
+                                                ? "status-done"
+                                                : ""
+                                        } bg-silver`}
+                                    >
+                                        <span className="order-status-text font-semibold text-center no-wrap text-silver">
+                                            Đang chuẩn bị
                                         </span>
                                     </div>
 
@@ -356,12 +377,31 @@ const OrderDetailScreen = () => {
                                 </div>
                             </OrderDetailStatusWrapper>
 
-                            {/* <OrderDetailMessageWrapper className="order-message flex items-center justify-start">
-                                <p className="font-semibold text-gray">
-                                    8 June 2023 3:40 PM &nbsp;
-                                    <span className="text-outerspace">Your order has been successfully verified.</span>
-                                </p>
-                            </OrderDetailMessageWrapper> */}
+                            <OrderDetailMessageWrapper className="order-message flex items-center justify-start">
+                                <div style={{ display: "flex", flexDirection: "column" }}>
+                                    <h2>Thông tin người đặt hàng</h2>
+                                    <div className="font-semibold text-gray">
+                                        <p style={{margin: "5px 0"}}>
+                                            Họ tên:{" "}
+                                            <span className="text-outerspace">
+                                                {orderDetail.name_order}
+                                            </span>
+                                        </p>
+                                        <p style={{margin: "5px 0"}}>
+                                            Số điện thoại:{" "}
+                                            <span className="text-outerspace">
+                                                {orderDetail.phone_order}
+                                            </span>
+                                        </p>
+                                        <p style={{margin: "5px 0"}}>
+                                            Địa chỉ:{" "}
+                                            <span className="text-outerspace">
+                                                {orderDetail.shipping_address}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </OrderDetailMessageWrapper>
 
                             <OrderDetailListWrapper className="order-d-list">
                                 {orderDetail.order_items?.map((item) => {
@@ -369,25 +409,32 @@ const OrderDetailScreen = () => {
                                     const productVariant = productVariants.find(
                                         (variant) => variant.id === item.product_variant_id
                                     );
-                                    console.log(productVariant);
-                                    
+
                                     const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
                                     const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
-                                    
+
                                     return (
                                         <div className="order-d-item grid" key={item.product_id}>
                                             <div className="order-d-item-img">
-                                                <img src={productVariant?.image_url} alt="" className="object-fit-cover" />
+                                                <img
+                                                    src={productVariant?.image_url}
+                                                    alt=""
+                                                    className="object-fit-cover"
+                                                />
                                             </div>
                                             <div className="order-d-item-info">
                                                 <p className="text-xl font-bold">{product?.name}</p>
                                                 <p className="text-md font-bold">
                                                     Màu: &nbsp;
-                                                    <span className="font-medium text-gray">{colorDetail?.name || "Không có màu"}</span>
+                                                    <span className="font-medium text-gray">
+                                                        {colorDetail?.name || "Không có màu"}
+                                                    </span>
                                                 </p>
                                                 <p className="text-md font-bold">
                                                     Size: &nbsp;
-                                                    <span className="font-medium text-gray">{sizeDetail?.name || "Không có size"}</span>
+                                                    <span className="font-medium text-gray">
+                                                        {sizeDetail?.name || "Không có size"}
+                                                    </span>
                                                 </p>
                                             </div>
                                             <div className="order-d-item-calc">
@@ -397,7 +444,9 @@ const OrderDetailScreen = () => {
                                                 </p>
                                                 <p className="font-bold text-lg">
                                                     Giá tiền: &nbsp;
-                                                    <span className="text-gray">{formatCurrency(productVariant?.price)}</span>
+                                                    <span className="text-gray">
+                                                        {formatCurrency(productVariant?.price)}
+                                                    </span>
                                                 </p>
                                             </div>
                                             <button type="button" className="text-xl text-outerspace order-d-item-btn">

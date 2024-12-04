@@ -3,7 +3,7 @@ import { FormGridWrapper, FormTitle } from "../../styles/form_grid";
 import { Container } from "../../styles/styles";
 import { staticImages } from "../../utils/images";
 import { FormElement } from "../../styles/form";
-import { Form, Link } from "react-router-dom";
+import {  Link } from "react-router-dom";
 import { BaseButtonBlack } from "../../styles/button";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useLogin from "../../../hooks/account";
@@ -48,7 +48,7 @@ const SignInScreenWrapper = styled.section`
 `;
 
 const SignInScreen = () => {
-    const { handleLogin, loading, error } = useLogin();
+    const { handleLogin, error } = useLogin();
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [formError, setFormError] = useState(null); // To manage form-level errors
@@ -72,7 +72,7 @@ const SignInScreen = () => {
 
         // Check if both fields are filled
         if (!identifier || !password) {
-            setFormError("Both fields are required.");
+            setFormError("Cả 2 trường đều bắt buộc!");
             return; // Prevent form submission if fields are empty
         }
 
@@ -109,16 +109,16 @@ const SignInScreen = () => {
                         </div>
                         <div className="form-grid-right">
                             <FormTitle>
-                                <h3>Sign In</h3>
-                                <p className="text-base">Sign in for free to access to any of our products</p>
+                                <h3>Đăng nhập</h3>
+                                <p className="text-base">
+                                    Đăng nhập để truy cập miễn phí vào bất kỳ sản phẩm nào của chúng tôi
+                                </p>
                             </FormTitle>
-
-
 
                             <form onSubmit={handleSubmit}>
                                 <FormElement>
                                     <label htmlFor="" className="form-elem-label">
-                                        User name or email address
+                                        Tên người dùng hoặc địa chỉ email
                                     </label>
                                     <input
                                         type="text"
@@ -128,12 +128,12 @@ const SignInScreen = () => {
                                         className="form-elem-control"
                                     />
                                     {formError && !identifier && (
-                                        <span className="error-message">This field is required</span>
+                                        <span className="error-message">Không được để trống!</span>
                                     )}
                                 </FormElement>
                                 <FormElement>
                                     <label htmlFor="" className="form-elem-label">
-                                        Password
+                                        Mật khẩu
                                     </label>
                                     <input
                                         type="password"
@@ -144,20 +144,20 @@ const SignInScreen = () => {
                                         className="form-elem-control"
                                     />
                                     {formError && !password && (
-                                        <span className="error-message">This field is required</span>
+                                        <span className="error-message">Không được để trống!</span>
                                     )}
                                 </FormElement>
                                 <Link to="/reset" className="form-elem-text text-end font-medium">
-                                    Forgot your password?
+                                    Quên mật khẩu?
                                 </Link>
                                 <BaseButtonBlack type="submit" className="form-submit-btn">
-                                    Sign in
+                                    Đăng nhập
                                 </BaseButtonBlack>
                             </form>
                             <p className="flex flex-wrap account-rel-text">
-                                Don&apos;t have an account?
+                                Không có tài khoản ?
                                 <Link to="/sign_up" className="font-medium">
-                                    Sign Up
+                                    Đăng ký
                                 </Link>
                             </p>
                         </div>

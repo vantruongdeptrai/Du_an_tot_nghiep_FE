@@ -41,15 +41,15 @@ const CheckoutScreen = () => {
 
         const userId = user ? user.id : null;
 
-        if (paymentType == "NCB") {
+        if (paymentType == "VNPAY") {
             // Nếu chọn thanh toán VNPay, gọi API tạo URL thanh toán
             const response = await createOrder(data, userId, orderItems, paymentType);
             console.log(response);
 
             localStorage.removeItem("orderItems");
-            if (response?.data) {
+            if (response) {
                 // Chuyển hướng đến URL thanh toán VNPay
-                window.location.href = response.data.payment_url;
+                window.location.href = response;
             } else {
                 console.error("Failed to generate VNPay payment URL.");
             }

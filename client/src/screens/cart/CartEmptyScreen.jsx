@@ -34,10 +34,11 @@ const CartEmptyScreen = () => {
           </div>
           <div className="empty-cart-msg w-full flex flex-col justify-center items-center">
             <p className="text-4xl text-center font-semibold text-outerspace">
-              Your cart is empty and sad :(
+              Giỏ hàng của bạn đang trống
             </p>
-            <p className="text-gray italic">Add something to fill it!</p>
-            <BaseLinkGreen to="/">Continue Shopping</BaseLinkGreen>
+            <p className="text-gray italic">
+            Thêm một cái gì đó để lấp đầy nó!</p>
+            <BaseLinkGreen to="/">Tiếp tục mua hàng</BaseLinkGreen>
           </div>
         </div>
       </Container>

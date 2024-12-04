@@ -1,8 +1,7 @@
 import styled from "styled-components";
-import { CheckboxGroup, FormGridWrapper, FormTitle } from "../../styles/form_grid";
+import { FormGridWrapper, FormTitle } from "../../styles/form_grid";
 import { Container } from "../../styles/styles";
 import { staticImages } from "../../utils/images";
-import AuthOptions from "../../components/auth/AuthOptions";
 import { FormElement } from "../../styles/form";
 import { Link, useNavigate } from "react-router-dom";
 import { BaseButtonBlack } from "../../styles/button";
@@ -52,19 +51,21 @@ const SignUpScreen = () => {
                         </div>
                         <div className="form-grid-right">
                             <FormTitle>
-                                <h3>Sign Up</h3>
-                                <p className="text-base">Sign up for free to access to in any of our products</p>
+                                <h3>Đăng ký</h3>
+                                <p className="text-base">
+                                    Đăng nhập để truy cập miễn phí vào bất kỳ sản phẩm nào của chúng tôi
+                                </p>
                             </FormTitle>
                             {/* <AuthOptions /> */}
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <FormElement>
                                     <div>
                                         <label htmlFor="" className="forme-elem-label">
-                                            User name
+                                            Tên người dùng
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="UserName..."
+                                            placeholder="Tên..."
                                             {...register("name")}
                                             className="form-elem-control"
                                         />
@@ -72,11 +73,11 @@ const SignUpScreen = () => {
                                     </div>
                                     <div>
                                         <label htmlFor="" className="forme-elem-label">
-                                            User name or email address
+                                            Tài khoản hoặc địa chỉ email
                                         </label>
                                         <input
                                             type="email"
-                                            placeholder="Email address..."
+                                            placeholder="Địa chỉ email..."
                                             {...register("email", { required: true })}
                                             className="form-elem-control"
                                         />
@@ -87,7 +88,7 @@ const SignUpScreen = () => {
 
                                     <div>
                                         <PasswordInput
-                                            fieldName="Password"
+                                            fieldName="Mật khẩu"
                                             name="password"
                                             errorMsg={errors.password?.message}
                                             register={register}
@@ -95,7 +96,7 @@ const SignUpScreen = () => {
                                     </div>
                                     <div>
                                         <PasswordInput
-                                            fieldName="Password Confirmation"
+                                            fieldName="Nhập lại mật khẩu"
                                             name="password_confirmation"
                                             errorMsg={errors.password_confirmation?.message}
                                             register={register}
@@ -104,7 +105,7 @@ const SignUpScreen = () => {
                                 </FormElement>
 
                                 <span className="form-elem-text font-medium">
-                                    Use 8 or more characters with a mix of letters, numbers & symbols
+                                    Sử dụng 8 ký tự trở lên kết hợp chữ cái, số và ký hiệu
                                 </span>
 
                                 {/* <CheckboxGroup>
@@ -127,13 +128,13 @@ const SignUpScreen = () => {
                                     </li>
                                 </CheckboxGroup> */}
                                 <BaseButtonBlack type="submit" className="form-submit-btn">
-                                    Sign Up
+                                    Đăng ký
                                 </BaseButtonBlack>
                             </form>
                             <p className="flex flex-wrap account-rel-text">
-                                Already have an account?
+                                Đã có tài khoản?
                                 <Link to="/sign_in" className="font-medium">
-                                    Log in
+                                    Đăng nhập
                                 </Link>
                             </p>
                         </div>

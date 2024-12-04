@@ -13,6 +13,22 @@ const getAllCart = async (userId) => {
     }
 };
 
+const updateCart = async ({ cartId, colorName, sizeName, productVariantId, quantity }) => {
+    try {
+        const response = await apiClient.put("/cart/update", {
+            cart_id: cartId,
+            color_name: colorName,
+            size_name: sizeName,
+            product_variant_id: productVariantId,
+            quantity: quantity,
+        });
+        return response.data;
+    } catch (error) {
+        toast.error(`Error updating cart: ${error.response?.data?.message || error.message}`);
+        throw error;
+    }
+};
+
 const deleteCart = async (id) => {
     try {
         const response = await apiClient.delete(`/delete/${id}`);
@@ -39,10 +55,18 @@ const useCart = (userId) => {
     const deleteItemMutation = useMutation(deleteCart, {
         onSuccess: () => {
             queryClient.invalidateQueries(["cart", userId || "guest"]);
-            toast.success("Delete cart successfully.");
         },
         onError: (error) => {
             toast.error(`Failed to delete item: ${error.message}`);
+        },
+    });
+    // Mutation để cập nhật giỏ hàng
+    const updateCartMutation = useMutation(updateCart, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(["cart", userId || "guest"]);
+        },
+        onError: (error) => {
+            toast.error(`Failed to update cart: ${error.message}`);
         },
     });
 
@@ -51,6 +75,7 @@ const useCart = (userId) => {
         isLoading,
         error,
         getAllCart,
+        updateCart: updateCartMutation.mutate,
         deleteItem: deleteItemMutation.mutate, // Hàm xóa item
         isDeleting: deleteItemMutation.isLoading,
     };

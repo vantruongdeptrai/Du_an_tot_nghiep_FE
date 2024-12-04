@@ -85,6 +85,7 @@ const Table = styled.table`
 const CartTable = ({
     cartItems,
     selectedItems,
+    setCartItems,
     onSelectItem,
     handleIncreaseQuantity,
     handleDecreaseQuantity,
@@ -94,12 +95,30 @@ const CartTable = ({
 }) => {
     const { deleteItem } = useCart();
     const handleDelete = (id) => {
+        // Kiểm tra selectedItems có phải là mảng không
+        if (!Array.isArray(selectedItems)) {
+            console.error("selectedItems phải là một mảng.");
+            return;
+        }
+
+        // Kiểm tra nếu item đã được chọn
         if (selectedItems.some((item) => item.cart_id === id)) {
             toast.warn("Không thể xóa sản phẩm đã chọn.");
             return;
         }
-        if (window.confirm("Bạn thực sự muốn xóa giỏ?")) {
-            deleteItem(id);
+
+        // Xác nhận xóa giỏ hàng
+        if (window.confirm("Bạn thực sự muốn xóa sản phẩm này?")) {
+            // Kiểm tra id có hợp lệ trước khi gọi deleteItem
+            if (id) {
+                // Xóa sản phẩm khỏi cartItems
+                deleteItem(id);
+                const updatedCartItems = cartItems.filter((item) => item.cart_id !== id);
+                setCartItems(updatedCartItems); // Cập nhật giỏ hàng
+            } else {
+                console.error("ID không hợp lệ.");
+                toast.error("ID không hợp lệ.");
+            }
         }
     };
 
@@ -129,6 +148,8 @@ const CartTable = ({
             <tbody>
                 {cartItems.length > 0 ? (
                     cartItems.map((item, index) => {
+                        console.log(cartItems);
+
                         const isSelected = selectedItems.some(
                             (selected) =>
                                 selected.product_id === item.product_id &&
@@ -163,7 +184,15 @@ const CartTable = ({
                                     {/* Nút tăng giảm số lượng */}
                                     <button
                                         className="quantity-button"
-                                        onClick={() => handleDecreaseQuantity(item.product_id, item.size, item.color)}
+                                        onClick={() =>
+                                            handleDecreaseQuantity(
+                                                item.cart_id,
+                                                item.size,
+                                                item.color,
+                                                item.product_variant_id,
+                                                item.quantity
+                                            )
+                                        }
                                         disabled={isSelected}
                                     >
                                         -
@@ -173,9 +202,10 @@ const CartTable = ({
                                         className="quantity-button"
                                         onClick={() =>
                                             handleIncreaseQuantity(
-                                                item.product_id,
+                                                item.cart_id,
                                                 item.size,
                                                 item.color,
+                                                item.product_variant_id,
                                                 item.quantity
                                             )
                                         }

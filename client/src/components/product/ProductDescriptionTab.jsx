@@ -12,7 +12,6 @@ import useProduct from "../../hooks/useProduct";
 
 // import { toast } from "react-toastify";
 
-
 const DetailsContent = styled.div`
     margin-top: 60px;
     @media (max-width: ${breakpoints.lg}) {
@@ -128,11 +127,35 @@ const DescriptionTabsWrapper = styled.div`
         }
     }
 `;
+const StarContainer = styled.div`
+    display: inline-flex;
+    align-items: center;
+
+    .rate {
+        display: flex;
+        gap: 2px; /* Khoảng cách nhỏ giữa các ngôi sao */
+    }
+
+    label {
+        font-size: 20px; /* Giảm kích thước ngôi sao */
+        color: #ccc; /* Màu mặc định cho ngôi sao chưa chọn */
+        margin: 0; /* Xóa khoảng cách thừa */
+        padding: 0;
+    }
+
+    .filled-star {
+        color: #ffc700; /* Màu vàng cho ngôi sao đã chọn */
+    }
+
+    .empty-star {
+        color: #ccc; /* Màu xám cho ngôi sao chưa chọn */
+    }
+`;
 
 const ProductDescriptionTab = ({ product_id, user }) => {
     const [activeDesTab, setActiveDesTab] = useState(productDescriptionTabHeads[0].tabHead);
 
-    const { comments} = useComment();
+    const { comments } = useComment();
 
     const { products } = useProduct();
 
@@ -154,7 +177,6 @@ const ProductDescriptionTab = ({ product_id, user }) => {
 
     //     createComments({ ...data, product_id });
     // };
-
 
     return (
         <DetailsContent>
@@ -194,7 +216,6 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                 <p>
                                     <p>{productDescription?.description}</p>
                                 </p>
-                                
                             </ContentStylings>
                         </div>
                         <div>
@@ -232,7 +253,27 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                                         padding: "5px 15px",
                                                     }}
                                                 >
-                                                    <div style={{ fontSize: 16, fontWeight: 600 }}>{user?.name}</div>
+                                                    <div className="flex" style={{ gap: 20, alignItems: "center" }}>
+                                                        <div style={{ fontSize: 16, fontWeight: 600 }}>
+                                                            {user?.name}
+                                                        </div>
+                                                        <StarContainer>
+                                                            <div className="rate">
+                                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                                    <label
+                                                                        key={star}
+                                                                        className={
+                                                                            star <= comment.rating
+                                                                                ? "filled-star"
+                                                                                : "empty-star"
+                                                                        }
+                                                                    >
+                                                                        ★
+                                                                    </label>
+                                                                ))}
+                                                            </div>
+                                                        </StarContainer>
+                                                    </div>
                                                     <div>{comment?.comment}</div>
                                                 </div>
                                                 <div>

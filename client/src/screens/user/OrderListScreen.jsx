@@ -9,6 +9,7 @@ import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import OrderItemList from "../../components/user/OrderItemList";
 import useOrder from "../../hooks/useOrder";
 import useUser from "../../hooks/useUser";
+import Loader from "../../components/loader/loader";
 
 const OrderListScreenWrapper = styled.div`
     .order-tabs-contents {
@@ -40,13 +41,23 @@ const breadcrumbItems = [
 
 const OrderListScreen = () => {
     const [activeTab, setActiveTab] = useState("active"); // state để lưu tab đang được chọn
-    const { orders } = useOrder();
+    const { orders, isLoading } = useOrder();
     const { user } = useUser();
-    console.log(user);
-    
+
     const userOrders = orders.filter((item) => item.user_id == user?.id);
-    const guestOrder = JSON.parse(localStorage.getItem('guestOrder'));
-    
+
+    // Sao chép mảng userOrders trước khi sắp xếp
+    const sortOrder = [...userOrders].sort((a, b) => Number(b.id) - Number(a.id));
+    console.log(sortOrder); // In ra mảng đã sắp xếp
+
+    const guestOrder = JSON.parse(localStorage.getItem("guestOrder"));
+
+    if (isLoading) {
+        return <p>
+            <Loader />
+        </p>;
+    }
+
     return (
         <OrderListScreenWrapper className="page-py-spacing">
             <Container>
@@ -65,7 +76,7 @@ const OrderListScreen = () => {
                                     }`}
                                     onClick={() => setActiveTab("active")}
                                 >
-                                    Đang chờ xác nhận
+                                    Tất cả đơn hàng
                                 </button>
                                 {/* <button
                                     type="button"
@@ -91,7 +102,7 @@ const OrderListScreen = () => {
                             <div className="order-tabs-contents">
                                 {activeTab === "active" && (
                                     <div className="order-tabs-content" id="active">
-                                        <OrderItemList orders={userOrders} guestOrders={guestOrder} />
+                                        <OrderItemList orders={sortOrder} guestOrders={guestOrder} />
                                     </div>
                                 )}
                                 {/* {activeTab === "cancelled" && (

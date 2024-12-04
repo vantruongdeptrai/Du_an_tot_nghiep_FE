@@ -11,6 +11,7 @@ import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import useUser from "../../hooks/useUser";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import Loader from "../../components/loader/loader";
 
 const AccountScreenWrapper = styled.main`
     .address-list {
@@ -108,7 +109,9 @@ const breadcrumbItems = [
 ];
 
 const AccountScreen = () => {
-    const { user, updateUser } = useUser();
+    const { user, updateUser, isLoading } = useUser();
+    console.log(user);
+    
     // Khởi tạo useForm từ React Hook Form
     const { register, handleSubmit, setValue } = useForm();
 
@@ -144,6 +147,11 @@ const AccountScreen = () => {
 
     if (!user) {
         return <p>User not found. Please log in again.</p>;
+    }
+    if(isLoading) {
+        return <p>
+            <Loader />
+        </p>
     }
 
     return (

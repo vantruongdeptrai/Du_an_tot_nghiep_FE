@@ -33,7 +33,7 @@ const HomeScreen = () => {
             <NewArrival />
             <SavingZone />
             <Catalog catalogTitle={"Sản phẩm đang được giảm giá"} productSeller={bestSellerProduct || []} />
-            <Catalog catalogTitle={"Tất cả sản phẩm"} products={products} />
+            {/* <Catalog catalogTitle={"Tất cả sản phẩm"} products={products} /> */}
             {/* <Brands /> */}
             <Catalog catalogTitle={"Sản phẩm đặc trưng của shop"} products={featuredProduct} />
             

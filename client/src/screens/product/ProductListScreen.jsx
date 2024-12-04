@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import useCategory from "../../hooks/useCategory";
 import formatCurrency from "../../utils/formatUtils";
+import Loader from "../../components/loader/loader";
 
 const ProductsContent = styled.div`
     display: grid;
@@ -122,7 +123,7 @@ const ProductsContentRight = styled.div`
 `;
 
 const ProductListPage = () => {
-    const { categories } = useCategory();
+    const { categories, isLoading } = useCategory();
 
     // State để lưu các bộ lọc trong một đối tượng duy nhất
     const [filters, setFilters] = useState({
@@ -163,6 +164,12 @@ const ProductListPage = () => {
     };
     const { slug } = useParams();
     const getProductByCategory = slug ? data.filter((product) => product.category.slug === slug) : data;
+
+    if(isLoading) {
+        return <p>
+            <Loader />
+        </p>
+    }
 
     return (
         <ProductsContent>
