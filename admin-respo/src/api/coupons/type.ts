@@ -3,7 +3,8 @@ export type Coupon = {
     name: string;               
     description: string;        
     discount_amount: number;    
-    min_order_value: number;    
+    min_order_value: number;
+    max_order_value:number;    
     usage_limit: number;        
     is_active: boolean;         
     start_date: string;         
@@ -17,7 +18,8 @@ export type CouponInput = {
     name: string;                
     description?: string;        
     discount_amount: number;     
-    min_order_value: number;     
+    min_order_value: number;
+    max_order_value:number;     
     usage_limit: number;         
     is_active: boolean;          
     start_date: string;          

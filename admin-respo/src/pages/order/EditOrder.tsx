@@ -55,9 +55,10 @@ const EditOrder = () => {
             variant_name: `${color?.name || "Không có màu"} - ${
               size?.name || "Không có size"
             }`,
-            variant_price: parseFloat(variant?.final_price) || 0, // Lấy giá cuối cùng của biến thể
+            variant_price: parseFloat(variant?.final_price) || 0,
             total_item_price:
-              (parseFloat(variant?.final_price) || 0) * item.quantity, // Tính tổng giá của sản phẩm theo biến thể
+              (parseFloat(variant?.final_price) || 0) * item.quantity,
+            image_url: variant?.image_url || "",
           };
         });
 
@@ -158,7 +159,7 @@ const EditOrder = () => {
         <div className="dark:bg-blackPrimary bg-whiteSecondary py-10">
           <div className="px-4 sm:px-6 lg:px-8 pb-8 border-b border-gray-800 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-              Edit order #{id}
+              Chỉnh sửa đơn hàng #{id}
             </h2>
           </div>
 

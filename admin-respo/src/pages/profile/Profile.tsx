@@ -49,7 +49,7 @@ const Profile = () => {
           <div className="px-4 sm:px-6 lg:px-8 pb-8 border-b border-gray-800 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <div className="flex flex-col gap-3">
               <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                Your Profile
+                Thông tin cá nhân
               </h2>
             </div>
           </div>
@@ -67,15 +67,16 @@ const Profile = () => {
                     {user.name} {/* Hiển thị tên người dùng */}
                   </p>
                   <p className="dark:text-whiteSecondary text-blackPrimary">
-                    {user.role?.name || "No role assigned"}{" "}
-                    {/* Hiển thị role */}
+                    {user.role?.name === "Role 1"
+                      ? "Admin"
+                      : user.role?.name || "No role assigned"}
                   </p>
                 </div>
               </div>
 
               {/* Form chỉ hiển thị thông tin */}
               <div className="flex flex-col gap-3 mt-5">
-                <InputWithLabel label="Your username">
+                <InputWithLabel label="Tên của bạn">
                   <SimpleInput
                     type="text"
                     placeholder="Your username"
@@ -83,7 +84,7 @@ const Profile = () => {
                     readOnly // Chỉ đọc
                   />
                 </InputWithLabel>
-                <InputWithLabel label="Your email">
+                <InputWithLabel label="Email của bạn">
                   <SimpleInput
                     type="text"
                     placeholder="Your email"

@@ -172,7 +172,7 @@ const Orders = () => {
                           to={`/orders/${order.id}`}
                           className="text-blue-500 hover:underline"
                         >
-                          Order Detail
+                          Chi tiết đơn
                         </Link>
                       </td>
                     </tr>
