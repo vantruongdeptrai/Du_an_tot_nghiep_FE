@@ -66,7 +66,7 @@ const CategoryTable = () => {
             <tr
               key={item.id}
               style={{
-                backgroundColor: index % 2 === 0 ? "#f5f5f5" : "white",
+                backgroundColor: "white",
                 transition: "background-color 0.3s ease",
               }}
               onMouseEnter={(e) =>
@@ -74,7 +74,7 @@ const CategoryTable = () => {
               }
               onMouseLeave={(e) =>
                 (e.currentTarget.style.backgroundColor =
-                  index % 2 === 0 ? "#f5f5f5" : "white")
+                  "white")
               }
             >
               <td style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>

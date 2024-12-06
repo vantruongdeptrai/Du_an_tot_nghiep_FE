@@ -244,7 +244,7 @@ const Header = () => {
                         </form>
                     </NavigationAndSearchWrapper>
 
-                    <IconLinksWrapper style={{ alignItems: "center" }} className="flex items-center">
+                    <IconLinksWrapper style={{ alignItems: "center", gap: 25 }} className="flex items-center">
                         {/* <Link
                             to="/wishlist"
                             className={`icon-link ${

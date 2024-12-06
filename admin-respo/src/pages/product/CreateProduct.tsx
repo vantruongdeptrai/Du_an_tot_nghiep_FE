@@ -316,7 +316,7 @@ const CreateProduct: React.FC = () => {
                   Giá & Tồn kho
                 </h3>
                 <div className="mt-4 flex flex-col gap-5">
-                  <div className="grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5">
+                  {/* <div className="grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5">
                     <div>
                       <InputWithLabel label="Giá cơ bản">
                         {!hasVariants ? (
@@ -357,7 +357,7 @@ const CreateProduct: React.FC = () => {
                         </span>
                       )}
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="grid grid-cols-2 gap-x-5 max-[500px]:grid-cols-1 max-[500px]:gap-x-0 max-[500px]:gap-y-5">
                     <InputWithLabel label="Ngày bắt đầu">
