@@ -6,9 +6,9 @@ import {
   WhiteButton,
 } from "../../components";
 import { HiOutlinePlus } from "react-icons/hi";
-import { HiOutlineChevronRight } from "react-icons/hi";
+// import { HiOutlineChevronRight } from "react-icons/hi";
 
-import { HiOutlineSearch } from "react-icons/hi";
+// import { HiOutlineSearch } from "react-icons/hi";
 
 const Categories = () => {
   return (

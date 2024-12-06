@@ -3,206 +3,180 @@ import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
 import useProduct from "../../hooks/product";
 import useCategory from "../../hooks/category";
 import { useState } from "react";
+import formatCurrency from "../../utils/formatCurrent";
 
 const ProductTable = () => {
-  const { products, deleteProduct } = useProduct();
-  const { categories } = useCategory();
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 5;
+    const { products, deleteProduct } = useProduct();
+    const { categories } = useCategory();
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 5;
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((cat) => cat.id == categoryId);
-    return category ? category.name : "Không xác định";
-  };
+    const getCategoryName = (categoryId: string) => {
+        const category = categories.find((cat) => cat.id == categoryId);
+        return category ? category.name : "Không xác định";
+    };
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(
-    indexOfFirstProduct,
-    indexOfLastProduct
-  );
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  const totalPages = Math.ceil(products.length / productsPerPage);
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    const totalPages = Math.ceil(products.length / productsPerPage);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
-  return (
-    <div className="overflow-auto">
-      <table className="mt-6 w-full whitespace-nowrap text-left table-auto">
-        <colgroup>
-          <col className="w-4/12" />
-          <col className="w-4/12" />
-          <col className="w-3/12" />
-          <col className="w-3/12" />
-          <col className="w-3/12" />
-          <col className="w-3/12" />
-          <col className="w-3/12" />
-          <col className="w-3/12" />
-        </colgroup>
-        <thead className="border-b border-white/10 text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
-          <tr>
-            <th scope="col" className="py-2 pl-4 pr-8 font-semibold">
-              Sản phẩm
-            </th>
-            <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Mô tả
-            </th>
-            <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Giá
-            </th>
-            <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Danh mục
-            </th>
-            <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Sản phẩm mới
-            </th>
-            <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Sản phẩm bán chạy
-            </th>
-            <th scope="col" className="py-2 pl-0 pr-8 font-semibold">
-              Sản phẩm nổi bật
-            </th>
-            <th scope="col" className="py-2 pl-0 pr-4 text-right font-semibold">
-              Hành động
-            </th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-white/5">
-          {currentProducts.map((item) => (
-            <tr key={item.id}>
-              <td className="py-4 pl-4 pr-8">
-                <div className="flex items-center gap-x-4">
-                  <img
-                    src={item.image_url}
-                    alt=""
-                    className="h-8 w-8 rounded-full bg-gray-800"
-                  />
-                  <div
-                    className="break-words text-sm font-medium leading-6 dark:text-whiteSecondary text-blackPrimary"
-                    style={{ maxWidth: "30ch" }}
-                  >
-                    {item.name.length > 30
-                      ? `${item.name.slice(0, 30)}...` // Giới hạn hiển thị tối đa 50 ký tự
-                      : item.name}
-                  </div>
+    return (
+        <div className="overflow-auto">
+            <>
+                {/* Hello world */}
+                <div className="">
+                    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <tr>
+                                <th scope="col" className="px-6 py-3">
+                                    Sản phẩm
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Ảnh
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Mô tả
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Giá
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Danh mục
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Sản phẩm mới
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Sản phẩm bán chạy
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Sản phẩm nổi bật
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Hành động
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentProducts.map((item) => (
+                                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                    <th
+                                        scope="row"
+                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                    >
+                                        {item.name.length > 30
+                                            ? `${item.name.slice(0, 30)}...` // Giới hạn hiển thị tối đa 50 ký tự
+                                            : item.name}
+                                    </th>
+                                    <td className="px-6 py-4">
+                                        <img src={item.image_url} alt="" className="h-8 w-8 rounded-full bg-gray-800" />
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {item.description.length > 30
+                                            ? `${item.description.slice(0, 100)}...` // Giới hạn hiển thị tối đa 50 ký tự
+                                            : item.description}
+                                    </td>
+                                    <td className="px-6 py-4">{formatCurrency(item.price)}</td>
+                                    <td className="px-6 py-4">{getCategoryName(`${item.category_id}`)}</td>
+                                    <td className="px-6 py-4">
+                                        {item.new_product ? (
+                                            <div className="w-5 h-5 bg-green-500 rounded-full"></div>
+                                        ) : (
+                                            <div className="w-5 h-5 bg-red-500 rounded-full"></div>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {item.best_seller_product ? (
+                                            <div className="w-5 h-5 bg-green-500 rounded-full"></div>
+                                        ) : (
+                                            <div className="w-5 h-5 bg-red-500 rounded-full"></div>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {item.featured_product ? (
+                                            <div className="w-5 h-5 bg-green-500 rounded-full"></div>
+                                        ) : (
+                                            <div className="w-5 h-5 bg-red-500 rounded-full"></div>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex gap-x-1 justify-end">
+                                            <Link
+                                                to={`/product/edit/${item.id}`}
+                                                className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                            >
+                                                <HiOutlinePencil className="text-lg" />
+                                            </Link>
+                                            <Link
+                                                to={`/product/detail/${item.id}`}
+                                                className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                            >
+                                                <HiOutlineEye className="text-lg" />
+                                            </Link>
+                                            <button
+                                                onClick={() => deleteProduct(`${item.id}`)}
+                                                className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                            >
+                                                <HiOutlineTrash className="text-lg" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
-              </td>
-              <td className="py-4 pl-0 pr-4">
-                <div className="font-mono text-sm leading-6 dark:text-whiteSecondary text-blackPrimary w-20 truncate">
-                  {item.description}
-                </div>
-              </td>
-              <td className="py-4 pl-0 pr-4 text-sm leading-6">
-                <div className="dark:text-whiteSecondary text-blackPrimary block">
-                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                    minimumFractionDigits: 0, // Không hiển thị phần thập phân
-                    maximumFractionDigits: 0, // Không hiển thị phần thập phân
-                  }).format(item.price)}
-                </div>
-              </td>
-              <td className="py-4 pl-0 pr-8 text-sm leading-6 dark:text-rose-200 text-rose-600 font-medium">
-                {getCategoryName(`${item.category_id}`)}
-              </td>
-              <td className="py-4 pl-0 pr-8 text-sm leading-6 dark:text-rose-200 text-rose-600 font-medium">
-                {item.new_product ? (
-                  <div className="w-5 h-5 bg-green-500 rounded-full"></div>
-                ) : (
-                  <div className="w-5 h-5 bg-red-500 rounded-full"></div>
-                )}
-              </td>
-              <td className="py-4 pl-0 pr-8 text-sm leading-6 dark:text-rose-200 text-rose-600 font-medium">
-                {item.best_seller_product ? (
-                  <div className="w-5 h-5 bg-green-500 rounded-full"></div>
-                ) : (
-                  <div className="w-5 h-5 bg-red-500 rounded-full"></div>
-                )}
-              </td>
-              <td className="py-4 pl-0 pr-8 text-sm leading-6 dark:text-rose-200 text-rose-600 font-medium">
-                {item.featured_product ? (
-                  <div className="w-5 h-5 bg-green-500 rounded-full"></div>
-                ) : (
-                  <div className="w-5 h-5 bg-red-500 rounded-full"></div>
-                )}
-              </td>
-              <td className="py-4 pl-0 pr-4 text-right text-sm leading-6 dark:text-whiteSecondary text-blackPrimary">
-                <div className="flex gap-x-1 justify-end">
-                  <Link
-                    to={`/product/edit/${item.id}`}
-                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                  >
-                    <HiOutlinePencil className="text-lg" />
-                  </Link>
-                  <Link
-                    to={`/product/detail/${item.id}`}
-                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                  >
-                    <HiOutlineEye className="text-lg" />
-                  </Link>
-                  <button
-                    onClick={() => deleteProduct(`${item.id}`)}
-                    className="dark:bg-blackPrimary bg-whiteSecondary dark:text-whiteSecondary text-blackPrimary border border-gray-600 w-8 h-8 block flex justify-center items-center cursor-pointer dark:hover:border-gray-500 hover:border-gray-400"
-                  >
-                    <HiOutlineTrash className="text-lg" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {/* Phân trang */}
-      <div className="flex justify-center mt-4">
-        <button
-          onClick={goToPreviousPage}
-          className={`px-4 py-2 mx-1 ${
-            currentPage === 1
-              ? "bg-gray-300 text-gray-500"
-              : "bg-gray-300 text-black"
-          } rounded`}
-          disabled={currentPage === 1}
-        >
-          Trước
-        </button>
-        {pageNumbers.map((number) => (
-          <button
-            key={number}
-            onClick={() => setCurrentPage(number)}
-            className={`px-4 py-2 mx-1 ${
-              currentPage === number
-                ? "bg-blue-500 text-white"
-                : "bg-gray-300 text-black"
-            } rounded`}
-          >
-            {number}
-          </button>
-        ))}
-        <button
-          onClick={goToNextPage}
-          className={`px-4 py-2 mx-1 ${
-            currentPage === totalPages
-              ? "bg-gray-300 text-gray-500"
-              : "bg-gray-300 text-black"
-          } rounded`}
-          disabled={currentPage === totalPages}
-        >
-          Tiếp theo
-        </button>
-      </div>
-    </div>
-  );
+            </>
+
+            {/* Phân trang */}
+            <div className="flex justify-center mt-4">
+                <button
+                    onClick={goToPreviousPage}
+                    className={`px-4 py-2 mx-1 ${
+                        currentPage === 1 ? "bg-gray-300 text-gray-500" : "bg-gray-300 text-black"
+                    } rounded`}
+                    disabled={currentPage === 1}
+                >
+                    Trước
+                </button>
+                {pageNumbers.map((number) => (
+                    <button
+                        key={number}
+                        onClick={() => setCurrentPage(number)}
+                        className={`px-4 py-2 mx-1 ${
+                            currentPage === number ? "bg-blue-500 text-white" : "bg-gray-300 text-black"
+                        } rounded`}
+                    >
+                        {number}
+                    </button>
+                ))}
+                <button
+                    onClick={goToNextPage}
+                    className={`px-4 py-2 mx-1 ${
+                        currentPage === totalPages ? "bg-gray-300 text-gray-500" : "bg-gray-300 text-black"
+                    } rounded`}
+                    disabled={currentPage === totalPages}
+                >
+                    Tiếp theo
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default ProductTable;
