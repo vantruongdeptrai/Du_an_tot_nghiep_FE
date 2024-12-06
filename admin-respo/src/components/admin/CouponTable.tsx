@@ -85,7 +85,7 @@ const CouponTable = () => {
                 {item.description}
               </td>
               <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
-                {formatCurrency(item.discount_amount)}
+                {item.discount_amount}%
               </td>
               <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
                 {formatCurrency(item.min_order_value)}

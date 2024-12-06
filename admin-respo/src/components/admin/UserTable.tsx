@@ -62,11 +62,11 @@ const UserTable = () => {
           <tr key={user.id} className="hover:bg-gray-50">
             <td className="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
               <div className="flex items-center gap-x-4">
-                <img
+                {/* <img
                   src={user.image || "https://via.placeholder.com/32"}
                   alt={user.name}
                   className="h-8 w-8 rounded-full"
-                />
+                /> */}
                 <div className="truncate text-sm font-medium">{user.name}</div>
               </div>
             </td>
@@ -80,24 +80,24 @@ const UserTable = () => {
             </td>
             <td className="py-4 pl-0 pr-4 text-right text-sm">
               <div className="flex gap-x-2 justify-end">
-                <Link
+                {/* <Link
                   to={`/users/${user.id}/edit`}
                   className="w-8 h-8 flex items-center justify-center border border-gray-400 rounded-full text-gray-600 hover:bg-gray-100"
                 >
                   <HiOutlinePencil className="text-lg" />
-                </Link>
+                </Link> */}
                 <Link
-                  to={`/users/${user.id}`}
+                  to={`/users/detail/${user.id}`}
                   className="w-8 h-8 flex items-center justify-center border border-gray-400 rounded-full text-gray-600 hover:bg-gray-100"
                 >
                   <HiOutlineEye className="text-lg" />
                 </Link>
-                <button
+                {/* <button
                   onClick={() => console.log(`Delete user ${user.id}`)}
                   className="w-8 h-8 flex items-center justify-center border border-gray-400 rounded-full text-gray-600 hover:bg-gray-100"
                 >
                   <HiOutlineTrash className="text-lg" />
-                </button>
+                </button> */}
               </div>
             </td>
           </tr>

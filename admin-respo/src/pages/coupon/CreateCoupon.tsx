@@ -139,7 +139,7 @@ const CreateCoupon = () => {
 
                 {/* Max Order Value */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Giảm giá tối đa">
+                  <InputWithLabel label="Giá trị đơn hàng tối đa">
                     <input
                       {...register("max_order_value", { valueAsNumber: true })}
                       placeholder="Nhập giá trị giảm giá tối đa ..."
@@ -156,13 +156,19 @@ const CreateCoupon = () => {
 
                 {/* Active Status */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Đang hoạt động">
-                    <input
-                      {...register("is_active")}
-                      type="checkbox"
-                      className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-4 h-4"
-                    />
-                  </InputWithLabel>
+                  <label>Trạng thái</label>
+                  <select
+                    {...register("is_active")}
+                    className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
+                  >
+                    <option value="1">Kích hoạt</option>
+                    <option value="0">Không kích hoạt</option>
+                  </select>
+                  {errors.is_active && (
+                    <span className="text-sm text-red-500">
+                      {errors.is_active.message}
+                    </span>
+                  )}
                 </div>
 
                 {/* Start Date */}
