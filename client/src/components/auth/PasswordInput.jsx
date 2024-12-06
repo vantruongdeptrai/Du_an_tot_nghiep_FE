@@ -13,7 +13,7 @@ const PasswordToggleButton = styled.button`
   }
 `;
 
-const PasswordInput = ({ fieldName, name, errorMsg = "", register}) => {
+const PasswordInput = ({ fieldName, name, errorMsg = "", register, placeholder}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePassword = () => {
@@ -28,7 +28,7 @@ const PasswordInput = ({ fieldName, name, errorMsg = "", register}) => {
       <div className="form-elem-block">
         <Input
           type={showPassword ? "text" : "password"}
-          placeholder=""
+          placeholder={placeholder}
           {...register(name)}
           className="form-elem-control"
         />

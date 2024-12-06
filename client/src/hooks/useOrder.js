@@ -58,7 +58,7 @@ const useOrder = () => {
                 return vnpayResponse.data.payment_url;
             } else {
                 const response = await apiClient.post(endPoint, orderData);
-                toast.success("Thanh toán thành công.");
+                return response.data;
             }
         } catch (error) {
             console.log(error);
@@ -72,8 +72,6 @@ const useOrder = () => {
             const response = await apiClient.post(
                 `http://127.0.0.1:8000/api/order/${orderId}/send-invoice?email_order=${email}`
             );
-            console.log("Invoice sent successfully", response.data);
-            toast.success("Invoice has been sent successfully!");
             return response.data;
         } catch (error) {
             console.error("Error sending invoice", error);

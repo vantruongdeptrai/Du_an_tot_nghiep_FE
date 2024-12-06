@@ -83,7 +83,7 @@ const UserMenu = () => {
 
     return (
         <div>
-            <Title titleText={`Xin chào, ${user.name}`} />
+            <Title titleText={`Xin chào ${user ? user?.name : "khách hàng"}`} />
             <p className="text-base font-light italic">Chào mừng đến với tài khoản của bạn</p>
 
             <NavMenuWrapper>

@@ -26,10 +26,11 @@ const CheckoutScreenWrapper = styled.main`
 
 const CheckoutScreen = () => {
     const methods = useForm();
-    const { createOrder } = useOrder();
+    const { createOrder, sendInvoice } = useOrder();
     const nav = useNavigate();
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const orderItems = JSON.parse(localStorage.getItem("orderItems"));
+
     // Hàm xử lý submit khi người dùng ấn "Pay Now"
     const handleSubmitOrder = async (data) => {
         const paymentType = data.payment_type;
@@ -55,7 +56,15 @@ const CheckoutScreen = () => {
             }
         } else {
             // Nếu không phải VNPay, gọi hàm tạo đơn hàng bình thường
-            await createOrder(data, userId, orderItems);
+            const response = await createOrder(data, userId, orderItems);
+            
+            if (response && response.order_id) {
+                // Gọi hàm gửi hóa đơn
+                await sendInvoice(response.order_id, user.email);
+                toast.success("Tạo đơn hàng thành công!");
+            } else {
+                console.error("Không lấy được orderId từ phản hồi createOrder.");
+            }
             nav("/confirm");
         }
     };

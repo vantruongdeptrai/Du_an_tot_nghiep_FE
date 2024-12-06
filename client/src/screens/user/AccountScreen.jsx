@@ -12,6 +12,7 @@ import useUser from "../../hooks/useUser";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import Loader from "../../components/loader/loader";
+import { useNavigate } from "react-router-dom";
 
 const AccountScreenWrapper = styled.main`
     .address-list {
@@ -109,8 +110,9 @@ const breadcrumbItems = [
 ];
 
 const AccountScreen = () => {
+    const users = localStorage.getItem("userInfo");
     const { user, updateUser, isLoading } = useUser();
-    console.log(user);
+    const nav = useNavigate()
     
     // Khởi tạo useForm từ React Hook Form
     const { register, handleSubmit, setValue } = useForm();
@@ -145,8 +147,8 @@ const AccountScreen = () => {
     //     }
     // };
 
-    if (!user) {
-        return <p>User not found. Please log in again.</p>;
+    if (!users) {
+        return nav("/sign_in");
     }
     if(isLoading) {
         return <p>

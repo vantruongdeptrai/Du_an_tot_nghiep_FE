@@ -8,11 +8,9 @@ import { Input, InputGroupWrapper } from "../../styles/form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import { useDispatch } from "react-redux";
 import { toggleSidebar } from "../../redux/slices/sidebarSlice";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useSearch from "../../../hooks/search";
 import useCart from "../../hooks/useCart";
-import { useQuery } from "@tanstack/react-query";
 
 const NavigationAndSearchWrapper = styled.div`
     column-gap: 20px;
@@ -77,7 +75,7 @@ const NavigationMenuWrapper = styled.nav`
         }
 
         &:hover {
-            color: ${defaultTheme.color_outerspace};
+            color: ${defaultTheme.color_sea_green};
         }
     }
 
@@ -120,6 +118,58 @@ const IconLinksWrapper = styled.div`
         column-gap: 6px;
     }
 `;
+const UserDropdownWrapper = styled.div`
+    position: relative;
+    display: inline-block;
+    height: 25px;
+
+    .avatar-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    .dropdown-content {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        right: 0;
+        top: 40px;
+        background-color: ${defaultTheme.color_white};
+        min-width: 180px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        border-radius: 6px;
+        overflow: hidden;
+        transition: opacity 0.3s ease, visibility 0s 0.3s;
+
+        a {
+            color: ${defaultTheme.color_outerspace};
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+
+            &:hover {
+                background-color: ${defaultTheme.color_light_gray};
+                color: ${defaultTheme.color_sea_green}; /* Hoặc màu khác nếu muốn */
+            }
+        }
+    }
+
+    &:hover .dropdown-content {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    /* Thêm hover vào các mục con */
+    .dropdown-content a:hover {
+        background-color: ${defaultTheme.color_sea_green}; /* Màu nền khi hover */
+        color: ${defaultTheme.color_white}; /* Màu chữ khi hover */
+    }
+`;
+
 
 const Header = () => {
     const location = useLocation();
@@ -137,6 +187,15 @@ const Header = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         navigate(`/search?name=${keyword}`);
+    };
+    const handleLogout = () => {
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("token");
+    };
+    const handleUserClick = () => {
+        if (!user) {
+            navigate("/sign_in"); // Điều hướng tới trang đăng nhập
+        }
     };
     return (
         <HeaderMainWrapper className="header flex items-center">
@@ -185,7 +244,7 @@ const Header = () => {
                         </form>
                     </NavigationAndSearchWrapper>
 
-                    <IconLinksWrapper className="flex items-center">
+                    <IconLinksWrapper style={{ alignItems: "center" }} className="flex items-center">
                         {/* <Link
                             to="/wishlist"
                             className={`icon-link ${
@@ -194,14 +253,30 @@ const Header = () => {
                         >
                             <img src={staticImages.heart} alt="" />
                         </Link> */}
-                        <Link
-                            to="/sign_in"
-                            className={`icon-link ${
-                                location.pathname === "/account" || location.pathname === "/account/add" ? "active" : ""
-                            } inline-flex items-center justify-center`}
-                        >
-                            <img src={staticImages.user} alt="" />
-                        </Link>
+                        <UserDropdownWrapper>
+                            <button className="flex" style={{alignItems: "center" ,border: "1px solid #ccc", padding: 3, borderRadius: 50}} onClick={handleUserClick}>
+                                <img
+                                    style={{width: "25px", height: "25px", objectFit: "contain", }}
+                                    src={
+                                        user
+                                            ? "https://chiemtaimobile.vn/images/companies/1/%E1%BA%A2nh%20Blog/avatar-facebook-dep/Anh-avatar-hoat-hinh-de-thuong-xinh-xan.jpg?1704788263223"
+                                              
+                                            : staticImages.user
+                                    }
+                                    alt="user avatar"
+                                />
+                            </button>
+                            {user && (
+                                <div className="dropdown-content">
+                                    <Link to="/order">Đơn hàng của tôi</Link>
+                                    <Link to="/cart">Giỏ hàng của tôi</Link>
+                                    <Link to="/account">Hồ sơ cá nhân</Link>
+                                    <Link to="/sign_in" onClick={() => handleLogout()}>
+                                        Đăng xuất
+                                    </Link>
+                                </div>
+                            )}
+                        </UserDropdownWrapper>
                         <Link
                             style={{ position: "relative" }}
                             to={"/cart"}
@@ -209,7 +284,7 @@ const Header = () => {
                                 location.pathname === "/cart" ? "active" : ""
                             } inline-flex items-center justify-center`}
                         >
-                            <img src={staticImages.cart} alt="" />
+                            <img style={{height: "25px" , width: "25px"}} src={staticImages.cart} alt="" />
                             <span
                                 style={{
                                     position: "absolute",

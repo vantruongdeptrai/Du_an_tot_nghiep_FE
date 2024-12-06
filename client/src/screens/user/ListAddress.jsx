@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 import styled from "styled-components";
@@ -7,11 +6,14 @@ import Breadcrumb from "../../components/common/Breadcrumb";
 import { UserContent, UserDashboardWrapper } from "../../styles/user";
 import UserMenu from "../../components/user/UserMenu";
 import Title from "../../components/common/Title";
-import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { defaultTheme } from "../../styles/themes/default";
 import useAddress from "../../hooks/useAddress";
 import AddressModal from "../../components/modals/ModalAdd";
 
 import { toast } from "react-toastify";
+import AddressEditModal from "../../components/modals/ModalEdit";
+import { useNavigate } from "react-router-dom";
+import Loader from "../../components/loader/loader";
 
 // Styled components
 const AccountScreenWrapper = styled.main`
@@ -38,7 +40,6 @@ const AccountScreenWrapper = styled.main`
         font-weight: bold;
         border: 1px solid red;
         padding: 2px 5px;
-
     }
 
     .button-update {
@@ -55,9 +56,8 @@ const AccountScreenWrapper = styled.main`
         transition: background-color 0.3s ease;
 
         &:hover {
-            background-color: ${defaultTheme.color_yellow_green};
+            opacity: 0.8;
             transform: scale(1.1);
-
         }
     }
 
@@ -73,7 +73,7 @@ const AccountScreenWrapper = styled.main`
         transition: background-color 0.3s ease;
 
         &:hover {
-            background-color: ${defaultTheme.color_dim_gray};
+            opacity: 0.8;
             transform: scale(1.1);
         }
     }
@@ -97,19 +97,22 @@ const AccountScreenWrapper = styled.main`
         border: 1px solid #ccc;
         padding: 4px 6px;
         font-size: 16px;
-
+        &:hover {
+            opacity: 0.5;
+        }
     }
 `;
 
 const ListAddressScreen = () => {
+    const nav = useNavigate();
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Chỉnh sửa địa chỉ
 
-    const { addresses, createAddress, setDefaultAddress } = useAddress();
+    const { addresses, isLoading ,createAddress, updateAddress, updateDefaultAddressApi, deleteAddress } = useAddress();
 
-    const addressByUser = Array.isArray(addresses) ? addresses.filter((address) => address.id == user.id) : [];
+    const addressByUser = Array.isArray(addresses) ? addresses.filter((address) => address?.id == user?.id) : [];
     console.log(addressByUser);
-
 
     const handleOpenModal = () => {
         setIsModalOpen(true);
@@ -119,6 +122,13 @@ const ListAddressScreen = () => {
         setIsModalOpen(false);
     };
 
+    // Xử lý mở modal chỉnh sửa địa chỉ
+    const handleOpenEditModal = () => {
+        setIsEditModalOpen(true);
+    };
+    const handleCloseEditModal = () => {
+        setIsEditModalOpen(false);
+    };
 
     const handleAddAddress = async (addressData) => {
         await createAddress(addressData);
@@ -126,13 +136,33 @@ const ListAddressScreen = () => {
         handleCloseModal();
     };
 
-    const handleSetDefaultAddress = (addressId) => {
-        setDefaultAddress(addressId); // Assume this function sets the default address in the state or backend
+    const handleEditAddress = async (addressData) => {
+        await updateAddress(addressData);
+        handleCloseEditModal();
     };
 
+    const handleSetDefaultAddress = async (address) => {
+        if (address.is_default === 1) {
+            toast.info("Địa chỉ này đã là mặc định.");
+            return;
+        }
+        await updateDefaultAddressApi(address);
+    };
+
+    const handleDeleteDefaultAddress = (id) => {
+        if (window.confirm("Bạn có chắc chắn muốn xóa địa chỉ này không?")) {
+            deleteAddress(id);
+        }
+    };
 
     if (!user) {
-        return <p>User not found. Please log in again.</p>;
+        return nav("/sign_in"); // Điều hướng đúng khi không có user
+    }
+
+    if(isLoading) {
+        return <p>
+            <Loader />
+        </p>
     }
 
     return (
@@ -154,14 +184,16 @@ const ListAddressScreen = () => {
                                 Thêm Địa Chỉ
                             </button>
 
-                            <AddressModal
-                                isOpen={isModalOpen}
-                                onClose={handleCloseModal}
-                                onConfirm={handleAddAddress}
-                            />
+                            {isModalOpen && (
+                                <AddressModal
+                                    isOpen={isModalOpen}
+                                    onClose={handleCloseModal}
+                                    onConfirm={handleAddAddress}
+                                />
+                            )}
                         </div>
 
-                        <h2 style={{ marginTop: 20 }}>Địa chỉ</h2>
+                        
                         <div className="address-list">
                             {addressByUser.length === 0 ? (
                                 <div>Chưa có địa chỉ nào.</div>
@@ -213,28 +245,52 @@ const ListAddressScreen = () => {
                                                                 </div>
                                                             </div>
                                                             <div>
-                                                                {/* <div
+                                                                <div
                                                                     style={{
                                                                         display: "flex",
                                                                         flexDirection: "column",
                                                                         gap: 20,
                                                                     }}
                                                                 >
-                                                                    <button
-                                                                        className="button-update"
-                                                                        // onClick={() => handleDeleteAddress(address._id)}
-                                                                    >
-                                                                        Cập nhật
-                                                                    </button>
-                                                                    <button
-                                                                        className="button"
-                                                                        onClick={() =>
-                                                                            handleSetDefaultAddress(address._id)
-                                                                        }
-                                                                    >
-                                                                        Thiết lập mặc định
-                                                                    </button>
-                                                                </div> */}
+                                                                    <div className="flex" style={{ gap: 20 }}>
+                                                                        <button
+                                                                            className="button-update"
+                                                                            onClick={handleOpenEditModal}
+                                                                        >
+                                                                            Cập nhật
+                                                                        </button>
+                                                                        {isEditModalOpen && (
+                                                                            <AddressEditModal
+                                                                                isOpen={isEditModalOpen}
+                                                                                onClose={handleCloseEditModal}
+                                                                                onConfirm={handleEditAddress}
+                                                                                currentAddress={item}
+                                                                            />
+                                                                        )}
+
+                                                                        <button
+                                                                            className="button-delete"
+                                                                            onClick={() =>
+                                                                                handleDeleteDefaultAddress(item.id)
+                                                                            }
+                                                                        >
+                                                                            Xóa
+                                                                        </button>
+                                                                    </div>
+
+                                                                    {item.is_default === 0 ? (
+                                                                        <button style={{borderRadius: "5px"}}
+                                                                            className="button"
+                                                                            onClick={() =>
+                                                                                handleSetDefaultAddress(item)
+                                                                            }
+                                                                        >
+                                                                            Thiết lập mặc định
+                                                                        </button>
+                                                                    ) : (
+                                                                        ""
+                                                                    )}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     ); // Thêm return vào đây
@@ -245,7 +301,6 @@ const ListAddressScreen = () => {
                                 ))
                             )}
                         </div>
-
                     </UserContent>
                 </UserDashboardWrapper>
             </Container>

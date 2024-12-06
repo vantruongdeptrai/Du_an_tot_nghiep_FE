@@ -4,7 +4,6 @@ import formatCurrency from "../../utils/formatUtils";
 import useCart from "../../hooks/useCart";
 import { toast } from "react-toastify";
 import { defaultTheme } from "../../styles/themes/default";
-import Loader from "../../components/loader/loader";
 
 const Table = styled.table`
     width: 100%;
@@ -167,7 +166,7 @@ const CartTable = ({
                                     <img
                                         src={item.product_image || item.image}
                                         alt=""
-                                        style={{ width: "50px", height: "50px" }}
+                                        style={{ width: "50px", height: "50px", borderRadius: "2px" }}
                                     />
                                 </td>
                                 <td>
@@ -186,7 +185,7 @@ const CartTable = ({
                                         className="quantity-button"
                                         onClick={() =>
                                             handleDecreaseQuantity(
-                                                item.cart_id,
+                                                item?.cart_id,
                                                 item.size,
                                                 item.color,
                                                 item.product_variant_id,
@@ -202,7 +201,7 @@ const CartTable = ({
                                         className="quantity-button"
                                         onClick={() =>
                                             handleIncreaseQuantity(
-                                                item.cart_id,
+                                                item?.cart_id,
                                                 item.size,
                                                 item.color,
                                                 item.product_variant_id,
