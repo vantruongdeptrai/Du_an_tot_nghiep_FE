@@ -92,6 +92,7 @@ const SignUpScreen = () => {
                                             name="password"
                                             errorMsg={errors.password?.message}
                                             register={register}
+                                            placeholder={"Mật khẩu..."}
                                         />
                                     </div>
                                     <div>
@@ -100,6 +101,7 @@ const SignUpScreen = () => {
                                             name="password_confirmation"
                                             errorMsg={errors.password_confirmation?.message}
                                             register={register}
+                                            placeholder={"Nhập lại mật khẩu..."}
                                         />
                                     </div>
                                 </FormElement>

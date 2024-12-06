@@ -253,6 +253,11 @@ const OrderDetailListWrapper = styled.div`
             }
         }
     }
+    img-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Hiển thị đầy đủ ảnh */
+    }
 `;
 
 const breadcrumbItems = [
@@ -293,7 +298,15 @@ const OrderDetailScreen = () => {
                             <div className="order-d-top flex justify-between items-start">
                                 <div className="order-d-top-l">
                                     <h4 className="text-3xl order-d-no">Mã đơn hàng: {orderDetail.id}</h4>
-                                    <p className="text-lg font-medium text-gray">{orderDetail.created_at}</p>
+                                    <p className="text-lg font-medium text-gray">
+                                        <span className="text-silver">
+                                            {new Date(orderDetail.updated_at).toLocaleDateString("vi-VN", {
+                                                year: "numeric",
+                                                month: "long",
+                                                day: "numeric",
+                                            })}
+                                        </span>
+                                    </p>
                                 </div>
                                 <div className="order-d-top-r text-xxl text-gray font-semibold">
                                     Tổng giá tiền:{" "}
@@ -381,23 +394,16 @@ const OrderDetailScreen = () => {
                                 <div style={{ display: "flex", flexDirection: "column" }}>
                                     <h2>Thông tin người đặt hàng</h2>
                                     <div className="font-semibold text-gray">
-                                        <p style={{margin: "5px 0"}}>
-                                            Họ tên:{" "}
-                                            <span className="text-outerspace">
-                                                {orderDetail.name_order}
-                                            </span>
+                                        <p style={{ margin: "5px 0" }}>
+                                            Họ tên: <span className="text-outerspace">{orderDetail.name_order}</span>
                                         </p>
-                                        <p style={{margin: "5px 0"}}>
+                                        <p style={{ margin: "5px 0" }}>
                                             Số điện thoại:{" "}
-                                            <span className="text-outerspace">
-                                                {orderDetail.phone_order}
-                                            </span>
+                                            <span className="text-outerspace">{orderDetail.phone_order}</span>
                                         </p>
-                                        <p style={{margin: "5px 0"}}>
+                                        <p style={{ margin: "5px 0" }}>
                                             Địa chỉ:{" "}
-                                            <span className="text-outerspace">
-                                                {orderDetail.shipping_address}
-                                            </span>
+                                            <span className="text-outerspace">{orderDetail.shipping_address}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -419,19 +425,23 @@ const OrderDetailScreen = () => {
                                                 <img
                                                     src={productVariant?.image_url}
                                                     alt=""
-                                                    className="object-fit-cover"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        objectFit: "contain",
+                                                    }}
                                                 />
                                             </div>
                                             <div className="order-d-item-info">
                                                 <p className="text-xl font-bold">{product?.name}</p>
                                                 <p className="text-md font-bold">
-                                                    Màu: &nbsp;
+                                                    Màu sắc: &nbsp;
                                                     <span className="font-medium text-gray">
                                                         {colorDetail?.name || "Không có màu"}
                                                     </span>
                                                 </p>
                                                 <p className="text-md font-bold">
-                                                    Size: &nbsp;
+                                                    Kích cỡ: &nbsp;
                                                     <span className="font-medium text-gray">
                                                         {sizeDetail?.name || "Không có size"}
                                                     </span>

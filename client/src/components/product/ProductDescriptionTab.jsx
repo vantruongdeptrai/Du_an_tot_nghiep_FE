@@ -225,7 +225,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                     activeDesTab === "tabComments" ? "show" : ""
                                 }`}
                             >
-                                <h2>Bình luận về sản phẩm</h2>
+                                <h2>Các đánh giá về sản phẩm</h2>
                                 <hr />
                                 {commentUser.length > 0 ? (
                                     commentUser.map((comment) => (
@@ -283,7 +283,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                         </div>
                                     ))
                                 ) : (
-                                    <p>Chưa có bình luận</p>
+                                    <p>Chưa có đánh giá nào.</p>
                                 )}
                                 {/* <form onSubmit={handleSubmit(onSubmit)} action="">
                                     <input {...register("user_id")} type="hidden" value={user?.id} />

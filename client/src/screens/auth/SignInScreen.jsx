@@ -122,7 +122,7 @@ const SignInScreen = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        placeholder="Nhập email hoặc số điện thoại"
+                                        placeholder="Nhập email..."
                                         value={identifier}
                                         onChange={(e) => setIdentifier(e.target.value)}
                                         className="form-elem-control"
@@ -137,7 +137,7 @@ const SignInScreen = () => {
                                     </label>
                                     <input
                                         type="password"
-                                        placeholder="Nhập mật khẩu"
+                                        placeholder="Nhập mật khẩu..."
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         autoComplete="current-password"

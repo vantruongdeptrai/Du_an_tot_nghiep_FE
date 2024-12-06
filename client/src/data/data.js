@@ -646,7 +646,7 @@ const productDescriptionTabHeads = [
     {
         id: "tab-comments",
         tabHead: "tabComments",
-        tabText: "Các bình luận",
+        tabText: "Các bình luận đánh giá",
         badgeValue: 10,
         badgeColor: "purple",
     },

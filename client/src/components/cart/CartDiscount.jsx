@@ -116,9 +116,9 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
 
         const subTotal = selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-        if (subTotal < coupon.min_order_value) {
+        if (subTotal < coupon.min_order_value || subTotal > coupon.max_order_value) {
             toast.warn(
-                `Số tiền tối thiểu của bạn phải là ${formatCurrency(coupon.min_order_value)} để sử dụng mã giảm giá.`
+                `Số tiền của bạn phải trong khoảng ${formatCurrency(coupon.min_order_value)} - ${formatCurrency(coupon.max_order_value)} để sử dụng mã giảm giá.`
             );
             return;
         }

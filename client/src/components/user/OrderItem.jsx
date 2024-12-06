@@ -126,7 +126,6 @@ const OrderItem = ({ order, guestOrder }) => {
     // const nav = useNavigate();
     const users = localStorage.getItem("userInfo");
     console.log(users);
-    
 
     // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
     const currentOrder = users ? order : guestOrder;
@@ -236,7 +235,7 @@ const OrderItem = ({ order, guestOrder }) => {
                         style={{ justifyContent: "space-between", alignItems: "center", margin: "15px 0" }}
                         className="flex"
                     >
-                        <h3 className="text-x order-item-title">Order no: {currentOrder.id}</h3>
+                        <h3 className="text-x order-item-title">Mã đơn hàng: {currentOrder.id}</h3>
                         {/* {["Đã xác nhận", "Đang chuẩn bị", "Đang vận chuyển"].includes(
                             order.status_order
                         ) ? null : order.status_order === "Đã hủy" ||
@@ -275,7 +274,7 @@ const OrderItem = ({ order, guestOrder }) => {
                     </div>
                     <div className="order-info-group flex flex-wrap">
                         <div className="order-info-item">
-                            <span className="font-semibold">Order Date:</span>
+                            <span className="font-semibold">Ngày đặt hàng:</span>
                             <span className="text-silver">
                                 {new Date(currentOrder.created_at).toLocaleDateString("vi-VN", {
                                     year: "numeric",
@@ -285,19 +284,25 @@ const OrderItem = ({ order, guestOrder }) => {
                             </span>
                         </div>
                         <div className="order-info-item">
-                            <span className=" font-semibold">Order Status:</span>
+                            <span className=" font-semibold">Trạng thái đơn hàng:</span>
                             <span className="text-silver">{currentOrder.status_order}</span>
                         </div>
                         <div className="order-info-item">
-                            <span className=" font-semibold">Estimated Delivery Date:</span>
-                            <span className="text-silver">{currentOrder.updated_at}</span>
+                            <span className=" font-semibold">Ngày giao dự kiến:</span>
+                            <span className="text-silver">
+                                {new Date(currentOrder.updated_at).toLocaleDateString("vi-VN", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                })}
+                            </span>
                         </div>
                         <div className="order-info-item">
-                            <span className=" font-semibold">Method:</span>
+                            <span className=" font-semibold">Phương thức thanh toán:</span>
                             <span className="text-silver">{currentOrder.payment_type}</span>
                         </div>
                         <div className="order-info-item">
-                            <span className=" font-semibold">Total price:</span>
+                            <span className=" font-semibold">Tổng tiền đơn hàng:</span>
                             <span className="text-silver">{formatCurrency(currentOrder.total_price)}</span>
                         </div>
                     </div>
@@ -314,29 +319,38 @@ const OrderItem = ({ order, guestOrder }) => {
                             <div key={itemIndex} className="order-overview flex justify-between">
                                 <div className="order-overview-content grid">
                                     <div className="order-overview-img">
-                                        <img src={product?.image_url} alt="" className="object-fit-cover" />
+                                        <img
+                                            src={product?.image_url}
+                                            alt=""
+                                            style={{
+                                                width: "100%",
+                                                height: "100%",
+                                                objectFit: "contain",
+                                                borderRadius: 5
+                                            }}
+                                        />
                                     </div>
                                     <div className="order-overview-info">
                                         <h4 className="text-xl">{product?.name}</h4>
                                         <ul>
                                             <li className="font-semibold text-base">
-                                                <span>Color:</span>
+                                                <span>Màu sắc:</span>
                                                 <span className="text-silver">
                                                     {colorDetail?.name || "Không có color"}
                                                 </span>
                                             </li>
                                             <li className="font-semibold text-base">
-                                                <span>Size:</span>
+                                                <span>Kích cỡ:</span>
                                                 <span className="text-silver">
                                                     {sizeDetail?.name || "Không có size"}
                                                 </span>
                                             </li>
                                             <li className="font-semibold text-base">
-                                                <span>Quantity:</span>
+                                                <span>Số lượng:</span>
                                                 <span className="text-silver">{item?.quantity}</span>
                                             </li>
                                             <li className="font-semibold text-base">
-                                                <span>Price:</span>
+                                                <span>Giá:</span>
                                                 <span className="text-silver">
                                                     {formatCurrency(productVariant?.price || product?.sale_price)}
                                                 </span>

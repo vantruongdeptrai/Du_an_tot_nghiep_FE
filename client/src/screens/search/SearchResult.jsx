@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import useSearch from "../../../hooks/search";
+import formatCurrency from "../../utils/formatUtils";
 
 const ProductsContent = styled.div`
     display: grid;
@@ -123,10 +124,10 @@ const SearchResult = () => {
     const [categories, setCategories] = useState([]);
     // State để lưu các bộ lọc
     const [minRange, setMinRange] = useState(0);
-    const [maxRange, setMaxRange] = useState(1000);
+    const [maxRange, setMaxRange] = useState(2000000);
     const [selectedColors, setSelectedColors] = useState([]);
     const [selectedSizes, setSelectedSizes] = useState([]);
-    const { keyword, setKeyword , results } = useSearch();
+    const { keyword, setKeyword, results } = useSearch();
     console.log(keyword);
 
     const location = useLocation(); // Lấy đối tượng location
@@ -252,25 +253,23 @@ const SearchResult = () => {
                     <h3>Kết quả tìm kiếm cho: "{searchName}"</h3>
                 </div>
                 <div className="product-card-list">
-                    {results.map((product) => {
+                    {results?.map((product) => {
                         const category = getCategoryById(product.category_id);
                         return (
-                            <div key={product.id} className="product-card">
-                                <img
-                                    src={product.image || "https://picsum.photos/200/300"}
-                                    alt={product.name}
-                                    className="product-image"
-                                />
-                                <div className="product-info">
-                                    <h3 className="product-name">{product.name}</h3>
-                                    <p className="product-price">${product.price}</p>
-                                    {product.new_product && <span className="new-product">New</span>}
-                                    {category && <p className="category-info">Danh mục: {category.name}</p>}
-                                    <button className="add-to-cart" onClick={() => handleAddToCart(product.id)}>
-                                        Thêm vào giỏ hàng
-                                    </button>
+                            <Link to={`/product/details/${product.id}`} key={product.id}>
+                                <div key={product.id} className="product-card">
+                                    <img
+                                        src={product.image_url || "https://picsum.photos/200/300"}
+                                        alt={product.name}
+                                        className="product-image"
+                                    />
+                                    <div className="product-info">
+                                        <h3 className="product-name">{product.name}</h3>
+                                        <p className="product-price">{formatCurrency(product.price)}</p>
+                                        {category && <p className="category-info">Danh mục: {category.name}</p>}
+                                    </div>
                                 </div>
-                            </div>
+                            </Link>
                         );
                     })}
                 </div>
