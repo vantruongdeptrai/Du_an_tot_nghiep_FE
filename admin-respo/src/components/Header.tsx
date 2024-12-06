@@ -48,7 +48,7 @@ const Header = () => {
         </Link>
         <SearchInput />
         <div className="flex gap-4 items-center max-xl:justify-center">
-          <span className="dark:text-whiteSecondary text-blackPrimary">EN</span>
+          {/* <span className="dark:text-whiteSecondary text-blackPrimary">EN</span> */}
           {darkMode ? (
             <HiOutlineSun
               onClick={() => dispatch(toggleDarkMode())}
@@ -60,9 +60,9 @@ const Header = () => {
               className="text-xl dark:text-whiteSecondary text-blackPrimary cursor-pointer"
             />
           )}
-          <Link to="/notifications">
+          {/* <Link to="/notifications">
             <HiOutlineBell className="text-xl dark:text-whiteSecondary text-blackPrimary" />
-          </Link>
+          </Link> */}
           <Link to={isLoggedIn ? "/profile" : "/login"}>
             <div className="flex gap-2 items-center">
               <img

@@ -39,6 +39,7 @@ import OperatingCost from "./pages/operating_costs/OperatingCost";
 import CreateOperatingCost from "./pages/operating_costs/CreateOperatingCost";
 import EditOperatingCost from "./pages/operating_costs/EditOperatingCost";
 import DetailProduct from "./pages/product/DetailProduct";
+import UserDetail from "./pages/user/UserDetail";
 
 // Kiểm tra trạng thái đăng nhập qua localStorage
 const isAuthenticated = () => !!localStorage.getItem("token");
@@ -172,6 +173,7 @@ const router = createBrowserRouter([
         path: "/users/:id",
         element: <EditUser />,
       },
+      { path: "/users/detail/:id", element: <UserDetail /> },
       {
         path: "/users/create-user",
         element: <CreateUser />,

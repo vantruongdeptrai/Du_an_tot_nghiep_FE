@@ -25,12 +25,19 @@ const couponSchema = z.object({
             // Chuyển giá trị thành số nếu có thể
             return Number(value);
         },
-        z.number().positive("The min order value must be greater than 0.")
+        z.number().positive("Giá trị tối thiểu phải lớn hơn 0.")
     ),
-    max_order_value: z
-    .number()
-    .min(0, "Số tiền giảm giá tối đa phải lớn hơn hoặc bằng 0.")
-    .optional(),
+    max_order_value: z.preprocess(
+      (value) => {
+          // Chuyển chuỗi rỗng thành undefined
+          if (value === "" || value === undefined) {
+              return undefined;
+          }
+          // Chuyển giá trị thành số nếu có thể
+          return Number(value);
+      },
+      z.number().positive("Giá trị tối đa phải lớn hơn 0.")
+  ),
     usage_limit: z.preprocess(
         (value) => {
             // Chuyển chuỗi rỗng thành undefined
@@ -43,7 +50,7 @@ const couponSchema = z.object({
         z.number().positive("The usage limit must be greater than 0.")
     ),
     description: z.string(),
-    is_active: z.boolean(),
+    is_active: z.string(),
   start_date: z
     .string()
     .refine(
