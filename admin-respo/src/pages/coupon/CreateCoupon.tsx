@@ -21,16 +21,14 @@ const CreateCoupon = () => {
 
   const onSubmit: SubmitHandler<CouponInput> = async (data) => {
     try {
-      console.log(data);
-
-      console.log("Request Data:", data);
+      console.log("Dữ liệu gửi:", data);
       const response = await axios.post(
         "http://127.0.0.1:8000/api/coupons",
         data
       );
       nav("/coupons");
     } catch (error) {
-      console.error("Error adding coupon:", error);
+      console.error("Lỗi khi thêm mã giảm giá:", error);
     }
   };
 
@@ -42,7 +40,7 @@ const CreateCoupon = () => {
           <div className="px-4 sm:px-6 lg:px-8 pb-8 border-b border-gray-800 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <div className="flex flex-col gap-3">
               <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                Add new coupon
+                Thêm mã giảm giá mới
               </h2>
             </div>
           </div>
@@ -51,15 +49,15 @@ const CreateCoupon = () => {
             {/* left div */}
             <div>
               <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                Basic information
+                Thông tin cơ bản
               </h3>
               <form onSubmit={handleSubmit(onSubmit)}>
                 {/* Coupon Name */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Coupon Name">
+                  <InputWithLabel label="Mã giảm giá">
                     <input
                       {...register("name")}
-                      placeholder="Enter a coupon name..."
+                      placeholder="Nhập tên mã giảm giá ..."
                       type="text"
                       className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
                     />
@@ -73,10 +71,10 @@ const CreateCoupon = () => {
 
                 {/* Discount Amount */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Discount Amount">
+                  <InputWithLabel label="Phần trăm giảm giá">
                     <input
                       {...register("discount_amount", { valueAsNumber: true })}
-                      placeholder="Enter Discount Amount..."
+                      placeholder="Nhập phần trăm giảm giá..."
                       type="number"
                       className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
                     />
@@ -90,10 +88,10 @@ const CreateCoupon = () => {
 
                 {/* Coupon Description */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Coupon Description">
+                  <InputWithLabel label="Mô tả mã giảm giá">
                     <input
                       {...register("description")}
-                      placeholder="Enter a coupon description..."
+                      placeholder="Nhập mô tả mã giảm giá..."
                       type="text"
                       className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
                     />
@@ -107,10 +105,10 @@ const CreateCoupon = () => {
 
                 {/* Min Order Value */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Min Order Value">
+                  <InputWithLabel label="Giá trị đơn hàng tối thiểu">
                     <input
                       {...register("min_order_value", { valueAsNumber: true })}
-                      placeholder="Enter Min Order Value..."
+                      placeholder="Nhập giá trị đơn hàng tối thiểu ..."
                       type="number"
                       className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
                     />
@@ -124,10 +122,10 @@ const CreateCoupon = () => {
 
                 {/* Usage Limit */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Usage Limit">
+                  <InputWithLabel label="Giới hạn số lần được dùng">
                     <input
                       {...register("usage_limit", { valueAsNumber: true })}
-                      placeholder="Enter Usage Limit..."
+                      placeholder="Nhập giới hạn số lần dùng"
                       type="number"
                       className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
                     />
@@ -139,9 +137,26 @@ const CreateCoupon = () => {
                   )}
                 </div>
 
+                {/* Max Order Value */}
+                <div className="mt-4 flex flex-col gap-5">
+                  <InputWithLabel label="Giảm giá tối đa">
+                    <input
+                      {...register("max_order_value", { valueAsNumber: true })}
+                      placeholder="Nhập giá trị giảm giá tối đa ..."
+                      type="number"
+                      className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
+                    />
+                  </InputWithLabel>
+                  {errors.max_order_value && (
+                    <span className="text-sm text-red-500">
+                      {errors.max_order_value.message}
+                    </span>
+                  )}
+                </div>
+
                 {/* Active Status */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Is Active">
+                  <InputWithLabel label="Đang hoạt động">
                     <input
                       {...register("is_active")}
                       type="checkbox"
@@ -152,7 +167,7 @@ const CreateCoupon = () => {
 
                 {/* Start Date */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Start Date">
+                  <InputWithLabel label="Ngày bắt đầu">
                     <input
                       {...register("start_date")}
                       type="date"
@@ -163,7 +178,7 @@ const CreateCoupon = () => {
 
                 {/* End Date */}
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="End Date">
+                  <InputWithLabel label="Ngày kết thúc">
                     <input
                       {...register("end_date")}
                       type="date"
@@ -177,7 +192,7 @@ const CreateCoupon = () => {
                     type="submit"
                     className="focus:outline-none text-white bg-black hover:border hover:border-white focus:ring-1 focus:ring-white font-medium rounded-none text-sm px-5 py-2.5 me-2 mb-2"
                   >
-                    Add Coupon
+                    Thêm mã giảm giá
                   </button>
                 </div>
               </form>
@@ -188,4 +203,5 @@ const CreateCoupon = () => {
     </div>
   );
 };
+
 export default CreateCoupon;

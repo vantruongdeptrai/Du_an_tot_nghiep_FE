@@ -53,6 +53,9 @@ const CouponTable = () => {
               Đơn hàng tối thiểu
             </th>
             <th style={{ padding: "8px", textAlign: "left" }}>
+              Giảm giá tối đa
+            </th>
+            <th style={{ padding: "8px", textAlign: "left" }}>
               Giới hạn sử dụng
             </th>
             <th style={{ padding: "8px", textAlign: "left" }}>Trạng thái</th>
@@ -86,6 +89,9 @@ const CouponTable = () => {
               </td>
               <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
                 {formatCurrency(item.min_order_value)}
+              </td>
+              <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
+                {formatCurrency(item.max_order_value)}
               </td>
               <td style={{ padding: "8px", borderBottom: "1px solid #ddd" }}>
                 {item.usage_limit}

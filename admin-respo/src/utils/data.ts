@@ -194,36 +194,36 @@ export const categoryAdminItems = [
 
 export const faqs = [
   {
-    question: "How to reset my password?",
-    answer: "Go to settings and click on 'Reset Password'.",
+    question: "Làm thế nào để đặt lại mật khẩu?",
+    answer: "Vào cài đặt và nhấp vào 'Đặt lại mật khẩu'.",
   },
   {
-    question: "Where can I find my purchase history?",
+    question: "Tôi có thể tìm lịch sử mua hàng của mình ở đâu?",
     answer:
-      "Your purchase history is available in your account settings under 'Purchase History'.",
+      "Lịch sử mua hàng của bạn có thể xem trong cài đặt tài khoản dưới mục 'Lịch sử mua hàng'.",
   },
   {
-    question: "How can I edit a user?",
+    question: "Làm thế nào để chỉnh sửa người dùng?",
     answer:
-      "Click on the users button in the sidebar and there choose a user that you want to edit by clicking pencil button.",
+      "Nhấp vào nút người dùng trong thanh bên và chọn người dùng mà bạn muốn chỉnh sửa bằng cách nhấp vào nút bút chì.",
   },
   {
-    question: "How can I edit a product?",
+    question: "Làm thế nào để chỉnh sửa sản phẩm?",
     answer:
-      "Click on the products button in the sidebar and there choose a product that you want to edit by clicking pencil button.",
+      "Nhấp vào nút sản phẩm trong thanh bên và chọn sản phẩm mà bạn muốn chỉnh sửa bằng cách nhấp vào nút bút chì.",
   },
   {
-    question: "How can I edit a order?",
+    question: "Làm thế nào để chỉnh sửa đơn hàng?",
     answer:
-      "Click on the orders button in the sidebar and there choose a order that you want to edit by clicking pencil button.",
+      "Nhấp vào nút đơn hàng trong thanh bên và chọn đơn hàng mà bạn muốn chỉnh sửa bằng cách nhấp vào nút bút chì.",
   },
   {
-    question: "How can I edit a category?",
+    question: "Làm thế nào để chỉnh sửa danh mục?",
     answer:
-      "Click on the categories button in the sidebar and there choose a category that you want to edit by clicking pencil button.",
+      "Nhấp vào nút danh mục trong thanh bên và chọn danh mục mà bạn muốn chỉnh sửa bằng cách nhấp vào nút bút chì.",
   },
-  // Add more FAQs as needed
 ];
+
 
 export const orderAdminItems = [
   {

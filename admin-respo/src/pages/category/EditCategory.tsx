@@ -62,7 +62,7 @@ const EditCategory = () => {
           <div className="px-4 sm:px-6 lg:px-8 pb-8 border-b border-gray-800 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <div className="flex flex-col gap-3">
               <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                Edit category
+                Sửa danh mục
               </h2>
             </div>
           </div>
@@ -73,10 +73,10 @@ const EditCategory = () => {
               {/* Phần thông tin cơ bản */}
               <div>
                 <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                  Basic information
+                  Thông tin cơ bản
                 </h3>
                 <div className="mt-4 flex flex-col gap-5">
-                  <InputWithLabel label="Category name">
+                  <InputWithLabel label="Tên danh mục">
                     <input
                       className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400`}
                       {...register("name")}
@@ -95,7 +95,7 @@ const EditCategory = () => {
               {/* Phần upload ảnh */}
               <div>
                 <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                  Category image
+                  Ảnh danh mục
                 </h3>
                 <div className="mt-4 flex flex-col gap-5">
                   <label

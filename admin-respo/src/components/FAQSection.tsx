@@ -16,7 +16,7 @@ const FAQSection = ({
   return (
     <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8">
       <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary mb-4">
-        Frequently Asked Questions
+        Câu Hỏi Thường Gặp
       </h3>
       <div className="flex flex-col gap-4">
         {faqs.map((faq, index) => (

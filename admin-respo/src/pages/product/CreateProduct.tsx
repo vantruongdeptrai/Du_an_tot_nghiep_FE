@@ -205,7 +205,7 @@ const CreateProduct: React.FC = () => {
             <div className="px-4 sm:px-6 lg:px-8 pb-8 pt-8 gap-x-10 max-xl:grid-cols-1 max-xl:gap-y-10">
               <div>
                 <h3 className="text-2xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-                  Basic information
+                  Thông tin cơ bản
                 </h3>
                 <div className="mt-4 flex flex-col gap-5">
                   <InputWithLabel label="Tên sản phẩm">
@@ -250,7 +250,7 @@ const CreateProduct: React.FC = () => {
                     </span>
                   )}
 
-                  <InputWithLabel label="Image">
+                  <InputWithLabel label="Ảnh">
                     <label
                       htmlFor="category-image"
                       className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer dark:bg-blackPrimary bg-whiteSecondary dark:hover:border-gray-600 hover:border-gray-500 transition-all"
@@ -272,8 +272,7 @@ const CreateProduct: React.FC = () => {
                           />
                         </svg>
                         <p className="mb-2 text-sm text-blackPrimary dark:text-whiteSecondary">
-                          <span className="font-semibold">Click to upload</span>{" "}
-                          or drag and drop
+                          <span className="font-semibold">Bấm để thêm ảnh</span>{" "}
                         </p>
                         <p className="text-xs dark:text-whiteSecondary text-blackPrimary">
                           SVG, PNG, JPG or GIF (MAX. 800x400px)
@@ -383,7 +382,7 @@ const CreateProduct: React.FC = () => {
             <div className="p-8">
               <>
                 <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-                  Checkbox
+                  Kiểm tra
                 </h3>
                 <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                   <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
@@ -397,7 +396,7 @@ const CreateProduct: React.FC = () => {
                         htmlFor="vue-checkbox-list"
                         className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        New Product
+                        Sản phẩm mới
                       </label>
                     </div>
                   </li>
@@ -412,7 +411,7 @@ const CreateProduct: React.FC = () => {
                         htmlFor="react-checkbox-list"
                         className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Best Seller Product
+                        Sản phẩm bán chạy
                       </label>
                     </div>
                   </li>
@@ -427,7 +426,7 @@ const CreateProduct: React.FC = () => {
                         htmlFor="angular-checkbox-list"
                         className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
                       >
-                        Featured Product
+                        Sản phẩm nổi bật
                       </label>
                     </div>
                   </li>

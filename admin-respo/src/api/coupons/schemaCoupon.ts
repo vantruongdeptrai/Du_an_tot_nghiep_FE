@@ -27,6 +27,10 @@ const couponSchema = z.object({
         },
         z.number().positive("The min order value must be greater than 0.")
     ),
+    max_order_value: z
+    .number()
+    .min(0, "Số tiền giảm giá tối đa phải lớn hơn hoặc bằng 0.")
+    .optional(),
     usage_limit: z.preprocess(
         (value) => {
             // Chuyển chuỗi rỗng thành undefined

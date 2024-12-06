@@ -46,7 +46,7 @@ const CreateCategory = () => {
         <div className="py-10">
           <div className="px-6 pb-8 border-b border-gray-800 flex justify-between items-center max-sm:flex-col max-sm:gap-5">
             <h2 className="text-3xl font-bold leading-7 dark:text-whiteSecondary text-blackPrimary">
-              Add New Category
+              Thêm danh mục mới
             </h2>
           </div>
 
@@ -55,15 +55,15 @@ const CreateCategory = () => {
               {/* Left Column */}
               <div>
                 <h3 className="text-2xl font-bold dark:text-whiteSecondary text-blackPrimary mb-4">
-                  Basic Information
+                  Thông tin cơ bản
                 </h3>
                 <div className="flex flex-col gap-5">
-                  <InputWithLabel label="Category Name">
+                  <InputWithLabel label="Tên danh mục">
                     <input
                       className={`dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-12 px-4 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600 hover:border-blue-300`}
                       {...register("name")}
                       type="text"
-                      placeholder="Enter a category name..."
+                      placeholder="Nhập tên danh mục vào ... "
                     />
                     {errors.name && (
                       <span className="text-sm text-red-500 mt-2">
@@ -77,7 +77,7 @@ const CreateCategory = () => {
               {/* Right Column */}
               <div>
                 <h3 className="text-2xl font-bold dark:text-whiteSecondary text-blackPrimary mb-4">
-                  Category Image
+                  Ảnh danh mục
                 </h3>
                 <div className="mt-4 flex flex-col gap-5">
                   <label
@@ -101,8 +101,9 @@ const CreateCategory = () => {
                         />
                       </svg>
                       <p className="mb-2 text-sm text-blackPrimary dark:text-whiteSecondary">
-                        <span className="font-semibold">Click to upload</span>{" "}
-                        or drag and drop
+                        <span className="font-semibold">
+                          Bấm vào để thêm ảnh
+                        </span>{" "}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-whiteSecondary">
                         SVG, PNG, JPG, or GIF (MAX. 800x400px)
@@ -135,7 +136,7 @@ const CreateCategory = () => {
                 type="submit"
                 className="px-8 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-colors"
               >
-                Add New Category
+                Thêm danh mục mới
               </button>
             </div>
           </form>
