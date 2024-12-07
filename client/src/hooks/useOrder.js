@@ -1,6 +1,7 @@
 import apiClient from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 // Fetch function for all orders
 const getAllOrders = async () => {
@@ -11,6 +12,7 @@ const getAllOrders = async () => {
 const useOrder = () => {
     // Fetch all orders with useQuery
     const { data: orders = [], isLoading, isError } = useQuery(["orders"], getAllOrders);
+    const nav = useNavigate();
 
     const createOrder = async (data, id, orderItems, paymentMethod) => {
         try {
@@ -62,7 +64,10 @@ const useOrder = () => {
             }
         } catch (error) {
             console.log(error);
-            toast.error("Error creating order.");
+            toast.error(error.response.data.message);
+            // setTimeout(() => {
+            //     nav("/");
+            // }, 2000);
         }
     };
 

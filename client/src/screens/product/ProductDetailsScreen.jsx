@@ -363,7 +363,7 @@ const ProductDetailsScreen = () => {
             return response.json();
         },
         onSuccess: () => {
-            toast.success("Product added to cart successfully!");
+            toast.success("Thêm sản phẩm vào giỏ hàng thành công!");
             queryClient.invalidateQueries(["cart"]);
         },
         onError: () => {

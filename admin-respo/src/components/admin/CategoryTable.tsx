@@ -4,230 +4,139 @@ import useCategory from "../../hooks/category";
 import { useState } from "react";
 
 const CategoryTable = () => {
-  const { categories, deleteCategory } = useCategory();
-  const [currentPage, setCurrentPage] = useState(1);
-  const categoriesPerPage = 5;
-  const indexOfLastCategory = currentPage * categoriesPerPage;
-  const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
-  const currentCategories = categories.slice(
-    indexOfFirstCategory,
-    indexOfLastCategory
-  );
-  const totalPages = Math.ceil(categories.length / categoriesPerPage);
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+    const { categories, deleteCategory } = useCategory();
+    const [currentPage, setCurrentPage] = useState(1);
+    const categoriesPerPage = 5;
+    const indexOfLastCategory = currentPage * categoriesPerPage;
+    const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
+    const currentCategories = categories.slice(indexOfFirstCategory, indexOfLastCategory);
+    const totalPages = Math.ceil(categories.length / categoriesPerPage);
+    const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
-  return (
-    <div
-      style={{
-        overflowX: "auto",
-        maxWidth: "100%",
-      }}
-    >
-      <table
-        style={{
-          width: "100%",
-          borderCollapse: "collapse",
-          fontSize: "14px",
-        }}
-        className="mt-6 whitespace-nowrap text-left"
-      >
-        <colgroup>
-          <col style={{ width: "60%" }} />
-          <col style={{ width: "25%" }} />
-          <col style={{ width: "15%" }} />
-        </colgroup>
-        <thead
-          style={{
-            backgroundColor: "#f9f9f9",
-            borderBottom: "2px solid #ddd",
-            color: "#333",
-          }}
-          className="text-sm leading-6"
+    return (
+        <div
+            style={{
+                overflowX: "auto",
+                maxWidth: "100%",
+            }}
         >
-          <tr>
-            <th style={{ padding: "12px", textAlign: "left" }}>Danh mục</th>
-            <th style={{ padding: "12px", textAlign: "left" }}>Hình ảnh</th>
-            <th style={{ padding: "12px", textAlign: "center" }}>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentCategories.map((item, index) => (
-            <tr
-              key={item.id}
-              style={{
-                backgroundColor: "white",
-                transition: "background-color 0.3s ease",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.backgroundColor = "#f0f0f0")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.backgroundColor =
-                  "white")
-              }
-            >
-              <td style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>
-                {item.name}
-              </td>
-              <td style={{ padding: "12px", borderBottom: "1px solid #ddd" }}>
-                <img
-                  src={item.image_url}
-                  alt={item.name}
-                  style={{
-                    width: "50px",
-                    height: "50px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-              </td>
-              <td
-                style={{
-                  padding: "12px",
-                  borderBottom: "1px solid #ddd",
-                  textAlign: "center",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    gap: "8px",
-                  }}
+            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th scope="col" className="px-6 py-3">
+                            Danh mục
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Hình ảnh
+                        </th>
+                        <th scope="col" className="px-6 py-3">
+                            Hành động
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {currentCategories.map((item, index) => (
+                        <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                            <th
+                                scope="row"
+                                className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                            >
+                                {item.name}
+                            </th>
+                            <td className="px-6 py-4">
+                                <img
+                                    src={item.image_url}
+                                    alt={item.name}
+                                    style={{
+                                        width: "50px",
+                                        height: "50px",
+                                        objectFit: "cover",
+                                        borderRadius: "8px",
+                                    }}
+                                />
+                            </td>
+                            <td className="px-6 py-4">
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        gap: "8px",
+                                    }}
+                                >
+                                    <Link
+                                        to={`/categories/${item.id}`}
+                                        className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                    >
+                                        <HiOutlinePencil />
+                                    </Link>
+                                    <Link
+                                        to={`/categories/${item.id}`}
+                                        className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                    >
+                                        <HiOutlineEye />
+                                    </Link>
+                                    <button
+                                        onClick={() => deleteCategory(`${item.id}`)}
+                                        className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                    >
+                                        <HiOutlineTrash />
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {/* Phân trang */}
+            <div className="pagination-container flex justify-center mt-4">
+                <button
+                    onClick={goToPreviousPage}
+                    className={`pagination-btn ${
+                        currentPage === 1 ? "bg-gray-200 text-gray-500" : "bg-gray-200 text-black"
+                    }`}
+                    disabled={currentPage === 1}
                 >
-                  <Link
-                    to={`/categories/${item.id}`}
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "32px",
-                      height: "32px",
-                      border: "1px solid #999",
-                      borderRadius: "4px",
-                      backgroundColor: "#fbbf24",
-                      color: "#fff",
-                      transition: "background-color 0.3s ease",
-                    }}
-                    className="action-btn"
-                  >
-                    <HiOutlinePencil />
-                  </Link>
-                  <Link
-                    to={`/categories/${item.id}`}
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "32px",
-                      height: "32px",
-                      border: "1px solid #999",
-                      borderRadius: "4px",
-                      backgroundColor: "#10b981",
-                      color: "#fff",
-                      transition: "background-color 0.3s ease",
-                    }}
-                    className="action-btn"
-                  >
-                    <HiOutlineEye />
-                  </Link>
-                  <button
-                    onClick={() => deleteCategory(`${item.id}`)}
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      width: "32px",
-                      height: "32px",
-                      border: "1px solid #999",
-                      borderRadius: "4px",
-                      backgroundColor: "#ef4444",
-                      color: "#fff",
-                      transition: "background-color 0.3s ease",
-                    }}
-                    className="action-btn"
-                  >
-                    <HiOutlineTrash />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                    Trước
+                </button>
+                {pageNumbers.map((number) => (
+                    <button
+                        key={number}
+                        onClick={() => setCurrentPage(number)}
+                        className={`pagination-btn ${
+                            currentPage === number ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+                        }`}
+                    >
+                        {number}
+                    </button>
+                ))}
+                <button
+                    onClick={goToNextPage}
+                    className={`pagination-btn ${
+                        currentPage === totalPages ? "bg-gray-200 text-gray-500" : "bg-gray-200 text-black"
+                    }`}
+                    disabled={currentPage === totalPages}
+                >
+                    Tiếp theo
+                </button>
+            </div>
 
-      {/* Phân trang */}
-      <div className="pagination-container flex justify-center mt-4">
-        <button
-          onClick={goToPreviousPage}
-          className={`pagination-btn ${
-            currentPage === 1
-              ? "bg-gray-200 text-gray-500"
-              : "bg-gray-200 text-black"
-          }`}
-          disabled={currentPage === 1}
-        >
-          Trước
-        </button>
-        {pageNumbers.map((number) => (
-          <button
-            key={number}
-            onClick={() => setCurrentPage(number)}
-            className={`pagination-btn ${
-              currentPage === number
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-black"
-            }`}
-          >
-            {number}
-          </button>
-        ))}
-        <button
-          onClick={goToNextPage}
-          className={`pagination-btn ${
-            currentPage === totalPages
-              ? "bg-gray-200 text-gray-500"
-              : "bg-gray-200 text-black"
-          }`}
-          disabled={currentPage === totalPages}
-        >
-          Tiếp theo
-        </button>
-      </div>
-
-      {/* CSS Style cho phân trang */}
-      <style>{`
+            {/* CSS Style cho phân trang */}
+            <style>{`
         .category-table-container {
           overflow-x: auto;
           margin-top: 2rem;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-        th, td {
-          padding: 12px;
-          text-align: left;
-          border-bottom: 1px solid #ddd;
-        }
-        th {
-          background-color: #f9f9f9;
-          font-weight: bold;
-          color: #333;
-        }
-        tr:nth-child(even) {
-          background-color: #f5f5f5;
         }
         .pagination-container {
           display: flex;
@@ -275,8 +184,8 @@ const CategoryTable = () => {
           background-color: rgba(0, 0, 0, 0.1);
         }
       `}</style>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default CategoryTable;
