@@ -67,6 +67,8 @@ const CartScreen = () => {
     const { carts, updateCart, isLoading } = useCart(user?.id);
     const { coupons } = useCoupons();
     const [appliedCoupon, setAppliedCoupon] = useState(null);
+    console.log(carts);
+    
     //     if (user) {
     //         // Khi có user, lấy giỏ hàng từ API
     //         setCartItems(carts.cart || []);

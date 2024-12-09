@@ -164,11 +164,21 @@ const ProductListPage = () => {
     };
     const { slug } = useParams();
     const getProductByCategory = slug ? data.filter((product) => product.category.slug === slug) : data;
+    const calculateMinMaxPrices = (productVariants) => {
+        const prices = productVariants
+            .map((variant) => parseFloat(variant.price || "0"))
+            .filter((price) => !isNaN(price));
+        const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+        const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+        return { minPrice, maxPrice };
+    };
 
-    if(isLoading) {
-        return <p>
-            <Loader />
-        </p>
+    if (isLoading) {
+        return (
+            <p>
+                <Loader />
+            </p>
+        );
     }
 
     return (
@@ -193,6 +203,7 @@ const ProductListPage = () => {
                 <div className="product-card-list">
                     {getProductByCategory.map((product) => {
                         const category = getCategoryById(product.category_id);
+                        const { minPrice, maxPrice } = calculateMinMaxPrices(product.product_variants);
                         return (
                             <Link to={`/product/details/${product.id}`} key={product.id}>
                                 <div className="product-card">
@@ -207,7 +218,16 @@ const ProductListPage = () => {
                                                 ? product.name.substring(0, 20) + "..."
                                                 : product.name}
                                         </h3>
-                                        <p className="product-price">Price: {formatCurrency(product.price)}</p>
+                                        <p className="product-price">
+                                            Giá:{" "}
+                                            {minPrice !== maxPrice ? (
+                                                <>
+                                                    {formatCurrency(minPrice)} - {formatCurrency(maxPrice)}
+                                                </>
+                                            ) : (
+                                                formatCurrency(minPrice)
+                                            )}
+                                        </p>
                                         {category && <p className="category-info">Danh mục: {category.name}</p>}
                                     </div>
                                 </div>

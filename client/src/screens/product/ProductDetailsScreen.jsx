@@ -290,16 +290,15 @@ const ProductDetailsScreen = () => {
     useEffect(() => {
         const fetchProductData = async () => {
             try {
-                // Lấy thông tin sản phẩm
                 const productData = products.find((prod) => prod.id === parseInt(id));
-                setProduct(productData);
-                setVariantPrice(productData ? productData.price : null);
+                if (!productData) return; // Nếu không tìm thấy sản phẩm, tránh tiếp tục.
 
-                // Lấy thông tin biến thể của sản phẩm
+                setProduct(productData);
+                setVariantPrice(productData.price);
+
                 const productVariant = productVariants.filter((variant) => variant.product_id === parseInt(id));
                 setVariants(productVariant);
 
-                // Lấy size và màu có sẵn từ các biến thể của sản phẩm
                 const sizeIds = [...new Set(productVariant.map((v) => v.size_id))];
                 const colorIds = [...new Set(productVariant.map((v) => v.color_id))];
 
@@ -313,8 +312,10 @@ const ProductDetailsScreen = () => {
             }
         };
 
-        fetchProductData();
-    }, [id, products, productVariants, sizes, colors]);
+        if (id && products.length > 0 && productVariants.length > 0 && sizes.length > 0 && colors.length > 0) {
+            fetchProductData();
+        }
+    }, [id, products, productVariants, sizes, colors]); // Chỉ chạy lại khi id hoặc các dữ liệu liên quan thay đổi.
 
     useEffect(() => {
         if (selectedSize && selectedColor) {

@@ -54,8 +54,20 @@ const ProductCardWrapper = styled(Link)`
 `;
 
 const ProductItem = ({ product }) => {
+    const calculateMinMaxPrices = (productVariants) => {
+        const prices = productVariants
+            .map((variant) => parseFloat(variant.price || "0"))
+            .filter((price) => !isNaN(price));
+        const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+        const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+        return { minPrice, maxPrice };
+    };
+
+    const {minPrice, maxPrice} = calculateMinMaxPrices(product.product_variants);
+    
+
     return (
-        <ProductCardWrapper key={product.id} >
+        <ProductCardWrapper key={product.id}>
             <Link to={`/product/details/${product.id}`}>
                 <div className="product-img">
                     <img className="object-fit-cover" src={product.image_url} alt={product.name} />
@@ -64,16 +76,17 @@ const ProductItem = ({ product }) => {
                     </button>
                 </div>
                 <div className="product-info">
-                    <p className="font-bold">{product.name.length > 20 ? product.name.substring(0, 40) + '...' : product.name}</p>
+                    <p className="font-bold">
+                        {product.name.length > 20 ? product.name.substring(0, 40) + "..." : product.name}
+                    </p>
                     <div className="text-sm text-gray">{product.category_name}</div>
                     <div className="product-price">
-                        {product.sale_price ? (
-                            <>
-                                <span className="original-price">{formatCurrency(product.price)}</span>
-                                <span className="sale-price">{formatCurrency(product.sale_price)}</span>
-                            </>
+                        {minPrice !== maxPrice ? (
+                            <span className="sale-price">
+                                {formatCurrency(minPrice)} - {formatCurrency(maxPrice)}
+                            </span>
                         ) : (
-                            <span className="font-bold">{formatCurrency(product.price)}</span>
+                            <span className="sale-price">{formatCurrency(minPrice)}</span>
                         )}
                     </div>
                 </div>
