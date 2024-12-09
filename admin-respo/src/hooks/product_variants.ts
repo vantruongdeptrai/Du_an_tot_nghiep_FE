@@ -78,8 +78,6 @@ const useProductVariant = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
-            toast.success("Product Variant added successfully");
             const productData = response.data;
             return productData;
         } catch (err) {
