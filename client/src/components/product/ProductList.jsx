@@ -15,7 +15,6 @@ const ProductListWrapper = styled.div`
 `;
 
 const ProductList = ({productSeller}) => {
-  
   return (
     <ProductListWrapper className="grid">
       {productSeller?.map((product, index) => {

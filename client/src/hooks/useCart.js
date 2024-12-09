@@ -50,7 +50,7 @@ const useCart = (userId) => {
         () => getAllCart(userId), // Gọi hàm fetch tương ứng
         {
             enabled: true, // Luôn bật query
-        }
+        },
     );
     const deleteItemMutation = useMutation(deleteCart, {
         onSuccess: () => {
