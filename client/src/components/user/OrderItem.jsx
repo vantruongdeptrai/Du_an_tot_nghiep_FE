@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import formatCurrency from "../../utils/formatUtils";
@@ -124,10 +124,10 @@ const OrderItem = ({ order, guestOrder }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalCommentOpen, setIsModalCommentOpen] = useState({});
     const [hasReviewed, setHasReviewed] = useState(false);
+    const [autoConfirmTimeout, setAutoConfirmTimeout] = useState(null);
 
     // const nav = useNavigate();
     const users = localStorage.getItem("userInfo");
-    console.log(users);
 
     // Kiểm tra nếu người dùng đã đăng nhập, sử dụng order, nếu không thì kiểm tra guestOrder
     const currentOrder = users ? order : guestOrder;
@@ -145,6 +145,32 @@ const OrderItem = ({ order, guestOrder }) => {
         }
         setIsModalCommentOpen((prev) => ({ ...prev, [productId]: false })); // Close the modal for this product
     };
+
+    const initiateAutoConfirm = () => {
+        // Nếu trạng thái là "Chờ xác nhận", kích hoạt tự động xác nhận sau 30 giây
+        if (order.status_order === "Giao hàng thành công") {
+            const timeoutId = setTimeout(() => {
+                handleConfirmOrder(order.id, "received");
+            }, 10000);
+            setAutoConfirmTimeout(timeoutId);
+        }
+    };
+
+    const cancelAutoConfirm = () => {
+        if (autoConfirmTimeout) {
+            clearTimeout(autoConfirmTimeout);
+            setAutoConfirmTimeout(null);
+        }
+    };
+
+    useEffect(() => {
+        // Gọi initiateAutoConfirm khi component được render và trạng thái là "Chờ xác nhận"
+        initiateAutoConfirm();
+        return () => {
+            // Cleanup timeout khi component bị unmount
+            cancelAutoConfirm();
+        };
+    }, [order.status_order]);
 
     return (
         <OrderItemWrapper>
