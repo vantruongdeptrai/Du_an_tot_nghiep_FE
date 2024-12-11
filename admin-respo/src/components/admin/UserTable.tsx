@@ -1,37 +1,18 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
-import axios from "axios";
-
-type User = {
-    id: number;
-    name: string;
-    email: string;
-    role_id: string;
-    lastLogin: string;
-    image?: string;
-};
+import useUser from "../../hooks/users";
+import Loader from "../loader/Loader";
 
 const UserTable = () => {
-    const [users, setUsers] = useState<User[]>([]);
-    const [loading, setLoading] = useState(true);
+    const { users, isLoading } = useUser();
+    const safeUser = Array.isArray(users) ? users : [];
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const response = await axios.get<User[]>("http://127.0.0.1:8000/api/users");
-                setUsers(response.data); // Đảm bảo API trả về dữ liệu phù hợp
-            } catch (error) {
-                console.error("Error fetching users:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchUsers();
-    }, []);
-
-    if (loading) {
-        return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div>
+                <Loader />
+            </div>
+        );
     }
 
     return (
@@ -53,7 +34,7 @@ const UserTable = () => {
                 </tr>
             </thead>
             <tbody>
-                {users.map((user, index) => (
+                {safeUser.map((user, index) => (
                     <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                         <th
                             scope="row"
