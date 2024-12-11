@@ -61,7 +61,7 @@ const CheckoutScreen = () => {
             if (response && response.order_id) {
                 // Gọi hàm gửi hóa đơn
                 await sendInvoice(response.order_id, user.email);
-                toast.success("Tạo đơn hàng thành công!");
+                toast.success("Thanh toán thành công!");
             } else {
                 console.error("Không lấy được orderId từ phản hồi createOrder.");
             }

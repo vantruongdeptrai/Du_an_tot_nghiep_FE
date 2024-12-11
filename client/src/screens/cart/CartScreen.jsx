@@ -91,7 +91,7 @@ const CartScreen = () => {
     }, [carts]);
 
     // Sử dụng useRef để lưu trữ timeout
-    const debounceRef = useRef(null);
+    // const debounceRef = useRef(null);
 
     const handleIncreaseQuantity = (cartId, size, color, productVariantId, quantity) => {
         // Cập nhật số lượng bằng cách sử dụng callback để lấy giá trị quantity hiện tại
@@ -109,13 +109,14 @@ const CartScreen = () => {
             );
         });
 
-        // Hủy timeout trước đó nếu có
-        clearTimeout(debounceRef.current);
+        // // Hủy timeout trước đó nếu có
+        // clearTimeout(debounceRef.current);
 
-        // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
-        debounceRef.current = setTimeout(() => {
-            updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
-        }, 500);
+        // // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
+        // debounceRef.current = setTimeout(() => {
+        //     updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        // }, 500);
+        updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
     };
 
     const handleDecreaseQuantity = (cartId, size, color, productVariantId, quantity) => {
@@ -133,13 +134,14 @@ const CartScreen = () => {
             );
         });
 
-        // Hủy timeout trước đó nếu có
-        clearTimeout(debounceRef.current);
+        // // Hủy timeout trước đó nếu có
+        // clearTimeout(debounceRef.current);
 
-        // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
-        debounceRef.current = setTimeout(() => {
-            updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
-        }, 500);
+        // // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
+        // debounceRef.current = setTimeout(() => {
+        //     updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        // }, 500);
+        updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
     };
 
     // Hàm xử lý chọn hoặc bỏ chọn từng sản phẩm

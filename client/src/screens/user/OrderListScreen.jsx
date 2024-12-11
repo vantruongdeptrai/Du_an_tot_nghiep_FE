@@ -102,7 +102,7 @@ const OrderListScreen = () => {
                             <div className="order-tabs-contents">
                                 {activeTab === "active" && (
                                     <div className="order-tabs-content" id="active">
-                                        <OrderItemList orders={sortOrder} guestOrders={guestOrder} />
+                                        <OrderItemList orders={sortOrder} />
                                     </div>
                                 )}
                                 {/* {activeTab === "cancelled" && (
