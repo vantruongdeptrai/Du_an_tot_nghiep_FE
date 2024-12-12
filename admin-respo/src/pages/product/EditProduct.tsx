@@ -237,36 +237,6 @@ const EditProduct = () => {
                   </tr>
                   <tr className="border-b border-gray-200 dark:border-gray-600">
                     <td className="px-4 py-2 text-gray-700 dark:text-whiteSecondary">
-                      Giá
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="number"
-                        className="input w-full py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-blackPrimary focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={inputObject.price}
-                        onChange={(e) =>
-                          handleInputChange("price", e.target.value)
-                        }
-                      />
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-200 dark:border-gray-600">
-                    <td className="px-4 py-2 text-gray-700 dark:text-whiteSecondary">
-                      Giá giảm
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="number"
-                        className="input w-full py-2 px-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-blackPrimary focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        value={inputObject.sale_price}
-                        onChange={(e) =>
-                          handleInputChange("sale_price", e.target.value)
-                        }
-                      />
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-200 dark:border-gray-600">
-                    <td className="px-4 py-2 text-gray-700 dark:text-whiteSecondary">
                       Ngày bắt đầu giảm giá
                     </td>
                     <td className="px-4 py-2">

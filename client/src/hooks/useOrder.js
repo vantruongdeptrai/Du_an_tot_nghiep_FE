@@ -1,7 +1,6 @@
 import apiClient from "../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 
 // Fetch function for all orders
 const getAllOrders = async () => {
@@ -12,7 +11,6 @@ const getAllOrders = async () => {
 const useOrder = () => {
     // Fetch all orders with useQuery
     const { data: orders = [], isLoading, isError } = useQuery(["orders"], getAllOrders);
-    const nav = useNavigate();
 
     const createOrder = async (data, id, orderItems, paymentMethod) => {
         try {
@@ -97,6 +95,18 @@ const useOrder = () => {
         }
     };
 
+    const handleConfirmOrder = async (orderId, data) => {
+        try {
+            await apiClient.post(`/confirm-delivery/${orderId}`, {
+                confirmation: data,
+            });
+            queryClient.invalidateQueries(["orders"]); // Làm mới dữ liệu
+        } catch (error) {
+            toast.error("Lỗi xác nhận nhận hàng!");
+            console.log(error);
+        }
+    };
+
     const deleteOrder = async (id) => {
         try {
             if (window.confirm("Are you sure you want to delete this order?")) {
@@ -113,6 +123,7 @@ const useOrder = () => {
         orders,
         createOrder,
         deleteOrderReason,
+        handleConfirmOrder,
         deleteOrder,
         sendInvoice,
         isLoading,

@@ -211,17 +211,6 @@ const DetailProduct: React.FC = () => {
         {/* Cột thông tin chi tiết */}
         <div className="space-y-4">
           <p className="text-lg font-semibold">
-            <span className="text-gray-600">Giá:</span>{" "}
-            <span className="text-blue-600">
-              {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              }).format(product.price)}
-            </span>
-          </p>
-          <p className="text-lg font-semibold">
             <span className="text-gray-600">Danh mục:</span>{" "}
             {category ? category.name : "Không xác định"}
           </p>

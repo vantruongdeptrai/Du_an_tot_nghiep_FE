@@ -98,18 +98,20 @@ const OrderItemWrapper = styled.div`
 
     .button-rate,
     .button-delete {
-        width: 120px;
+        width: 160px;
         border-radius: 5px;
         border: 1px solid;
         height: 40px;
     }
-    .button-delete:hover button {
+    .button-delete:hover {
         background-color: ${defaultTheme.color_red};
         color: ${defaultTheme.color_white};
+        border: none;
     }
-    .button-rate:hover button {
+    .button-rate:hover {
         background-color: ${defaultTheme.color_sea_green_v1};
         color: ${defaultTheme.color_white};
+        border: none;
     }
 `;
 
@@ -118,9 +120,9 @@ const OrderItem = ({ order, guestOrder }) => {
     const { colors } = useColors();
     const { sizes } = useSizes();
     const { products } = useProduct();
-    const { deleteOrderReason } = useOrder();
+    const { deleteOrderReason, handleConfirmOrder } = useOrder();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isModalCommentOpen, setIsModalCommentOpen] = useState(false);
+    const [isModalCommentOpen, setIsModalCommentOpen] = useState({});
     const [hasReviewed, setHasReviewed] = useState(false);
 
     // const nav = useNavigate();
@@ -137,11 +139,11 @@ const OrderItem = ({ order, guestOrder }) => {
         setIsModalOpen(false); // Close modal after confirmation
     };
 
-    const handleComment = (data) => {
+    const handleComment = (data, productId) => {
         if (data) {
             setHasReviewed(true); // Set review status to true after comment
         }
-        setIsModalCommentOpen(false);
+        setIsModalCommentOpen((prev) => ({ ...prev, [productId]: false })); // Close the modal for this product
     };
 
     return (
@@ -176,51 +178,6 @@ const OrderItem = ({ order, guestOrder }) => {
                             </div>
                         </div>
 
-                        {/* {guestOrderItem.order_items.map((item, itemIndex) => {
-                            const product = products.find((product) => product.id === item.product_id);
-                            const productVariant = productVariants.find((variant) => variant.id === item.product_variant_id);
-                            const colorDetail = colors.find((color) => color.id === productVariant?.color_id);
-                            const sizeDetail = sizes.find((size) => size.id === productVariant?.size_id);
-
-                            return (
-                                <div key={itemIndex} className="order-overview flex justify-between">
-                                    <div className="order-overview-content grid">
-                                        <div className="order-overview-img">
-                                            <img src={product?.image_url} alt="" className="object-fit-cover" />
-                                        </div>
-                                        <div className="order-overview-info">
-                                            <h4 className="text-xl">{product?.name}</h4>
-                                            <ul>
-                                                <li className="font-semibold text-base">
-                                                    <span>Color:</span>
-                                                    <span className="text-silver">{colorDetail?.name || "Không có color"}</span>
-                                                </li>
-                                                <li className="font-semibold text-base">
-                                                    <span>Size:</span>
-                                                    <span className="text-silver">{sizeDetail?.name || "Không có size"}</span>
-                                                </li>
-                                                <li className="font-semibold text-base">
-                                                    <span>Quantity:</span>
-                                                    <span className="text-silver">{item?.quantity}</span>
-                                                </li>
-                                                <li className="font-semibold text-base">
-                                                    <span>Price:</span>
-                                                    <span className="text-silver">
-                                                        {formatCurrency(productVariant?.price || product?.sale_price)}
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div style={{ fontSize: 18 }}>
-                                        Total:{" "}
-                                        {formatCurrency(
-                                            productVariant?.price * item.quantity || product?.sale_price * item.quantity
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })} */}
                         <div style={{ gap: 30 }} className="flex flex-col">
                             <BaseLinkGreen style={{ fontSize: 18 }} to={`/order_detail/${guestOrderItem.id}`}>
                                 View Detail
@@ -236,30 +193,7 @@ const OrderItem = ({ order, guestOrder }) => {
                         className="flex"
                     >
                         <h3 className="text-x order-item-title">Mã đơn hàng: {currentOrder.id}</h3>
-                        {/* {["Đã xác nhận", "Đang chuẩn bị", "Đang vận chuyển"].includes(
-                            order.status_order
-                        ) ? null : order.status_order === "Đã hủy" ||
-                          order.status_order === "Đã giao hàng thành công" ? (
-                            <div className="button-delete">
-                                <button
-                                    onClick={() => deleteOrder(order.id)}
-                                    className="button-delete"
-                                    style={{ fontSize: 16, fontWeight: 500, border: "none" }}
-                                >
-                                    Xóa đơn hàng
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="button-delete">
-                                <button
-                                    onClick={() => setIsModalOpen(true)}
-                                    style={{ fontSize: 16, fontWeight: 500, border: "none" }}
-                                    className="button-delete"
-                                >
-                                    Hủy đơn hàng
-                                </button>
-                            </div>
-                        )} */}
+
                         {order.status_order === "Chờ xác nhận" ? (
                             <div className="button-delete">
                                 <button
@@ -268,6 +202,17 @@ const OrderItem = ({ order, guestOrder }) => {
                                     className="button-delete"
                                 >
                                     Hủy đơn hàng
+                                </button>
+                            </div>
+                        ) : null}
+                        {order.status_order === "Giao hàng thành công" ? (
+                            <div className="button-rate">
+                                <button
+                                    onClick={() => handleConfirmOrder(order.id, "received")}
+                                    style={{ fontSize: 16, fontWeight: 500, border: "none" }}
+                                    className="button-rate"
+                                >
+                                    Xác nhận giao hàng
                                 </button>
                             </div>
                         ) : null}
@@ -326,7 +271,7 @@ const OrderItem = ({ order, guestOrder }) => {
                                                 width: "100%",
                                                 height: "100%",
                                                 objectFit: "contain",
-                                                borderRadius: 5
+                                                borderRadius: 5,
                                             }}
                                         />
                                     </div>
@@ -358,10 +303,15 @@ const OrderItem = ({ order, guestOrder }) => {
                                         </ul>
                                     </div>
                                 </div>
-                                {order.status_order === "Giao hàng thành công" && !hasReviewed ? (
+                                {order.status_order === "Đã nhận hàng" && !hasReviewed ? (
                                     <div className="button-rate">
                                         <button
-                                            onClick={() => setIsModalCommentOpen(true)}
+                                            onClick={() =>
+                                                setIsModalCommentOpen((prev) => ({
+                                                    ...prev,
+                                                    [product.id]: true, // Open modal for this specific product
+                                                }))
+                                            }
                                             style={{ fontSize: 16, fontWeight: 500, border: "none" }}
                                             className="button-rate"
                                         >
@@ -380,10 +330,12 @@ const OrderItem = ({ order, guestOrder }) => {
                                     </div>
                                 ) : null}
                                 <ModalComment
-                                    onConfirm={handleComment}
+                                    onConfirm={(data) => handleComment(data, product.id)}
                                     product={product}
-                                    isOpen={isModalCommentOpen}
-                                    onClose={() => setIsModalCommentOpen(false)}
+                                    isOpen={isModalCommentOpen[product?.id] || false} // Check if modal is open for this product
+                                    onClose={
+                                        () => setIsModalCommentOpen((prev) => ({ ...prev, [product.id]: false })) // Close modal for this product
+                                    }
                                 />
                             </div>
                         );
