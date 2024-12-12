@@ -81,12 +81,12 @@ const CouponTable = () => {
                                     >
                                         <HiOutlinePencil />
                                     </Link>
-                                    <Link
+                                    {/* <Link
                                         to={`/coupons/${item.id}`}
                                         className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
                                     >
                                         <HiOutlineEye />
-                                    </Link>
+                                    </Link> */}
                                     <button
                                         onClick={() => deleteCoupon(`${item.id}`)}
                                         style={{

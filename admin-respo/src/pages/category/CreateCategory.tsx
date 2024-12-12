@@ -51,7 +51,7 @@ const CreateCategory = () => {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div className="gap-10">
               {/* Left Column */}
               <div>
                 <h3 className="text-2xl font-bold dark:text-whiteSecondary text-blackPrimary mb-4">
@@ -123,7 +123,7 @@ const CreateCategory = () => {
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      className="mt-4 w-full h-64 object-cover rounded-lg"
+                      className="mt-4 w-full h-64 object-contain rounded-lg"
                     />
                   )}
                 </div>
@@ -134,7 +134,7 @@ const CreateCategory = () => {
             <div className="mt-8 flex justify-center">
               <button
                 type="submit"
-                className="px-8 py-3 bg-black text-white font-medium rounded-md hover:bg-gray-800 focus:ring-2 focus:ring-blue-500 transition-colors"
+                className="px-8 py-3 w-full bg-black text-white font-medium rounded-md hover:bg-green-800 focus:ring-2 focus:ring-blue-500 transition-colors"
               >
                 Thêm danh mục mới
               </button>
