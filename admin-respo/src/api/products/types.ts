@@ -3,6 +3,7 @@ interface ProductVariants {
 }
 export type Product = {
     id?: string;
+    product_variant_id?: string;
     name: string;
     image: string;
     price: string;
@@ -21,6 +22,7 @@ export type Product = {
 
 export type ProductInput = {
     id?: string;
+
     name: string;
     quantity: string;
     image: string;

@@ -9,6 +9,7 @@ import { BaseButtonGreen } from "../../styles/button";
 import useOrder from "../../hooks/useOrder";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 const CheckoutScreenWrapper = styled.main`
     padding: 48px 0;
@@ -30,6 +31,20 @@ const CheckoutScreen = () => {
     const nav = useNavigate();
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const orderItems = JSON.parse(localStorage.getItem("orderItems"));
+    // State để quản lý thời gian đếm ngược
+    const [timeLeft, setTimeLeft] = useState(120); // 2 phút = 120 giây
+
+    // Đếm ngược thời gian
+    useEffect(() => {
+        if (timeLeft === 0) {
+            toast.warn("Hết thời gian thanh toán, chuyển về giỏ hàng.");
+            nav("/cart"); // Chuyển về trang giỏ hàng
+            return;
+        }
+        const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+
+        return () => clearInterval(timer); // Dọn dẹp timer khi component unmount
+    }, [timeLeft, nav]);
 
     // Hàm xử lý submit khi người dùng ấn "Pay Now"
     const handleSubmitOrder = async (data) => {
@@ -57,7 +72,7 @@ const CheckoutScreen = () => {
         } else {
             // Nếu không phải VNPay, gọi hàm tạo đơn hàng bình thường
             const response = await createOrder(data, userId, orderItems);
-            
+
             if (response && response.order_id) {
                 // Gọi hàm gửi hóa đơn
                 await sendInvoice(response.order_id, user.email);
@@ -72,6 +87,10 @@ const CheckoutScreen = () => {
         <CheckoutScreenWrapper>
             <Container>
                 <Title titleText={"Check Out"} />
+                {/* Hiển thị thời gian đếm ngược */}
+                <span style={{fontSize: "16px", fontWeight: 600, border: "1px solid black", borderRadius: "3px", padding: "4px 8px"}} className="countdown-timer">
+                    Thời gian thực hiện thanh toán: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, "0")}
+                </span>
                 <FormProvider {...methods}>
                     <form onSubmit={methods.handleSubmit(handleSubmitOrder)} action="">
                         <Billing />

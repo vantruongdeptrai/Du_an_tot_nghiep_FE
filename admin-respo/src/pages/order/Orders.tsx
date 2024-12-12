@@ -1,14 +1,19 @@
-
 import { Sidebar } from "../../components";
 import { Link } from "react-router-dom";
 import formatCurrency from "../../utils/formatCurrent";
-import {useFetchOrdersWithUserDetails} from "../../hooks/orders";
+import useFetchOrders from "../../hooks/orders";
+import Loader from "../../components/loader/Loader";
 
 const Orders = () => {
     // Fetch danh sách đơn hàng
-    const { data: ordersWithUsers, isLoading, isError } = useFetchOrdersWithUserDetails();
-    console.log(ordersWithUsers);
-    
+    const { orders, isLoading } = useFetchOrders();
+    const sortOrder =
+        orders && Array.isArray(orders)
+            ? [...orders].sort((a, b) => {
+                  // Đảm bảo id là kiểu số để sắp xếp chính xác
+                  return Number(b.id) - Number(a.id); // Giảm dần
+              })
+            : [];
 
     // Gửi hóa đơn
     const handleSendInvoice = async (orderId: string) => {
@@ -27,11 +32,15 @@ const Orders = () => {
     };
 
     if (isLoading) {
-        return <p className="text-center text-gray-500">Đang tải dữ liệu...</p>;
+        return (
+            <p>
+                <Loader />
+            </p>
+        );
     }
 
-    if (isError) {
-        return <p className="text-center text-red-500">Lỗi khi tải dữ liệu!</p>;
+    if (!orders || orders.length === 0) {
+        return <p className="text-center text-gray-500">Không có đơn hàng nào.</p>;
     }
 
     return (
@@ -45,68 +54,64 @@ const Orders = () => {
                         </h2>
                     </div>
                     <div className="px-4 sm:px-6 lg:px-8 mt-5">
-                        {ordersWithUsers && ordersWithUsers.length === 0 ? (
-                            <p className="text-center text-gray-500">Không có đơn hàng nào.</p>
-                        ) : (
-                            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th className="px-6 py-3">ID</th>
-                                        <th className="px-6 py-3">Tên người dùng</th>
-                                        <th className="px-6 py-3">Tổng tiền</th>
-                                        <th className="px-6 py-3">Trạng thái</th>
-                                        <th className="px-6 py-3">Loại thanh toán</th>
-                                        <th className="px-6 py-3">Địa chỉ giao hàng</th>
-                                        <th className="px-6 py-3">Hành động</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {ordersWithUsers.map((order) => (
-                                        <tr
-                                            key={order.id}
-                                            className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th className="px-6 py-3">STT</th>
+                                    <th className="px-6 py-3">Tên người dùng</th>
+                                    <th className="px-6 py-3">Tổng tiền</th>
+                                    <th className="px-6 py-3">Trạng thái</th>
+                                    <th className="px-6 py-3">Loại thanh toán</th>
+                                    <th className="px-6 py-3">Địa chỉ giao hàng</th>
+                                    <th className="px-6 py-3">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sortOrder.map((order) => (
+                                    <tr
+                                        key={order.id}
+                                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                                    >
+                                        <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {order.id}
+                                        </th>
+                                        <td className="px-6 py-4">{order.name_order}</td>
+                                        <td className="px-6 py-4">{formatCurrency(order.total_price)}</td>
+                                        <td
+                                            className={`px-6 py-4 ${
+                                                order.status_order === "Đã hủy"
+                                                    ? "text-red-600 font-bold"
+                                                    : order.status_order === "Giao hàng thành công"
+                                                    ? "text-green-600 font-bold"
+                                                    : order.status_order === "Chờ xác nhận hủy"
+                                                    ? "text-yellow-500 font-bold"
+                                                    : "text-blue-500"
+                                            }`}
                                         >
-                                            <th className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                {order.id}
-                                            </th>
-                                            <td className="px-6 py-4">{order.user_name}</td>
-                                            <td className="px-6 py-4">{formatCurrency(order.total_price)}</td>
-                                            <td
-                                                className={`px-6 py-4 ${
-                                                    order.status_order === "Đã hủy"
-                                                        ? "text-red-600 font-bold"
-                                                        : order.status_order === "Giao hàng thành công"
-                                                        ? "text-green-600 font-bold"
-                                                        : order.status_order === "Chờ xác nhận hủy"
-                                                        ? "text-yellow-500 font-bold"
-                                                        : "text-blue-500"
-                                                }`}
-                                            >
-                                                {order.status_order}
-                                            </td>
-                                            <td className="px-6 py-4">{order.payment_type}</td>
-                                            <td className="px-6 py-4">{order.shipping_address}</td>
-                                            <td className="px-4 py-4 flex flex-col gap-5">
-                                                {order.status_order === "Giao hàng thành công" && (
-                                                    <button
-                                                        onClick={() => handleSendInvoice(order.id)}
-                                                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                                    >
-                                                        Gửi hóa đơn
-                                                    </button>
-                                                )}
-                                                <Link
-                                                    to={`/orders/${order.id}`}
-                                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            {order.status_order}
+                                        </td>
+                                        <td className="px-6 py-4">{order.payment_type}</td>
+                                        <td className="px-6 py-4">{order.shipping_address}</td>
+                                        <td className="px-2 py-2 flex flex-col items-center gap-5">
+                                            {/* {order.status_order === "Giao hàng thành công" && (
+                                                <button
+                                                    onClick={() => handleSendInvoice(order.id)}
+                                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
                                                 >
-                                                    Chi tiết
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        )}
+                                                    Gửi hóa đơn
+                                                </button>
+                                            )} */}
+                                            <Link
+                                                to={`/orders/${order.id}`}
+                                                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                            >
+                                                Chi tiết
+                                            </Link>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
