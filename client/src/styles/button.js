@@ -45,7 +45,7 @@ const BaseButtonBlack = styled(BaseButton)`
 `;
 
 const BaseButtonOuterspace = styled(BaseButton)`
-  background-color: ${defaultTheme.color_outerspace};
+  background-color: ${defaultTheme.color_black};
 `;
 
 const BaseButtonWhitesmoke = styled(BaseButton)`
@@ -83,7 +83,7 @@ const BaseLinkOutlineWhite = styled(BaseLink)`
 `;
 
 const BaseLinkOutlinePlatinum = styled(BaseLink)`
-  color: ${defaultTheme.color_black};
+  color: ${defaultTheme.color_outerspace};
   border-color: ${defaultTheme.color_platinum};
 `;
 

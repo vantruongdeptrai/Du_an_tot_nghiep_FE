@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import PropTypes from "prop-types";
 import formatCurrency from "../../utils/formatUtils";
 import useProductVariant from "../../hooks/useProductVariant";
+import ModalVoucher from "../modals/ModalVoucher";
 
 const CartDiscountWrapper = styled.div`
     @media (max-width: ${breakpoints.xl}) {
@@ -39,6 +40,14 @@ const CartDiscountWrapper = styled.div`
         border-bottom-left-radius: 0;
     }
 
+    .coupon-select {
+        margin-top: 10px;
+        width: 100%;
+        padding: 8px;
+        border: 1px solid ${defaultTheme.color_platinum};
+        border-radius: 6px;
+    }
+
     .contd-shop-btn {
         height: 40px;
         margin-top: 10px;
@@ -47,21 +56,20 @@ const CartDiscountWrapper = styled.div`
 
 const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
     const [couponCode, setCouponCode] = useState("");
+    const [isModalOpen, setModalOpen] = useState(false);
     const { productVariants } = useProductVariant();
 
     // Hàm xử lý khi áp dụng mã giảm giá
+    const handleSelectCoupon = (coupon) => {
+        setCouponCode(coupon.name);
+        setModalOpen(false); // Đóng modal
+        setAppliedCoupon(coupon); // Cập nhật mã giảm giá
+    };
     const handleApplyCoupon = (e) => {
         e.preventDefault();
-        // Kiểm tra mã giảm giá có bị trống không
-        const trimmedCouponCode = couponCode.trim();
-        if (!trimmedCouponCode) {
-            toast.warn("Vui lòng điền mã giảm giá!");
-            return;
-        }
-        console.log(couponCode);
+        const coupon = coupons.find((coupon) => coupon.name === couponCode.trim());
 
-        const coupon = coupons.find((coupon) => coupon.name === trimmedCouponCode);
-
+        // Kiểm tra mã giảm giá hợp lệ
         if (!coupon) {
             toast.error("Mã giảm giá không hợp lệ!");
             return;
@@ -77,25 +85,21 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
         const startDate = new Date(coupon.start_date);
         const endDate = new Date(coupon.end_date);
 
-        // Kiểm tra nếu mã giảm giá chưa bắt đầu
         if (currentDate < startDate) {
             toast.error("Mã giảm giá chưa được áp dụng!");
             return;
         }
 
-        // Kiểm tra nếu mã giảm giá đã hết hạn
         if (currentDate > endDate) {
             toast.error("Mã giảm giá đã hết hạn!");
             return;
         }
 
-        // Kiểm tra nếu mã giảm giá không hoạt động
         if (!coupon.is_active) {
             toast.error("Mã giảm giá này hiện không khả dụng!");
             return;
         }
 
-        // Kiểm tra nếu mã giảm giá đã bị xóa (deleted_at không null)
         if (coupon.deleted_at) {
             toast.error("Mã giảm giá không tồn tại!");
             return;
@@ -118,15 +122,17 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
 
         if (subTotal < coupon.min_order_value || subTotal > coupon.max_order_value) {
             toast.warn(
-                `Số tiền của bạn phải trong khoảng ${formatCurrency(coupon.min_order_value)} - ${formatCurrency(coupon.max_order_value)} để sử dụng mã giảm giá.`
+                `Số tiền của bạn phải trong khoảng ${formatCurrency(coupon.min_order_value)} - ${formatCurrency(
+                    coupon.max_order_value
+                )} để sử dụng mã giảm giá.`
             );
             return;
         }
 
-        // Nếu mã giảm giá hợp lệ, cập nhật trạng thái
         setAppliedCoupon(coupon);
         toast.success("Áp mã giảm giá thành công.");
     };
+
     return (
         <CartDiscountWrapper>
             <h3 className="text-xxl text-outerspace">Mã giảm giá</h3>
@@ -145,6 +151,16 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
                     </BaseButtonOuterspace>
                 </div>
             </form>
+            <BaseLinkOutlinePlatinum onClick={() => setModalOpen(true)} className="contd-shop-btn w-full text-gray">
+                Chọn voucher
+            </BaseLinkOutlinePlatinum>
+            {isModalOpen && (
+                <ModalVoucher
+                    coupons={coupons}
+                    onClose={() => setModalOpen(false)}
+                    onSelectCoupon={handleSelectCoupon}
+                />
+            )}
             <BaseLinkOutlinePlatinum as={BaseLinkOutlinePlatinum} to="/" className="contd-shop-btn w-full text-gray">
                 Tiếp tục mua hàng
             </BaseLinkOutlinePlatinum>
@@ -153,17 +169,16 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
 };
 
 CartDiscount.propTypes = {
-    coupons: PropTypes.array, // Hoặc kiểu phù hợp với coupons của bạn
-    setAppliedCoupon: PropTypes.func, // Hàm cập nhật coupon
+    coupons: PropTypes.array.isRequired,
+    setAppliedCoupon: PropTypes.func.isRequired,
     selectedItems: PropTypes.arrayOf(
-        // Đảm bảo selectedItems là một mảng
         PropTypes.shape({
-            product_id: PropTypes.number, // Hoặc kiểu phù hợp với dữ liệu của bạn
-            product_variant_id: PropTypes.number, // Tùy thuộc vào dữ liệu của bạn
+            product_id: PropTypes.number,
+            product_variant_id: PropTypes.number,
             price: PropTypes.number,
             quantity: PropTypes.number,
         })
-    ).isRequired, // Kiểu của selectedItems là mảng các sản phẩm
+    ).isRequired,
 };
 
 export default CartDiscount;
