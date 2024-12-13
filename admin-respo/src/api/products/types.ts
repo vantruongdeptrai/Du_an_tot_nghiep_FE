@@ -22,7 +22,6 @@ export type Product = {
 
 export type ProductInput = {
     id?: string;
-
     name: string;
     quantity: string;
     image: string;
