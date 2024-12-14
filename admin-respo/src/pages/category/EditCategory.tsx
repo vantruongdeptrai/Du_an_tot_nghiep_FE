@@ -120,7 +120,7 @@ const EditCategory = () => {
                                                 <span className="font-semibold">Click to upload</span> or drag and drop
                                             </p>
                                             <p className="text-xs dark:text-whiteSecondary text-blackPrimary">
-                                                SVG, PNG, JPG or GIF (MAX. 800x400px)
+                                                SVG, PNG, JPG or GIF
                                             </p>
                                         </div>
                                         <input

@@ -41,9 +41,9 @@ const useProduct = () => {
         formData.append("name", data.name);
         // formData.append("price", data.price);
         formData.append("description", data.description);
-        formData.append("quantity", data.quantity);
+        // formData.append("quantity", data.quantity);
         // formData.append("sale_price", data.sale_price);
-        formData.append("sale_start", data.sale_start);
+        // formData.append("sale_start", data.sale_start);
         formData.append("category_id", data.category_id);
         formData.append("new_product", String(Number(data.new_product)));
         formData.append("best_seller_product", String(Number(data.best_seller_product)));
@@ -60,11 +60,12 @@ const useProduct = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Product added successfully");
+            toast.success("Thêm sản phẩm mới thành công.");
             const productData = response.data;
             return productData;
         } catch (err) {
-            setError("Failed to create Product");
+            console.log(err);
+            
         }
     };
 
@@ -84,7 +85,7 @@ const useProduct = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Product edit successfully");
+            toast.success("Cập nhật sản phẩm thành công.");
         } catch (error) {
             console.error("Error updating Product:", error);
         }
@@ -95,7 +96,7 @@ const useProduct = () => {
       if (window.confirm("Are you sure you want to delete")) {
         
         await axios.delete("http://localhost:8000/api/products/" + id);
-        toast.success("Product delete successfully");
+        toast.success("Xóa sản phẩm thành công.");
         getProducts();
       }
     } catch (err) {

@@ -58,6 +58,18 @@ const useProductVariant = () => {
                 formData.append(`prices[${key}]`, value.toString());
             }
 
+            for (const [key, value] of Object.entries(data.prices)) {
+                formData.append(`sale_prices[${key}]`, value.toString());
+            }
+
+            for (const [key, value] of Object.entries(data.prices)) {
+                formData.append(`sale_starts[${key}]`, value.toString());
+            }
+
+            for (const [key, value] of Object.entries(data.prices)) {
+                formData.append(`sale_ends[${key}]`, value.toString());
+            }
+
             // Thêm đường dẫn hình ảnh vào formData
             for (const [key, file] of Object.entries(data.images)) {
                 formData.append(`images[${key}]`, file); // Gửi file ảnh
