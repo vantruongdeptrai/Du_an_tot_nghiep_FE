@@ -57,7 +57,7 @@ const useCategory = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Category added successfully");
+            toast.success("Thêm mới danh mục thành công.");
         } catch (err) {
             setError("Failed to create category");
         } finally {
@@ -69,7 +69,7 @@ const useCategory = () => {
     const updateCategory = async (data: categoryInput, file?: File) => {
         const formData = new FormData();
         formData.append("name", data.name);
-        formData.append('_method', 'put');
+        formData.append('method', 'put');
         console.log(id);
 
         if (file) {
@@ -82,19 +82,19 @@ const useCategory = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Category edit successfully");
+            toast.success("Cập nhật danh mục thành công.");
         } catch (error) {
-            console.error("Error updating category:", error);
+            console.error(error);
         }
     };
 
 
     const deleteCategory = async (id: string) => {
         try {
-            if (window.confirm("Are you sure you want to delete")) {
+            if (window.confirm("Bạn thực sự muốn xóa?")) {
                 setIsLoading(true);
                 await axios.delete("http://localhost:8000/api/categories/" + id);
-                toast.success("Category delete successfully");
+                toast.success("Xóa danh mục thành công.");
                 fetchCategories();
             }
         } catch (err) {

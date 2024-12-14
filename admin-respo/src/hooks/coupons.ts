@@ -39,7 +39,7 @@ const useCoupon = () => {
         try {
             setIsLoading(true);
             await axios.post("http://localhost:8000/api/coupons", data);
-            toast.success("Coupon added successfully");
+            toast.success("Thêm mã giảm giá thành công.");
         } catch (err) {
             setError("Failed to add Coupon");
         } finally {
@@ -51,7 +51,7 @@ const useCoupon = () => {
         try {
             setIsLoading(true);
             await axios.put(`http://localhost:8000/api/coupons/${id}`, data);
-            toast.success("Coupon edited successfully");
+            toast.success("Cập nhật mã giảm giá thành công.");
         } catch (err) {
             setError("Failed to edit Coupon");
         } finally {
@@ -64,7 +64,7 @@ const useCoupon = () => {
             if (window.confirm("Are you sure you want to delete?")) {
                 setIsLoading(true);
                 await axios.delete(`http://localhost:8000/api/coupons/${id}`);
-                toast.success("Coupon deleted successfully");
+                toast.success("Xóa mã giảm giá thành công.");
                 getCoupons();
             }
         } catch (err) {

@@ -46,4 +46,7 @@ export type ProductVariant = {
     prices: Record<string, number>; // Đối tượng chứa giá
     status: string; // Trạng thái
     images: Record<string, File>;
+    sale_prices: Record<string, number>;
+    sale_starts: Record<string, string>; // Cập nhật kiểu của sale_start
+    sale_ends: Record<string, string>; // Cập nhật kiểu của sale_end
 };
