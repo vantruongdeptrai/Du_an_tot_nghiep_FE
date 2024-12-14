@@ -1,14 +1,14 @@
 import { InputWithLabel, Sidebar } from "../../components";
-import { AiOutlineSave } from "react-icons/ai";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useCoupon from "../../hooks/coupons";
 import { CouponInput } from "../../api/coupons/type";
-import couponSchema from "../../api/coupons/schemaCoupon";
-import axios from "axios"; // Import axios for API request
+import couponSchema from "../../api/coupons/schemaCoupon"; // Import axios for API request
+import { toast } from "react-toastify";
 
 const CreateCoupon = () => {
+    const { addCoupon } = useCoupon();
     const {
         register,
         handleSubmit,
@@ -20,13 +20,21 @@ const CreateCoupon = () => {
     const nav = useNavigate();
 
     const onSubmit: SubmitHandler<CouponInput> = async (data) => {
-        try {
-            console.log("Dữ liệu gửi:", data);
-            const response = await axios.post("http://127.0.0.1:8000/api/coupons", data);
-            nav("/coupons");
-        } catch (error) {
-            console.error("Lỗi khi thêm mã giảm giá:", error);
+        const startDate = new Date(data.start_date);
+        const endDate = new Date(data.end_date);
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        if (endDate < startDate) {
+            toast.error("Ngày kết thúc phải sau ngày bắt đầu!");
+            return;
         }
+        // Kiểm tra ngày bắt đầu không nhỏ hơn ngày hiện tại
+        if (startDate < currentDate) {
+            toast.error("Ngày bắt đầu phải bằng ngày hiện tại!");
+            return;
+        }
+        await addCoupon(data);
+        nav("/coupons");
     };
 
     return (
@@ -66,7 +74,7 @@ const CreateCoupon = () => {
                                 <div className="mt-4 flex flex-col gap-5">
                                     <InputWithLabel label="Phần trăm giảm giá">
                                         <input
-                                            {...register("discount_amount", { valueAsNumber: true })}
+                                            {...register("discount_amount")}
                                             placeholder="Nhập phần trăm giảm giá..."
                                             type="number"
                                             className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
@@ -96,7 +104,7 @@ const CreateCoupon = () => {
                                 <div className="mt-4 flex flex-col gap-5">
                                     <InputWithLabel label="Giá trị đơn hàng tối thiểu">
                                         <input
-                                            {...register("min_order_value", { valueAsNumber: true })}
+                                            {...register("min_order_value")}
                                             placeholder="Nhập giá trị đơn hàng tối thiểu ..."
                                             type="number"
                                             className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
@@ -111,7 +119,7 @@ const CreateCoupon = () => {
                                 <div className="mt-4 flex flex-col gap-5">
                                     <InputWithLabel label="Giới hạn số lần được dùng">
                                         <input
-                                            {...register("usage_limit", { valueAsNumber: true })}
+                                            {...register("usage_limit")}
                                             placeholder="Nhập giới hạn số lần dùng"
                                             type="number"
                                             className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
@@ -126,7 +134,7 @@ const CreateCoupon = () => {
                                 <div className="mt-4 flex flex-col gap-5">
                                     <InputWithLabel label="Giá trị đơn hàng tối đa">
                                         <input
-                                            {...register("max_order_value", { valueAsNumber: true })}
+                                            {...register("max_order_value")}
                                             placeholder="Nhập giá trị giảm giá tối đa ..."
                                             type="number"
                                             className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
@@ -161,6 +169,9 @@ const CreateCoupon = () => {
                                             className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
                                         />
                                     </InputWithLabel>
+                                    {errors.start_date && (
+                                        <span className="text-sm text-red-500">{errors.start_date.message}</span>
+                                    )}
                                 </div>
 
                                 {/* End Date */}
@@ -172,6 +183,9 @@ const CreateCoupon = () => {
                                             className="dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary w-full h-10 indent-2 outline-none border-gray-700 border dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-600 hover:border-gray-400"
                                         />
                                     </InputWithLabel>
+                                    {errors.end_date && (
+                                        <span className="text-sm text-red-500">{errors.end_date.message}</span>
+                                    )}
                                 </div>
 
                                 <div className="mt-4 flex flex-col gap-5">

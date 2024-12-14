@@ -15,6 +15,7 @@ import productSchema from "../../api/products/productSchema";
 
 const CreateProduct: React.FC = () => {
     const { categories } = useCategory();
+    const safeCategories = Array.isArray(categories) ? categories : [];
     const { createProduct } = useProduct();
     const { createProductVariant } = useProductVariant();
     const { sizes } = useSizes();
@@ -28,7 +29,6 @@ const CreateProduct: React.FC = () => {
         register: registerBasic,
         formState: { errors },
         handleSubmit: handleSubmitBasic,
-        setValue,
     } = useForm<ProductInput>({
         resolver: zodResolver(productSchema),
     });
@@ -43,23 +43,19 @@ const CreateProduct: React.FC = () => {
 
     const onSubmitBasic: SubmitHandler<ProductInput> = async (data) => {
         try {
-            const price = Number(data.price);
-            const sale_price = Number(data.sale_price);
-
-            if (price < sale_price) {
-                toast.error("Price must be greater than sale_price");
-                return;
-            }
-            const product = await createProduct(data, selectedFile || undefined);
-            console.log(data);
-
-            setProductId(product.product.id);
-
             if (hasVariants) {
+                if (selectedVariants.length === 0) {
+                    toast.error("Vui lòng thêm ít nhất một biến thể cho sản phẩm!");
+                    return;
+                }
                 // Sau khi tạo sản phẩm, sẽ chuyển đến form tạo biến thể
+                const product = await createProduct(data, selectedFile || undefined);
+                console.log(data);
+
+                setProductId(product.product.id);
                 setHasVariants(true);
             } else {
-                nav("/products");
+                toast.error("Vui lòng thêm biến thể cho sản phẩm!");
             }
         } catch (error) {
             console.log(error);
@@ -82,6 +78,8 @@ const CreateProduct: React.FC = () => {
             status: "1", // Trạng thái
         };
 
+        let hasError = false;
+
         // Duyệt qua từng variant để cập nhật quantities, prices, và images
         selectedVariants.forEach(({ sizeId, colorId }) => {
             const variantKey = `${colorId}-${sizeId}`;
@@ -92,6 +90,44 @@ const CreateProduct: React.FC = () => {
                 sale_start = "",
                 sale_end = "",
             } = variantDetails[variantKey] || {};
+            const priceNum = Number(price);
+            const quantityNum = Number(quantity);
+            const salePriceNum = Number(sale_price);
+            const startDate = new Date(sale_start);
+            const endDate = new Date(sale_end);
+            if (!priceNum || !quantityNum || !salePriceNum) {
+                toast.error("Vui lòng điền đầy đủ thông tin và giá trị hợp lệ!");
+                hasError = true;
+                return;
+            }
+            if (priceNum <= 0) {
+                toast.error(`Biến thể ${variantKey}: Vui lòng nhập giá hợp lệ!`);
+                hasError = true;
+                return;
+            }
+
+            if (quantityNum <= 0) {
+                toast.error(`Biến thể ${variantKey}: Vui lòng nhập số lượng hợp lệ!`);
+                hasError = true;
+                return;
+            }
+            if (salePriceNum <= 0) {
+                toast.error(`Biến thể ${variantKey}: Vui lòng nhập giá khuyến mại hợp lệ!`);
+                hasError = true;
+                return;
+            }
+
+            // if (!sale_start || !sale_end) {
+            //     toast.error(`Biến thể ${variantKey}: Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc khuyến mãi!`);
+            //     hasError = true;
+            //     return;
+            // }
+
+            if (endDate < startDate) {
+                toast.error(`Biến thể ${variantKey}: Ngày kết thúc phải sau ngày bắt đầu!`);
+                hasError = true;
+                return;
+            }
 
             variantsData.quantities[variantKey] = Number(quantity); // Thêm số lượng
             variantsData.prices[variantKey] = Number(price); // Thêm giá
@@ -104,14 +140,15 @@ const CreateProduct: React.FC = () => {
                 files.push(file); // Thêm file vào mảng files
                 // Thêm URL tạm thời cho từng file vào trường images
                 variantsData.images[variantKey] = file; // Thêm file vào images
-            } else {
-                toast.error("Vui lòng chọn ảnh cho biến thể!");
-                return;
             }
         });
 
         if (!productId) {
             toast.error("Cần thêm sản phẩm trước khi thêm biến thể!");
+            return;
+        }
+
+        if (hasError) {
             return;
         }
 
@@ -124,6 +161,7 @@ const CreateProduct: React.FC = () => {
         console.log(files);
 
         toast.success("Tạo biến thể thành công!");
+        nav("/products");
     };
 
     // State lưu trữ biến thể đã chọn và chi tiết biến thể
@@ -290,7 +328,7 @@ const CreateProduct: React.FC = () => {
                                             className="w-full h-12 px-4 py-2 rounded-lg border border-gray-600 dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary outline-none dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-500 hover:border-gray-400 transition-all"
                                         >
                                             <option value="">Danh muc</option>
-                                            {categories.map((cat, index) => (
+                                            {safeCategories.map((cat, index) => (
                                                 <option key={index} value={cat.id}>
                                                     {cat.name}
                                                 </option>

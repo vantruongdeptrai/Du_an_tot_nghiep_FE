@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useOrderAndUpdate } from "../../hooks/orderDetails";
 import { toast } from "react-toastify";
+import Loader from "../../components/loader/Loader";
 
 const EditOrder = () => {
     const { id } = useParams<{ id: string }>();
     const { orderDetailsQuery, updateOrderStatusMutation } = useOrderAndUpdate(id || "");
     const { data, isLoading } = orderDetailsQuery;
-    console.log(data);
-    
+
     const [inputObject, setInputObject] = useState({
         customerName: "",
         phoneNumber: "",
@@ -24,6 +24,7 @@ const EditOrder = () => {
         cancel_reason: "",
     });
     const [availableStatuses, setAvailableStatuses] = useState<string[]>([]);
+    console.log(availableStatuses);
 
     useEffect(() => {
         if (data) {
@@ -63,6 +64,9 @@ const EditOrder = () => {
             case "Giao hàng thành công":
                 setAvailableStatuses(["Giao hàng thành công"]);
                 break;
+            case "Đã nhận hàng":
+                setAvailableStatuses(["Đã nhận hàng"]);
+                break;
             case "Đã hủy":
                 setAvailableStatuses(["Đã hủy"]);
                 break;
@@ -85,7 +89,12 @@ const EditOrder = () => {
         toast.success("Cập nhật trạng thái thành công.");
     };
 
-    if (isLoading) return <p>Đang tải...</p>;
+    if (isLoading)
+        return (
+            <div>
+                <Loader />
+            </div>
+        );
 
     return (
         <div className="h-auto border-t border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">

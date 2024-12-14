@@ -2,9 +2,15 @@ import { Link } from "react-router-dom";
 import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
 import useCoupon from "../../hooks/coupons";
 import formatCurrency from "../../utils/formatCurrent";
+import Loader from "../loader/Loader";
 
 const CouponTable = () => {
-    const { coupons, deleteCoupon } = useCoupon();
+    const { coupons, deleteCoupon, isLoading } = useCoupon();
+    if(isLoading) {
+        return <div>
+            <Loader />
+        </div>
+    }
 
     return (
         <div

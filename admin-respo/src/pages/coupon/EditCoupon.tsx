@@ -1,5 +1,4 @@
 import { InputWithLabel, Sidebar } from "../../components";
-import { AiOutlineSave } from "react-icons/ai";
 import { SubmitHandler, useForm } from "react-hook-form"; // Import React Hook Form
 import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +6,7 @@ import useCoupon from "../../hooks/coupons";
 import { CouponInput } from "../../api/coupons/type";
 import couponSchema from "../../api/coupons/schemaCoupon";
 import { useEffect } from "react";
-import axios from "axios";
+import { toast } from "react-toastify";
 
 const EditCoupon = () => {
     // Khởi tạo các hàm của React Hook Form
@@ -25,24 +24,30 @@ const EditCoupon = () => {
 
     // Hàm xử lý khi form được submit
     const onSubmit: SubmitHandler<CouponInput> = async (data) => {
-        try {
-            // Chuyển đổi 'is_active' từ chuỗi thành số hoặc boolean
-            data.is_active = parseInt(data.is_active as string, 10); // Chuyển thành số (1 hoặc 0)
-
-            // Gửi PUT request để cập nhật coupon
-            const response = await axios.put(
-                `http://127.0.0.1:8000/api/coupons/${coupon?.id}`, // Dùng coupon.id để lấy ID của mã giảm giá
-                data
-            );
-
-            if (response.status === 200) {
-                alert("Coupon updated successfully!");
-                nav("/coupons");
-            }
-        } catch (error) {
-            console.error("Error updating coupon:", error);
-            alert("Failed to update coupon. Please try again.");
+        const id = coupon?.id;
+        if (!id) {
+            // Nếu coupon không có id, dừng hàm và thông báo lỗi
+            toast.error("Không tìm thấy mã giảm giá để chỉnh sửa.");
+            return;
         }
+
+        const startDate = new Date(data.start_date);
+        const endDate = new Date(data.end_date);
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+        if (endDate < startDate) {
+            toast.error("Ngày kết thúc phải sau ngày bắt đầu!");
+            return;
+        }
+        // Kiểm tra ngày bắt đầu không nhỏ hơn ngày hiện tại
+        if (startDate < currentDate) {
+            toast.error("Ngày bắt đầu phải bằng ngày hiện tại!");
+            return;
+        }
+        // Gửi PUT request để cập nhật coupon
+        await editCoupon(data, id);
+
+        nav("/coupons");
     };
 
     // Lấy dữ liệu danh mục hiện tại để hiển thị giá trị ban đầu
@@ -52,7 +57,7 @@ const EditCoupon = () => {
             setValue("description", coupon.description);
             setValue("discount_amount", coupon.discount_amount);
             setValue("min_order_value", coupon.min_order_value);
-            setValue("usage_limit", coupon.usage_limit);
+            setValue("usage_limit", coupon.usage_limit.toString());
             setValue("is_active", coupon.is_active.toString()); // Đảm bảo is_active được gán là "1" hoặc "0" cho select
             setValue("start_date", coupon.start_date);
             setValue("end_date", coupon.end_date);
