@@ -15,7 +15,9 @@ import productSchema from "../../api/products/productSchema";
 
 const CreateProduct: React.FC = () => {
     const { categories } = useCategory();
+
     const safeCategories = Array.isArray(categories) ? categories : [];
+
     const { createProduct } = useProduct();
     const { createProductVariant } = useProductVariant();
     const { sizes } = useSizes();
@@ -29,6 +31,7 @@ const CreateProduct: React.FC = () => {
         register: registerBasic,
         formState: { errors },
         handleSubmit: handleSubmitBasic,
+
     } = useForm<ProductInput>({
         resolver: zodResolver(productSchema),
     });
@@ -43,6 +46,7 @@ const CreateProduct: React.FC = () => {
 
     const onSubmitBasic: SubmitHandler<ProductInput> = async (data) => {
         try {
+
             if (hasVariants) {
                 if (selectedVariants.length === 0) {
                     toast.error("Vui lòng thêm ít nhất một biến thể cho sản phẩm!");
@@ -56,10 +60,12 @@ const CreateProduct: React.FC = () => {
                 setHasVariants(true);
             } else {
                 toast.error("Vui lòng thêm biến thể cho sản phẩm!");
+
             }
         } catch (error) {
             console.log(error);
         }
+
     };
 
     // Hàm xử lý khi submit form biến thể sản phẩm
@@ -191,6 +197,7 @@ const CreateProduct: React.FC = () => {
             },
         }));
     };
+
 
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [selectedFileVariants, setSelectedFileVariants] = useState<{
@@ -328,7 +335,9 @@ const CreateProduct: React.FC = () => {
                                             className="w-full h-12 px-4 py-2 rounded-lg border border-gray-600 dark:bg-blackPrimary bg-white dark:text-whiteSecondary text-blackPrimary outline-none dark:focus:border-gray-600 focus:border-gray-400 dark:hover:border-gray-500 hover:border-gray-400 transition-all"
                                         >
                                             <option value="">Danh muc</option>
+
                                             {safeCategories.map((cat, index) => (
+
                                                 <option key={index} value={cat.id}>
                                                     {cat.name}
                                                 </option>

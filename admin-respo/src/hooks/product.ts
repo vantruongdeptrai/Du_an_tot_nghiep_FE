@@ -98,7 +98,9 @@ const useProduct = () => {
         
         await axios.delete("http://localhost:8000/api/products/" + id);
         toast.success("Xóa sản phẩm thành công.");
+
         queryClient.invalidateQueries(["products"]);
+
       }
     } catch (err) {
       setError("Failed to fetch permissions");

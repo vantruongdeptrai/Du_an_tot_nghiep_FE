@@ -61,7 +61,9 @@ const useCategory = () => {
     const updateCategory = async (data: categoryInput, file?: File) => {
         const formData = new FormData();
         formData.append("name", data.name);
+
         formData.append("method", "put");
+
         console.log(id);
 
         if (file) {
@@ -76,7 +78,9 @@ const useCategory = () => {
             });
             toast.success("Cập nhật danh mục thành công.");
         } catch (error) {
+
             toast.error("Lỗi cập nhất danh mục");
+
             console.error(error);
         }
     };
@@ -84,6 +88,7 @@ const useCategory = () => {
     const deleteCategory = async (id: string) => {
         try {
             if (window.confirm("Bạn thực sự muốn xóa?")) {
+
                 
                 await axios.delete("http://localhost:8000/api/categories/" + id);
                 toast.success("Xóa danh mục thành công.");
