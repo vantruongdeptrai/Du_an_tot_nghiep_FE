@@ -62,7 +62,7 @@ const useCategory = () => {
         const formData = new FormData();
         formData.append("name", data.name);
 
-        formData.append("method", "put");
+        formData.append("_method", "put");
 
         console.log(id);
 
