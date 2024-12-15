@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
+import { toast } from "react-toastify";
 
 // Định nghĩa kiểu dữ liệu cho comment, người dùng, và sản phẩm
 interface Comment {
@@ -105,10 +106,10 @@ const ReviewsTable = () => {
         );
 
         if (response.ok) {
-          alert("Xóa bình luận thành công!");
+          toast.success("Xóa bình luận thành công!");
           setReviews((prev) => prev.filter((review) => review.id !== id));
         } else {
-          alert("Xóa bình luận không thành công.");
+          toast.error("Xóa bình luận không thành công.");
           console.log("Lỗi:", await response.json());
         }
       } catch (error) {

@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { Product, ProductInput } from "../api/products/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useProduct = () => {
     // const [products, setProducts] = useState<Product[]>([]);
@@ -11,6 +11,7 @@ const useProduct = () => {
     const [error, setError] = useState<string | null>(null);
     // const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
+    const queryClient = useQueryClient(); 
     const getProducts = async () => {
         const response = await axios.get("http://localhost:8000/api/products");
         return response.data; // Trả về dữ liệu sản phẩm
@@ -97,16 +98,14 @@ const useProduct = () => {
         
         await axios.delete("http://localhost:8000/api/products/" + id);
         toast.success("Xóa sản phẩm thành công.");
-        getProducts();
+
+        queryClient.invalidateQueries(["products"]);
+
       }
     } catch (err) {
       setError("Failed to fetch permissions");
     }
   };
-
-  useEffect(() => {
-    getProducts();
-  }, []);
   useEffect(() => {
     if (!id) return;
     getProductById(id);

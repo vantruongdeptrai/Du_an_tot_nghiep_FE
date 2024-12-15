@@ -112,10 +112,10 @@ const CartScreen = () => {
         // // Hủy timeout trước đó nếu có
         // clearTimeout(debounceRef.current);
 
-        // // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
+        // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
         // debounceRef.current = setTimeout(() => {
         //     updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
-        // }, 500);
+        // }, 1000);
         updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
     };
 
@@ -140,7 +140,7 @@ const CartScreen = () => {
         // // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
         // debounceRef.current = setTimeout(() => {
         //     updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
-        // }, 500);
+        // }, 1000);
         updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
     };
 

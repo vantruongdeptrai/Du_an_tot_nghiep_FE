@@ -14,6 +14,7 @@ const ProductTable = () => {
     const safeProducts = Array.isArray(products) ? products : [];
 
     const getCategoryName = (categoryId: string) => {
+        if (!categories) return "Không xác định";
         const category = categories.find((cat) => cat.id == categoryId);
         return category ? category.name : "Không xác định";
     };
