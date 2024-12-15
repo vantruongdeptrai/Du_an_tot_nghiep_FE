@@ -10,10 +10,9 @@ import {
     Legend,
 } from "chart.js";
 import { useAppSelector } from "../../hooks";
-import { useStats } from "../../hooks/useStatistical";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Loader from "../loader/Loader";
+import { useQueryMonthlyRevenueLine } from "../../hooks/useStatis";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -23,19 +22,21 @@ const LineGraph = () => {
     const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString());
 
     // Sử dụng react-query để lấy dữ liệu doanh thu theo tháng
-    const { fetchMonthlyRevenue } = useStats();
-    const { data, isLoading, isError } = useQuery(
-        ["monthlyRevenue", selectedYear],
-        () => fetchMonthlyRevenue(selectedYear) // Truyền năm vào hàm fetchMonthlyRevenue
-    );
+    const { data: monthlyRevenue, isLoading, isError } = useQueryMonthlyRevenueLine(selectedYear);
 
-    if (isLoading) return <div>
-        <Loader />
-    </div>;
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: currentYear - 2022 + 1 }, (_, index) => (2023 + index).toString());
+
+    if (isLoading)
+        return (
+            <div>
+                <Loader />
+            </div>
+        );
     if (isError) return <div>Đã xảy ra lỗi khi lấy dữ liệu</div>;
 
     // Kiểm tra xem dữ liệu có phải là mảng không và có chứa key revenues không
-    const revenues = data?.revenues;
+    const revenues = monthlyRevenue?.revenues;
     const isDataArray = Array.isArray(revenues);
     if (!isDataArray) {
         return <div>Dữ liệu không hợp lệ</div>;
@@ -45,7 +46,7 @@ const LineGraph = () => {
     const labels = revenues.map((item: { month: number }) => `Tháng ${item.month}`);
 
     // Giới hạn doanh thu tối đa là 20 triệu VND (20,000,000)
-    const maxRevenue = 20000000; // 20 triệu VND
+    const maxRevenue = 50000000; // 20 triệu VND
     const revenueData = revenues.map((item: { revenue: string }) => {
         const revenue = parseFloat(item.revenue);
         return revenue > maxRevenue ? maxRevenue : revenue; // Giới hạn doanh thu
@@ -67,7 +68,7 @@ const LineGraph = () => {
         labels, // Sử dụng tháng làm nhãn
         datasets: [
             {
-                label: "Doanh thu",
+                label: "Đường viền doanh thu",
                 width: "80%",
                 data: revenueData, // Dữ liệu doanh thu
                 borderColor: "#42a5f5", // Màu đường biểu đồ
@@ -84,7 +85,20 @@ const LineGraph = () => {
         plugins: {
             title: {
                 display: true,
-                text: `Doanh thu theo tháng (${selectedYear})`, // Hiển thị năm trong tiêu đề
+                text: `Doanh thu theo năm (${selectedYear})`, // Hiển thị năm trong tiêu đề
+                font: {
+                    size: 20, // Thay đổi kích thước chữ (càng lớn càng to)
+                    weight: "bold", // Đậm chữ
+                },
+            },
+
+            legend: {
+                labels: {
+                    font: {
+                        size: 14, // Kích thước chữ của các label trong legend
+                        weight: "normal", // Đậm chữ của label trong legend
+                    },
+                },
             },
             tooltip: {
                 callbacks: {
@@ -127,12 +141,18 @@ const LineGraph = () => {
 
     return (
         <div>
-            {/* Select input để chọn năm */}
-            <select className="py-2 px-5" value={selectedYear} onChange={handleYearChange}>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                {/* Thêm các năm khác nếu cần */}
+            <label className="block mb-2 text-base font-medium text-gray-900 dark:text-white">Chọn năm:</label>
+            <select
+                id="default"
+                value={selectedYear}
+                onChange={handleYearChange}
+                className="bg-gray-50 border border-gray-300 text-gray-900 mb-6 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-[30%] p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            >
+                {years.map((year) => (
+                    <option key={year} value={year}>
+                        {year}
+                    </option>
+                ))}
             </select>
             {/* Biểu đồ */}
             <div className="w-[1000px]">

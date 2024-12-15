@@ -38,6 +38,8 @@ const EditCategory = () => {
     const onSubmit: SubmitHandler<categoryInput> = async (data) => {
         try {
             await updateCategory(data, selectedFile || undefined);
+            console.log(data);
+            
             nav("/categories");
         } catch (error) {
             console.error("Error updating category:", error);

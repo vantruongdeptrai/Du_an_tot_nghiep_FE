@@ -8,12 +8,12 @@ import {
   Welcome,
 } from "../../components";
 import { BarChart, LineGraph, PieChart } from "../../components/chart";
+import LineGraphRevenueDaily from "../../components/chart/LineGraphRevenueDaily";
 import { useStats } from "../../hooks/useStatistical";
 
 const Landing = () => {
   const { totalRevenue, bestSellers } = useStats();
   console.log(bestSellers?.data);
-
   return (
     <div className="h-auto border-t dark:border-blackSecondary border-blackSecondary border-1 flex dark:bg-blackPrimary bg-whiteSecondary">
       <Sidebar />
@@ -24,19 +24,20 @@ const Landing = () => {
               {/* <Welcome.Title>Good evening, Sherwood 😀</Welcome.Title> */}
               <Welcome.Description>Biểu đồ thống kê</Welcome.Description>
             </Welcome>
+            <hr className="border-gray-400" />
             <Stats totalRevenue={totalRevenue} bestSellers={bestSellers} />
           </div>
           <div className="sm:w-[66%] mt-10 max-sm:w-[80%]">
             <h3 className="text-3xl dark:text-whiteSecondary text-blackPrimary font-bold mb-7 max-sm:text-2xl">
-              Tổng quan chiến dịch
+              Tổng quan doanh thu tháng
             </h3>
             <LineGraph />
           </div>
           <div className="sm:w-[66%] mt-10 max-sm:w-[80%]">
             <h3 className="text-3xl dark:text-whiteSecondary text-blackPrimary font-bold mb-7 max-sm:text-2xl">
-              Tổng quan đơn hàng
+              Tổng quan doanh thu ngày
             </h3>
-            <BarChart />
+            <LineGraphRevenueDaily />
           </div>
           {/* <div className="sm:w-[50%] mt-10 max-sm:w-[70%]">
             <h3 className="text-3xl dark:text-whiteSecondary text-blackPrimary font-bold mb-7 max-sm:text-2xl">

@@ -7,19 +7,15 @@
 // Input parameters: roles: { title: string; value: string }
 // Output: SingleStats component that displays the single stats with the title and value
 // *********************
-
-const SingleStats = ({ title, value }: { title: string; value: React.ReactNode }) => {
+import { ReactNode } from "react";
+const SingleStats = ({ title, value, icon }: { title: string; value: React.ReactNode; icon: ReactNode; }) => {
   return (
-    <div className="bg-white flex w-[400px] h-28 shadow-custom-white border-1 border-white items-center justify-between px-4 hover:scale-105 hover:ease-linear hover:duration-200 cursor-pointer">
+    <div className="bg-white flex gap-2 w-[300px] h-28 shadow-custom-white border-1 border-white rounded-md items-center justify-between px-4 hover:scale-105 hover:ease-linear hover:duration-200 cursor-pointer">
       <div>
-        <h3 className="text-blackPrimary text-xl font-bold">{title}</h3>
-        <p className="text-blackPrimary text-2xl font-bold">{value}</p>
+        <h3 className="text-blackPrimary text-lg font-bold">{title}</h3>
+        <p className="text-blackPrimary text-xl font-bold">{value}</p>
       </div>
-      <img
-        src="/src/assets/valueGraph.svg"
-        alt="Value Graph"
-        className="w-32"
-      />
+      {icon}
     </div>
   );
 };
