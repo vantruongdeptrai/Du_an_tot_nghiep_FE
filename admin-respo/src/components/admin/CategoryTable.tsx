@@ -47,6 +47,9 @@ const CategoryTable = () => {
                             Danh mục
                         </th>
                         <th scope="col" className="px-6 py-3">
+                            Ảnh
+                        </th>
+                        <th scope="col" className="px-6 py-3">
                             Hành động
                         </th>
                     </tr>
@@ -60,28 +63,38 @@ const CategoryTable = () => {
                             >
                                 {item.name}
                             </td>
-                            
-                            <td className="px-6 py-4 flex">
-                                
-                                    <Link
-                                        to={`/categories/${item.id}`}
-                                        className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
-                                    >
-                                        <HiOutlinePencil />
-                                    </Link>
-                                    <Link
-                                        to={`/categories/${item.id}`}
-                                        className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
-                                    >
-                                        <HiOutlineEye />
-                                    </Link>
-                                    <button
-                                        onClick={() => deleteCategory(`${item.id}`)}
-                                        className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
-                                    >
-                                        <HiOutlineTrash />
-                                    </button>
-                                
+                            <td className="px-6 py-4">
+                                <img
+                                    src={item.image_url}
+                                    alt={item.name}
+                                    style={{
+                                        width: "60px",
+                                        height: "60px",
+                                        objectFit: "contain",
+                                        borderRadius: "10px",
+                                    }}
+                                />
+                            </td>
+
+                            <td className="px-6 py-4 flex gap-3">
+                                <Link
+                                    to={`/categories/${item.id}`}
+                                    className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                >
+                                    <HiOutlinePencil />
+                                </Link>
+                                <Link
+                                    to={`/categories/${item.id}`}
+                                    className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                >
+                                    <HiOutlineEye />
+                                </Link>
+                                <button
+                                    onClick={() => deleteCategory(`${item.id}`)}
+                                    className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
+                                >
+                                    <HiOutlineTrash />
+                                </button>
                             </td>
                         </tr>
                     ))}
