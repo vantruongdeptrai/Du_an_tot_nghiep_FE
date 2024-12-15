@@ -14,14 +14,10 @@ const useCategory = () => {
     const [error, setError] = useState<string | null>(null);
     const queryClient = useQueryClient();
     const { id } = useParams();
-    const { data: categories, isLoading, isError } = useQuery<Category[]>(
-        ["categories"],
-        fetchCategories
-    )
+    const { data: categories, isLoading, isError } = useQuery<Category[]>(["categories"], fetchCategories);
     // Hàm lấy danh mục theo ID
     const getCategoryById = async (id: string | undefined) => {
         try {
-            
             const response = await axios.get(`http://localhost:8000/api/categories/${id}`);
             setCategorie(response.data);
         } catch (error) {
@@ -44,25 +40,23 @@ const useCategory = () => {
         }
 
         try {
-            
             await axios.post("http://localhost:8000/api/categories", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
+            queryClient.invalidateQueries(["categories"]);
             toast.success("Thêm mới danh mục thành công.");
         } catch (err) {
             toast.error("Lỗi cập nhất danh mục");
             console.log(err);
-            
         }
     };
 
     const updateCategory = async (data: categoryInput, file?: File) => {
         const formData = new FormData();
         formData.append("name", data.name);
-        formData.append("method", "put");
-        console.log(id);
+        formData.append("_method", "put");
 
         if (file) {
             formData.append("image", file);
@@ -74,6 +68,7 @@ const useCategory = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
+
             toast.success("Cập nhật danh mục thành công.");
         } catch (error) {
             toast.error("Lỗi cập nhất danh mục");
@@ -84,7 +79,6 @@ const useCategory = () => {
     const deleteCategory = async (id: string) => {
         try {
             if (window.confirm("Bạn thực sự muốn xóa?")) {
-                
                 await axios.delete("http://localhost:8000/api/categories/" + id);
                 toast.success("Xóa danh mục thành công.");
                 queryClient.invalidateQueries(["categories"]);
@@ -108,7 +102,7 @@ const useCategory = () => {
         deleteCategory,
         error,
         isLoading,
-        isError
+        isError,
     };
 };
 

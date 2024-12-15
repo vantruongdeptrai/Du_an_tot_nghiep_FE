@@ -68,7 +68,7 @@ const CartScreen = () => {
     const { coupons } = useCoupons();
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     console.log(carts);
-    
+
     //     if (user) {
     //         // Khi có user, lấy giỏ hàng từ API
     //         setCartItems(carts.cart || []);
@@ -91,57 +91,50 @@ const CartScreen = () => {
     }, [carts]);
 
     // Sử dụng useRef để lưu trữ timeout
-    // const debounceRef = useRef(null);
+    const debounceRef = useRef(null);
 
     const handleIncreaseQuantity = (cartId, size, color, productVariantId, quantity) => {
         // Cập nhật số lượng bằng cách sử dụng callback để lấy giá trị quantity hiện tại
         const updatedQuantity = quantity + 1;
-
-        // Cập nhật ngay lập tức số lượng trên UI
-        setCartItems((prevItems) => {
-            return prevItems.map((item) =>
-                item.cartId === cartId &&
-                item.size === size &&
-                item.color === color &&
-                item.productVariantId === productVariantId
-                    ? { ...item, quantity: updatedQuantity }
-                    : item
-            );
-        });
+        const updatedItems = cartItems.map((item) =>
+            item.product_variant_id === productVariantId &&
+            item.size === size &&
+            item.color === color &&
+            item.cart_id === cartId
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+        );
+        setCartItems(updatedItems);
 
         // // Hủy timeout trước đó nếu có
-        // clearTimeout(debounceRef.current);
+        clearTimeout(debounceRef.current);
 
         // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
-        // debounceRef.current = setTimeout(() => {
-        //     updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
-        // }, 1000);
-        updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        debounceRef.current = setTimeout(() => {
+            updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        }, 500);
     };
 
     const handleDecreaseQuantity = (cartId, size, color, productVariantId, quantity) => {
         const updatedQuantity = Math.max(quantity - 1, 1);
-
         // Cập nhật số lượng bằng cách sử dụng callback để lấy giá trị quantity hiện tại
-        setCartItems((prevItems) => {
-            return prevItems.map((item) =>
-                item.cartId === cartId &&
-                item.size === size &&
-                item.color === color &&
-                item.productVariantId === productVariantId
-                    ? { ...item, quantity: updatedQuantity }
-                    : item
-            );
-        });
+        const updatedItems = cartItems.map((item) =>
+            item.product_variant_id === productVariantId &&
+            item.size === size &&
+            item.color === color &&
+            item.cart_id === cartId
+                ? { ...item, quantity: item.quantity - 1 }
+                : item
+        );
+        setCartItems(updatedItems);
 
         // // Hủy timeout trước đó nếu có
-        // clearTimeout(debounceRef.current);
+        clearTimeout(debounceRef.current);
 
         // // Đợi 500ms sau khi người dùng ngừng thao tác để gọi API
-        // debounceRef.current = setTimeout(() => {
-        //     updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
-        // }, 1000);
-        updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        debounceRef.current = setTimeout(() => {
+            updateCart({ cartId, size, color, productVariantId, quantity: updatedQuantity });
+        }, 500);
     };
 
     // Hàm xử lý chọn hoặc bỏ chọn từng sản phẩm

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import SingleStats from "./SingleStats";
 import CountUp from "react-countup";
+import { useQueryTotalOrderDaily, useQueryTotalRevenueDay, useQueryTotalStatusOrderDaily } from "../hooks/useStatis";
+import { FaBoxOpen, FaCircleCheck, FaMoneyBillTrendUp } from "react-icons/fa6";
+import { FaTimesCircle } from "react-icons/fa";
+
 
 interface StatsProps {
     totalRevenue: { total_revenue: string };
@@ -13,19 +17,41 @@ interface StatsProps {
     soldProducts: Array<{ product_name: string; total_sold: number }> | undefined;
     totalSoldProducts: number;
 }
+interface StatusOrder {
+    order_date: string;
+    status_order: string;
+    total: number;
+}
 
 const Stats = ({
     totalRevenue = { total_revenue: "0" },
     bestSellers = { success: false, data: [] },
-    yearlyRevenue = 0,
-    dailyRevenue = 0,
-    monthlyRevenue = 0,
     revenueByCategory = [],
     orderStats = [], // Dữ liệu mới
-    soldProducts = [],
     totalSoldProducts,
 }: StatsProps) => {
-    const [selectedDate, setSelectedDate] = useState<string>("");
+    const getCurrentDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+    const [selectedDate, setSelectedDate] = useState<string>(getCurrentDate());
+    const { data: totalOrderSold } = useQueryTotalOrderDaily(selectedDate);
+    const { data: totalRevenueDaily } = useQueryTotalRevenueDay(selectedDate);
+    const { data: totalStatusOrderDaily } = useQueryTotalStatusOrderDaily(selectedDate);
+
+    const canceledOrders =
+        totalStatusOrderDaily
+            ?.filter((item: StatusOrder) => item.status_order === "Đã hủy")
+            .reduce((total: number, item: StatusOrder) => total + item.total, 0) || 0;
+
+    const completedOrders =
+        totalStatusOrderDaily
+            ?.filter((item: StatusOrder) => item.status_order === "Đã nhận hàng")
+            .reduce((total: number, item: StatusOrder) => total + item.total, 0) || 0;
+
     const revenueNumber = parseFloat(totalRevenue.total_revenue) || 0;
 
     const totalBestSellers =
@@ -42,7 +68,7 @@ const Stats = ({
     return (
         <div>
             <h2 className="text-3xl text-whiteSecondary font-bold mb-7">Balance Overview</h2>
-            <div className="mb-5 flex flex-row gap-2">
+            <div className="mb-5 flex flex-row items-center gap-2">
                 <label htmlFor="">Chọn ngày:</label>
                 <input
                     type="date"
@@ -55,15 +81,22 @@ const Stats = ({
                 {/* Hiển thị tổng doanh thu */}
 
                 <SingleStats
-                    title="Tổng doanh thu"
-                    value={<CountUp start={0} end={revenueNumber} duration={2.5} suffix=" VNĐ" separator="," />}
+                    title="Tổng doanh thu theo ngày"
+                    value={<CountUp start={0} end={totalRevenueDaily} duration={2.5} suffix=" VNĐ" separator="," />}
+                    icon={<FaMoneyBillTrendUp className="text-3xl text-blue-400" />}
+                />
+
+                <SingleStats
+                    title="Tổng đơn hàng"
+                    value={<CountUp start={0} end={totalOrderSold} duration={2.5} suffix=" đơn" separator="," />}
+                    icon={<FaBoxOpen className="text-3xl text-blue-400" />}
                 />
 
                 {/* Hiển thị tổng số lượng sản phẩm bán chạy */}
-                <SingleStats
+                {/* <SingleStats
                     title="Sản phẩm bán chạy"
                     value={<CountUp start={0} end={totalBestSellers} duration={1} suffix=" sản phẩm" separator="," />}
-                />
+                /> */}
 
                 {/* Hiển thị doanh thu theo năm
         <SingleStats
@@ -109,23 +142,25 @@ const Stats = ({
 
                 {/* Hiển thị doanh thu theo danh mục */}
                 <SingleStats
-                    title="Doanh thu theo danh mục"
+                    title="Đơn hàng đã giao"
                     value={
-                        <CountUp start={0} end={totalRevenueByCategory} duration={2.5} suffix=" VNĐ" separator="," />
+                        <CountUp start={0} end={completedOrders} duration={2.5} suffix=" đơn" separator="," />
                     }
+                    icon={<FaCircleCheck className="text-3xl text-green-400" />}
                 />
 
                 {/* Hiển thị tổng số đơn hàng */}
                 <SingleStats
-                    title="Tổng số đơn hàng"
+                    title="Đơn hàng đã bị hủy"
                     value={
                         <CountUp
                             start={0}
-                            end={totalOrders} // Sử dụng tổng số đơn hàng từ `orderStats`
+                            end={canceledOrders} // Sử dụng tổng số đơn hàng từ `orderStats`
                             duration={2.5}
                             separator=","
                         />
                     }
+                    icon={<FaTimesCircle className="text-3xl text-red-400" />}
                 />
 
                 {/* Hiển thị tổng số sản phẩm đã bán */}
