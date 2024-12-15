@@ -53,7 +53,9 @@ const useCoupon = () => {
             if (window.confirm("Are you sure you want to delete?")) {
                 await axios.delete(`http://localhost:8000/api/coupons/${id}`);
                 toast.success("Xóa mã giảm giá thành công.");
+
                 queryClient.invalidateQueries(["coupons"]);
+
             }
         } catch (err) {
             console.log(err);

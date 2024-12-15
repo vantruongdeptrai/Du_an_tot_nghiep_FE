@@ -71,7 +71,9 @@ const useCategory = () => {
 
             toast.success("Cập nhật danh mục thành công.");
         } catch (error) {
+
             toast.error("Lỗi cập nhất danh mục");
+
             console.error(error);
         }
     };
