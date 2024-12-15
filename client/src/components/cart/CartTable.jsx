@@ -107,7 +107,7 @@ const CartTable = ({
         }
 
         // Xác nhận xóa giỏ hàng
-        if (window.confirm("Bạn thực sự muốn xóa sản phẩm này?")) {
+        if (window.confirm("Bạn thực sự muốn xóa sản phẩm này khỏi giỏ hàng?")) {
             // Kiểm tra id có hợp lệ trước khi gọi deleteItem
             if (id) {
                 // Xóa sản phẩm khỏi cartItems

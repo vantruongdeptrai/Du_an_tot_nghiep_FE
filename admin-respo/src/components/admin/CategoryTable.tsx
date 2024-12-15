@@ -37,9 +37,7 @@ const CategoryTable = () => {
                         <th scope="col" className="px-6 py-3">
                             Danh mục
                         </th>
-                        <th scope="col" className="px-6 py-3">
-                            Hình ảnh
-                        </th>
+                        
                         <th scope="col" className="px-6 py-3">
                             Hành động
                         </th>
@@ -55,7 +53,7 @@ const CategoryTable = () => {
                                 {item.name}
                             </th>
                             <td className="px-6 py-4">
-                                <img
+                                {/* <img
                                     src={item.image_url}
                                     alt={item.name}
                                     style={{
@@ -64,7 +62,7 @@ const CategoryTable = () => {
                                         objectFit: "cover",
                                         borderRadius: "8px",
                                     }}
-                                />
+                                /> */}
                             </td>
                             <td className="px-6 py-4">
                                 <div
