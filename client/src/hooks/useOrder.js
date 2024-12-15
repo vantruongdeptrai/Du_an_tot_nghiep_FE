@@ -111,7 +111,7 @@ const useOrder = () => {
         try {
             if (window.confirm("Are you sure you want to delete this order?")) {
                 await apiClient.delete(`/orders/${id}`);
-                toast.success("Order deleted successfully!");
+                toast.success("xóa giỏ hàng thành công.");
             }
         } catch (error) {
             toast.error("Error deleting order.");

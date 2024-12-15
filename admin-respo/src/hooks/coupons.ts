@@ -3,80 +3,65 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { Coupon, CouponInput } from "../api/coupons/type";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+const getCoupons = async () => {
+    const response = await axios.get("http://localhost:8000/api/coupons");
+    return response.data;
+};
 const useCoupon = () => {
     const { id } = useParams();
-    const [coupons, setCoupons] = useState<Coupon[]>([]);
     const [coupon, setCoupon] = useState<Coupon>();
-    const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
 
-    const getCoupons = async () => {
-        try {
-            setIsLoading(true);
-            const response = await axios.get("http://localhost:8000/api/coupons");
-            setCoupons(response.data);
-        } catch (err) {
-            setError("Failed to fetch Coupons");
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const queryClient = useQueryClient();
+
+    // Query để lấy danh sách coupon
+    const { data: coupons = [], isLoading, error } = useQuery<Coupon[]>(["coupons"], getCoupons);
 
     const getCouponById = async (id: string) => {
         try {
-            setIsLoading(true);
             const response = await axios.get(`http://localhost:8000/api/coupons/${id}`);
             setCoupon(response.data);
         } catch (err) {
-            setError("Failed to fetch Coupons");
-        } finally {
-            setIsLoading(false);
+            console.log(err);
+            toast.error("Có lỗi ở phần lấy mã giảm giá theo id.");
         }
     };
 
     const addCoupon = async (data: CouponInput) => {
         try {
-            setIsLoading(true);
             await axios.post("http://localhost:8000/api/coupons", data);
-            toast.success("Coupon added successfully");
+            toast.success("Thêm mã giảm giá thành công.");
         } catch (err) {
-            setError("Failed to add Coupon");
-        } finally {
-            setIsLoading(false);
+            console.log(err);
+            toast.error("Có lỗi ở phần thêm mới mã giảm giá.");
         }
     };
 
-    const editCoupon = async (data: CouponInput) => {
+    const editCoupon = async (data: CouponInput, id: string) => {
         try {
-            setIsLoading(true);
             await axios.put(`http://localhost:8000/api/coupons/${id}`, data);
-            toast.success("Coupon edited successfully");
+            toast.success("Cập nhật mã giảm giá thành công.");
         } catch (err) {
-            setError("Failed to edit Coupon");
-        } finally {
-            setIsLoading(false);
+            console.log(err);
+            toast.error("Có lỗi ở phần cập nhật mã giảm giá.");
         }
     };
 
     const deleteCoupon = async (id: string) => {
         try {
             if (window.confirm("Are you sure you want to delete?")) {
-                setIsLoading(true);
                 await axios.delete(`http://localhost:8000/api/coupons/${id}`);
-                toast.success("Coupon deleted successfully");
-                getCoupons();
+                toast.success("Xóa mã giảm giá thành công.");
+
+                queryClient.invalidateQueries(["coupons"]);
+
             }
         } catch (err) {
-            setError("Failed to delete Coupon");
-        } finally {
-            setIsLoading(false);
+            console.log(err);
+            toast.error("Có lỗi ở phần xóa mã giảm giá.");
         }
     };
-
-    useEffect(() => {
-        getCoupons();
-    }, []);
 
     useEffect(() => {
         if (!id) return;

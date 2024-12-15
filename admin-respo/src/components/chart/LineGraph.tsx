@@ -13,6 +13,7 @@ import { useAppSelector } from "../../hooks";
 import { useStats } from "../../hooks/useStatistical";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import Loader from "../loader/Loader";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -28,7 +29,9 @@ const LineGraph = () => {
         () => fetchMonthlyRevenue(selectedYear) // Truyền năm vào hàm fetchMonthlyRevenue
     );
 
-    if (isLoading) return <div>Đang tải dữ liệu...</div>;
+    if (isLoading) return <div>
+        <Loader />
+    </div>;
     if (isError) return <div>Đã xảy ra lỗi khi lấy dữ liệu</div>;
 
     // Kiểm tra xem dữ liệu có phải là mảng không và có chứa key revenues không

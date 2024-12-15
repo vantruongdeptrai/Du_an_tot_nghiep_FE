@@ -2,15 +2,17 @@ import { Link } from "react-router-dom";
 import { HiOutlinePencil, HiOutlineTrash, HiOutlineEye } from "react-icons/hi";
 import useCategory from "../../hooks/category";
 import { useState } from "react";
+import Loader from "../loader/Loader";
 
 const CategoryTable = () => {
-    const { categories, deleteCategory } = useCategory();
+    const { categories, isLoading, deleteCategory } = useCategory();
     const [currentPage, setCurrentPage] = useState(1);
     const categoriesPerPage = 5;
     const indexOfLastCategory = currentPage * categoriesPerPage;
     const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage;
-    const currentCategories = categories.slice(indexOfFirstCategory, indexOfLastCategory);
-    const totalPages = Math.ceil(categories.length / categoriesPerPage);
+    const categoriesList = Array.isArray(categories) ? categories : [];
+    const currentCategories = categoriesList.slice(indexOfFirstCategory, indexOfLastCategory);
+    const totalPages = Math.ceil(categoriesList.length / categoriesPerPage);
     const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
     const goToPreviousPage = () => {
         if (currentPage > 1) {
@@ -23,6 +25,13 @@ const CategoryTable = () => {
             setCurrentPage(currentPage + 1);
         }
     };
+    if (isLoading) {
+        return (
+            <div>
+                <Loader />
+            </div>
+        );
+    }
 
     return (
         <div

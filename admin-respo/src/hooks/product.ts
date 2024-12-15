@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import { Product, ProductInput } from "../api/products/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useProduct = () => {
     // const [products, setProducts] = useState<Product[]>([]);
@@ -11,6 +11,7 @@ const useProduct = () => {
     const [error, setError] = useState<string | null>(null);
     // const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
+    const queryClient = useQueryClient(); 
     const getProducts = async () => {
         const response = await axios.get("http://localhost:8000/api/products");
         return response.data; // Trả về dữ liệu sản phẩm
@@ -41,9 +42,9 @@ const useProduct = () => {
         formData.append("name", data.name);
         // formData.append("price", data.price);
         formData.append("description", data.description);
-        formData.append("quantity", data.quantity);
+        // formData.append("quantity", data.quantity);
         // formData.append("sale_price", data.sale_price);
-        formData.append("sale_start", data.sale_start);
+        // formData.append("sale_start", data.sale_start);
         formData.append("category_id", data.category_id);
         formData.append("new_product", String(Number(data.new_product)));
         formData.append("best_seller_product", String(Number(data.best_seller_product)));
@@ -60,11 +61,12 @@ const useProduct = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Product added successfully");
+            toast.success("Thêm sản phẩm mới thành công.");
             const productData = response.data;
             return productData;
         } catch (err) {
-            setError("Failed to create Product");
+            console.log(err);
+            
         }
     };
 
@@ -84,7 +86,7 @@ const useProduct = () => {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Product edit successfully");
+            toast.success("Cập nhật sản phẩm thành công.");
         } catch (error) {
             console.error("Error updating Product:", error);
         }
@@ -95,17 +97,15 @@ const useProduct = () => {
       if (window.confirm("Are you sure you want to delete")) {
         
         await axios.delete("http://localhost:8000/api/products/" + id);
-        toast.success("Product delete successfully");
-        getProducts();
+        toast.success("Xóa sản phẩm thành công.");
+
+        queryClient.invalidateQueries(["products"]);
+
       }
     } catch (err) {
       setError("Failed to fetch permissions");
     }
   };
-
-  useEffect(() => {
-    getProducts();
-  }, []);
   useEffect(() => {
     if (!id) return;
     getProductById(id);

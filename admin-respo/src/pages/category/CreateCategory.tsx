@@ -36,7 +36,7 @@ const CreateCategory = () => {
   // Hàm xử lý khi form được submit
   const onSubmit: SubmitHandler<categoryInput> = (data) => {
     createCategory(data, selectedFile || undefined);
-    // nav("/categories");
+    nav("/categories");
   };
 
   return (
@@ -106,7 +106,7 @@ const CreateCategory = () => {
                         </span>{" "}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-whiteSecondary">
-                        SVG, PNG, JPG, or GIF (MAX. 800x400px)
+                        SVG, PNG, JPG, or GIF
                       </p>
                     </div>
                     <input

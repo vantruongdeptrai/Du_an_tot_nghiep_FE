@@ -3,37 +3,31 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Category, categoryInput } from "../api/categories/types";
 import { useParams } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+const fetchCategories = async () => {
+    const response = await axios.get("http://localhost:8000/api/categories");
+    return response.data.categories;
+};
 const useCategory = () => {
-    const [categories, setCategories] = useState<Category[]>([]);
     const [categorie, setCategorie] = useState<Category>();
     const [error, setError] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
     const { id } = useParams();
-    const fetchCategories = async () => {
-        try {
-            setIsLoading(true);
-            const respon = await axios.get("http://localhost:8000/api/categories");
-            setCategories(respon.data.categories); 
-        } catch (err) {
-            setError("Failed to fetch permissions");
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
+    const { data: categories, isLoading, isError } = useQuery<Category[]>(
+        ["categories"],
+        fetchCategories
+    )
     // Hàm lấy danh mục theo ID
     const getCategoryById = async (id: string | undefined) => {
         try {
-            setIsLoading(true);
+            
             const response = await axios.get(`http://localhost:8000/api/categories/${id}`);
             setCategorie(response.data);
         } catch (error) {
-            setError("Category not found");
+            toast.error("Lỗi lấy danh mục theo id!");
             console.error("Error fetching category by ID:", error);
             return null;
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -48,65 +42,62 @@ const useCategory = () => {
         if (file) {
             formData.append("image", file);
         }
-        
 
         try {
-            setIsLoading(true);
+            
             await axios.post("http://localhost:8000/api/categories", formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Category added successfully");
+            toast.success("Thêm mới danh mục thành công.");
         } catch (err) {
-            setError("Failed to create category");
-        } finally {
-            setIsLoading(false);
+            toast.error("Lỗi cập nhất danh mục");
+            console.log(err);
+            
         }
     };
-
 
     const updateCategory = async (data: categoryInput, file?: File) => {
         const formData = new FormData();
         formData.append("name", data.name);
-        formData.append('_method', 'put');
+
+        formData.append("method", "put");
+
         console.log(id);
 
         if (file) {
             formData.append("image", file);
         }
-        
+
         try {
             await axios.post("http://localhost:8000/api/categories/" + id, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            toast.success("Category edit successfully");
+            toast.success("Cập nhật danh mục thành công.");
         } catch (error) {
-            console.error("Error updating category:", error);
+
+            toast.error("Lỗi cập nhất danh mục");
+
+            console.error(error);
         }
     };
-
 
     const deleteCategory = async (id: string) => {
         try {
-            if (window.confirm("Are you sure you want to delete")) {
-                setIsLoading(true);
+            if (window.confirm("Bạn thực sự muốn xóa?")) {
+
+                
                 await axios.delete("http://localhost:8000/api/categories/" + id);
-                toast.success("Category delete successfully");
-                fetchCategories();
+                toast.success("Xóa danh mục thành công.");
+                queryClient.invalidateQueries(["categories"]);
             }
         } catch (err) {
             setError("Failed to fetch permissions");
-        } finally {
-            setIsLoading(false);
         }
     };
-
-    useEffect(() => {
-        fetchCategories();
-    }, []);
     useEffect(() => {
         if (!id) return;
         getCategoryById(id);
@@ -122,6 +113,7 @@ const useCategory = () => {
         deleteCategory,
         error,
         isLoading,
+        isError
     };
 };
 
