@@ -47,9 +47,6 @@ const CategoryTable = () => {
                             Danh mục
                         </th>
                         <th scope="col" className="px-6 py-3">
-                            Hình ảnh
-                        </th>
-                        <th scope="col" className="px-6 py-3">
                             Hành động
                         </th>
                     </tr>
@@ -57,32 +54,15 @@ const CategoryTable = () => {
                 <tbody>
                     {currentCategories.map((item, index) => (
                         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <th
+                            <td
                                 scope="row"
                                 className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                             >
                                 {item.name}
-                            </th>
-                            <td className="px-6 py-4">
-                                <img
-                                    src={item.image_url}
-                                    alt={item.name}
-                                    style={{
-                                        width: "50px",
-                                        height: "50px",
-                                        objectFit: "cover",
-                                        borderRadius: "8px",
-                                    }}
-                                />
                             </td>
-                            <td className="px-6 py-4">
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        gap: "8px",
-                                    }}
-                                >
+                            
+                            <td className="px-6 py-4 flex">
+                                
                                     <Link
                                         to={`/categories/${item.id}`}
                                         className="flex justify-center items-center w-8 h-8 border border-gray-500 rounded text-gray-800 hover:bg-slate-400"
@@ -101,7 +81,7 @@ const CategoryTable = () => {
                                     >
                                         <HiOutlineTrash />
                                     </button>
-                                </div>
+                                
                             </td>
                         </tr>
                     ))}
