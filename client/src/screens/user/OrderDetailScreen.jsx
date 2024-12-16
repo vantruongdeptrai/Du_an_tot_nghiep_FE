@@ -79,17 +79,17 @@ const OrderDetailStatusWrapper = styled.div`
             }
 
             &:nth-child(2) {
-                left: calc(20% - 10px);
+                left: calc(25% - 10px);
             }
 
             &:nth-child(3) {
-                left: calc(40% - 10px);
+                left: calc(50% - 10px);
             }
             &:nth-child(4) {
-                left: calc(60% - 10px);
+                left: calc(75% - 10px);
             }
             &:nth-child(5) {
-                left: calc(80% - 10px);
+                right: 0;
             }
             &:nth-child(6) {
                 right: 0;
@@ -326,7 +326,7 @@ const OrderDetailScreen = () => {
                                             orderDetail.status_order === "Đã xác nhận" ||
                                             orderDetail.status_order === "Đang chuẩn bị" ||
                                             orderDetail.status_order === "Đang vận chuyển" ||
-                                            orderDetail.status_order === "Giao thành công" ||
+                                            orderDetail.status_order === "Giao hàng thành công" ||
                                             orderDetail.status_order === "Đã nhận hàng"
                                                 ? "status-done"
                                                 : ""
@@ -343,7 +343,7 @@ const OrderDetailScreen = () => {
                                             orderDetail.status_order === "Đã xác nhận" ||
                                             orderDetail.status_order === "Đang chuẩn bị" ||
                                             orderDetail.status_order === "Đang vận chuyển" ||
-                                            orderDetail.status_order === "Giao thành công" ||
+                                            orderDetail.status_order === "Giao hàng thành công" ||
                                             orderDetail.status_order === "Đã nhận hàng"
                                                 ? "status-done"
                                                 : ""
@@ -358,7 +358,7 @@ const OrderDetailScreen = () => {
                                         className={`order-status-dot ${
                                             orderDetail.status_order === "Đang chuẩn bị" ||
                                             orderDetail.status_order === "Đang vận chuyển" ||
-                                            orderDetail.status_order === "Giao thành công" ||
+                                            orderDetail.status_order === "Giao hàng thành công" ||
                                             orderDetail.status_order === "Đã nhận hàng"
                                                 ? "status-done"
                                                 : ""
@@ -373,7 +373,7 @@ const OrderDetailScreen = () => {
                                     <div
                                         className={`order-status-dot ${
                                             orderDetail.status_order === "Đang vận chuyển" ||
-                                            orderDetail.status_order === "Giao thành công" ||
+                                            orderDetail.status_order === "Giao hàng thành công" ||
                                             orderDetail.status_order === "Đã nhận hàng"
                                                 ? "status-done"
                                                 : ""
@@ -384,29 +384,21 @@ const OrderDetailScreen = () => {
                                         </span>
                                     </div>
 
-                                    {/* Trạng thái "Giao thành công" */}
+                                    {/* Trạng thái "Giao hàng thành công" */}
                                     <div
                                         className={`order-status-dot ${
-                                            orderDetail.status_order === "Giao thành công" ||
+                                            orderDetail.status_order === "Giao hàng thành công" ||
                                             orderDetail.status_order === "Đã nhận hàng"
                                                 ? "status-done"
                                                 : ""
                                         } bg-silver`}
                                     >
                                         <span className="order-status-text font-semibold text-center no-wrap text-silver">
-                                            Giao thành công
+                                            Giao hàng thành công
                                         </span>
                                     </div>
 
-                                    <div
-                                        className={`order-status-dot ${
-                                            orderDetail.status_order === "Đã nhận hàng" ? "status-done" : ""
-                                        } bg-silver`}
-                                    >
-                                        <span className="order-status-text font-semibold text-center no-wrap text-silver">
-                                            Đã nhận hàng
-                                        </span>
-                                    </div>
+
                                 </div>
                             </OrderDetailStatusWrapper>
 

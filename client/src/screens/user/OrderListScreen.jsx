@@ -50,8 +50,6 @@ const OrderListScreen = () => {
     const sortOrder = [...userOrders].sort((a, b) => Number(b.id) - Number(a.id));
     console.log(sortOrder); // In ra mảng đã sắp xếp
 
-    const guestOrder = JSON.parse(localStorage.getItem("guestOrder"));
-
     if (isLoading) {
         return <p>
             <Loader />

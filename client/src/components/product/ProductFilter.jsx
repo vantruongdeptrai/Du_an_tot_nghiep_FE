@@ -8,9 +8,7 @@ import {
     ProductCategoryFilter,
     SizesFilter,
 } from "../../styles/filter";
-import { ProductFilterList } from "../../data/data";
 import useCategory from "../../hooks/useCategory";
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 const ProductFilter = ({
@@ -175,7 +173,7 @@ const ProductFilter = ({
                             type="range"
                             className="min w-full"
                             min="0"
-                            max="3000000" // Thay đổi max thành 20000000
+                            max="2000000" // Thay đổi max thành 20000000
                             value={minRange}
                             step="1000" // Thay đổi bước nhảy thành 1000
                             name="min"

@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-const getTotalOrderDaily = async (date: string) => {
-    const response = await axios.get(`http://localhost:8000/api/order-statistics?date=${date}`);
-    return response.data.data.total_orders;
-};
+// const getTotalOrderDaily = async (date: string) => {
+//     const response = await axios.get(`http://localhost:8000/api/order-statistics?date=${date}`);
+//     return response.data.data.total_orders;
+// };
 
 const getMonthlyRevenue = async (year: string) => {
     try {
@@ -16,12 +16,17 @@ const getMonthlyRevenue = async (year: string) => {
 };
 
 const getTotalStatusOrderDaily = async (date: string) => {
-    const response = await axios.get(`http://127.0.0.1:8000/api/order-StatsByDate?date=${date}`);
-    return response.data;
+    const response = await axios.get(`http://127.0.0.1:8000/api/order-stats-d?date=${date}`);
+    return response.data.data;
+};
+
+const getTotalRevenueProductSold = async (date: string) => {
+    const response = await axios.get(`http://127.0.0.1:8000/api/sold-products-count-by-day?date=${date}`);
+    return response.data.data.products;
 };
 
 const getTotalRevenueDay = async (date: string) => {
-    const response = await axios.get(`http://localhost:8000/api/revenue/day?date=${date}`);
+    const response = await axios.get(`http://localhost:8000/api/revenue-by-date?date=${date}`);
     return response.data.total_revenue;
 };
 
@@ -30,14 +35,20 @@ const getTotalRevenueDaily = async (month: string, year: string) => {
     return response.data;
 };
 
-export const useQueryTotalOrderDaily = (date: string) => {
-    return useQuery(["totalOrderDaily", date], () => getTotalOrderDaily(date), {
+// export const useQueryTotalOrderDaily = (date: string) => {
+//     return useQuery(["totalOrderDaily", date], () => getTotalOrderDaily(date), {
+//         enabled: !!date,
+//     });
+// };
+
+export const useQueryTotalRevenueDay = (date: string) => {
+    return useQuery(["totalRevenueDaily", date], () => getTotalRevenueDay(date), {
         enabled: !!date,
     });
 };
 
-export const useQueryTotalRevenueDay = (date: string) => {
-    return useQuery(["totalRevenueDaily", date], () => getTotalRevenueDay(date), {
+export const useQueryTotalRevenueProductSold = (date: string) => {
+    return useQuery(["totalRevenueProductSold", date], () => getTotalRevenueProductSold(date), {
         enabled: !!date,
     });
 };

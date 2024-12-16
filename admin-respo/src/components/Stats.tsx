@@ -1,10 +1,14 @@
 import { useState } from "react";
 import SingleStats from "./SingleStats";
 import CountUp from "react-countup";
-import { useQueryTotalOrderDaily, useQueryTotalRevenueDay, useQueryTotalStatusOrderDaily } from "../hooks/useStatis";
+import {
+    useQueryTotalOrderDaily,
+    useQueryTotalRevenueDay,
+    useQueryTotalRevenueProductSold,
+    useQueryTotalStatusOrderDaily,
+} from "../hooks/useStatis";
 import { FaBoxOpen, FaCircleCheck, FaMoneyBillTrendUp } from "react-icons/fa6";
-import { FaTimesCircle } from "react-icons/fa";
-
+import { FaClipboardList, FaTimesCircle } from "react-icons/fa";
 
 interface StatsProps {
     totalRevenue: { total_revenue: string };
@@ -19,7 +23,7 @@ interface StatsProps {
 }
 interface StatusOrder {
     order_date: string;
-    status_order: string;
+    status: string;
     total: number;
 }
 
@@ -38,18 +42,33 @@ const Stats = ({
         return `${year}-${month}-${day}`;
     };
     const [selectedDate, setSelectedDate] = useState<string>(getCurrentDate());
-    const { data: totalOrderSold } = useQueryTotalOrderDaily(selectedDate);
+    // const { data: totalOrderSold } = useQueryTotalOrderDaily(selectedDate);
     const { data: totalRevenueDaily } = useQueryTotalRevenueDay(selectedDate);
     const { data: totalStatusOrderDaily } = useQueryTotalStatusOrderDaily(selectedDate);
+    const { data: totalProductSold } = useQueryTotalRevenueProductSold(selectedDate);
+    const totalProductSoldDay = Array.isArray(totalProductSold)
+        ? totalProductSold.reduce((acc, item) => acc + (item.total_sold || 0), 0)
+        : 0;
+    console.log(totalProductSoldDay);
+
+    const pendingdOrders =
+        totalStatusOrderDaily
+            ?.filter((item: StatusOrder) => item.status === "Chờ xác nhận")
+            .reduce((total: number, item: StatusOrder) => total + item.total, 0) || 0;
+
+    const totaldOrders =
+        totalStatusOrderDaily
+            ?.filter((item: StatusOrder) => item.status)
+            .reduce((total: number, item: StatusOrder) => total + item.total, 0) || 0;
 
     const canceledOrders =
         totalStatusOrderDaily
-            ?.filter((item: StatusOrder) => item.status_order === "Đã hủy")
+            ?.filter((item: StatusOrder) => item.status === "Đã hủy")
             .reduce((total: number, item: StatusOrder) => total + item.total, 0) || 0;
 
     const completedOrders =
         totalStatusOrderDaily
-            ?.filter((item: StatusOrder) => item.status_order === "Đã nhận hàng")
+            ?.filter((item: StatusOrder) => item.status === "Giao hàng thành công")
             .reduce((total: number, item: StatusOrder) => total + item.total, 0) || 0;
 
     const revenueNumber = parseFloat(totalRevenue.total_revenue) || 0;
@@ -81,70 +100,75 @@ const Stats = ({
                 {/* Hiển thị tổng doanh thu */}
 
                 <SingleStats
-                    title="Tổng doanh thu theo ngày"
-                    value={<CountUp start={0} end={totalRevenueDaily} duration={2.5} suffix=" VNĐ" separator="," />}
+                    title="Tổng doanh thu ngày"
+                    value={
+                        <CountUp
+                            style={{ fontSize: 18, fontWeight: "normal" }}
+                            start={0}
+                            end={totalRevenueDaily}
+                            duration={2.5}
+                            suffix=" VNĐ"
+                            separator=","
+                        />
+                    }
                     icon={<FaMoneyBillTrendUp className="text-3xl text-blue-400" />}
                 />
 
                 <SingleStats
-                    title="Tổng đơn hàng"
-                    value={<CountUp start={0} end={totalOrderSold} duration={2.5} suffix=" đơn" separator="," />}
+                    title="Đơn hàng đã đặt"
+                    value={
+                        <CountUp
+                            style={{ fontSize: 18, fontWeight: "normal" }}
+                            start={0}
+                            end={totaldOrders}
+                            duration={2.5}
+                            suffix=" đơn"
+                            separator=","
+                        />
+                    }
                     icon={<FaBoxOpen className="text-3xl text-blue-400" />}
                 />
-
-                {/* Hiển thị tổng số lượng sản phẩm bán chạy */}
-                {/* <SingleStats
-                    title="Sản phẩm bán chạy"
-                    value={<CountUp start={0} end={totalBestSellers} duration={1} suffix=" sản phẩm" separator="," />}
-                /> */}
-
-                {/* Hiển thị doanh thu theo năm
-        <SingleStats
-          title="Doanh thu theo năm"
-          value={
-            <CountUp
-              start={0}
-              end={yearlyRevenue}
-              duration={2.5}
-              suffix=" VNĐ"
-              separator=","
-            />
-          }
-        /> */}
-
-                {/* Hiển thị doanh thu theo ngày
-        <SingleStats
-          title="Doanh thu hôm nay"
-          value={
-            <CountUp
-              start={0}
-              end={dailyRevenue}
-              duration={2.5}
-              suffix=" VNĐ"
-              separator=","
-            />
-          }
-        /> */}
-
-                {/* Hiển thị doanh thu theo tháng
-        <SingleStats
-          title="Doanh thu tháng này"
-          value={
-            <CountUp
-              start={0}
-              end={monthlyRevenue}
-              duration={2.5}
-              suffix=" VNĐ"
-              separator=","
-            />
-          }
-        /> */}
+                {/* Hiển thị tổng số sản phẩm đã bán */}
+                <SingleStats
+                    title="Tổng sản phẩm đã bán"
+                    value={
+                        <CountUp
+                            style={{ fontSize: 18, fontWeight: "normal" }}
+                            start={0}
+                            end={totalProductSoldDay} // Sử dụng tổng số đơn hàng từ `orderStats`
+                            duration={2.5}
+                            suffix=" sản phẩm"
+                        />
+                    }
+                    icon={<FaClipboardList className="text-3xl text-orange-300" />}
+                />
+                <SingleStats
+                    title="Đơn hàng đang chờ xử lý"
+                    value={
+                        <CountUp
+                            style={{ fontSize: 18, fontWeight: "normal" }}
+                            start={0}
+                            end={pendingdOrders}
+                            duration={2.5}
+                            suffix=" đơn"
+                            separator=","
+                        />
+                    }
+                    icon={<FaBoxOpen className="text-3xl text-blue-400" />}
+                />
 
                 {/* Hiển thị doanh thu theo danh mục */}
                 <SingleStats
                     title="Đơn hàng đã giao"
                     value={
-                        <CountUp start={0} end={completedOrders} duration={2.5} suffix=" đơn" separator="," />
+                        <CountUp
+                            style={{ fontSize: 18, fontWeight: "normal" }}
+                            start={0}
+                            end={completedOrders}
+                            duration={2.5}
+                            suffix=" đơn"
+                            separator=","
+                        />
                     }
                     icon={<FaCircleCheck className="text-3xl text-green-400" />}
                 />
@@ -154,21 +178,14 @@ const Stats = ({
                     title="Đơn hàng đã bị hủy"
                     value={
                         <CountUp
+                            style={{ fontSize: 18, fontWeight: "normal" }}
                             start={0}
                             end={canceledOrders} // Sử dụng tổng số đơn hàng từ `orderStats`
                             duration={2.5}
-                            separator=","
+                            suffix=" đơn"
                         />
                     }
                     icon={<FaTimesCircle className="text-3xl text-red-400" />}
-                />
-
-                {/* Hiển thị tổng số sản phẩm đã bán */}
-                <SingleStats
-                    title="Tổng sản phẩm đã bán"
-                    value={
-                        <CountUp start={0} end={totalSoldProducts} duration={2.5} separator="," suffix=" sản phẩm" />
-                    }
                 />
             </div>
         </div>
