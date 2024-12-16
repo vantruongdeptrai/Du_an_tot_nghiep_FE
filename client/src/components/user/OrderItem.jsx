@@ -113,6 +113,7 @@ const OrderItemWrapper = styled.div`
         color: ${defaultTheme.color_white};
         border: none;
     }
+    
 `;
 
 const OrderItem = ({ order, guestOrder }) => {
@@ -125,7 +126,6 @@ const OrderItem = ({ order, guestOrder }) => {
     const [isModalCommentOpen, setIsModalCommentOpen] = useState({});
     const [hasReviewed, setHasReviewed] = useState(false);
     const [autoConfirmTimeout, setAutoConfirmTimeout] = useState(null);
-
     // const nav = useNavigate();
     const users = localStorage.getItem("userInfo");
 
@@ -162,6 +162,7 @@ const OrderItem = ({ order, guestOrder }) => {
             setAutoConfirmTimeout(null);
         }
     };
+    
 
     useEffect(() => {
         // Gọi initiateAutoConfirm khi component được render và trạng thái là "Chờ xác nhận"
@@ -380,6 +381,7 @@ const OrderItem = ({ order, guestOrder }) => {
                         onConfirm={handleCancelOrder} // Hành động xóa đơn hàng khi nhấn Confirm
                     />
                 </div>
+                
             )}
         </OrderItemWrapper>
     );

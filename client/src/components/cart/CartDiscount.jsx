@@ -63,7 +63,6 @@ const CartDiscount = ({ coupons, setAppliedCoupon, selectedItems }) => {
     const handleSelectCoupon = (coupon) => {
         setCouponCode(coupon.name);
         setModalOpen(false); // Đóng modal
-        setAppliedCoupon(coupon); // Cập nhật mã giảm giá
     };
     const handleApplyCoupon = (e) => {
         e.preventDefault();
