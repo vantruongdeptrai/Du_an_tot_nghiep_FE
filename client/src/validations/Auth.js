@@ -17,4 +17,8 @@ const loginSchema = z.object({
     password: z.string().min(8, "Mật khẩu tối thiểu 8 ký tự!"),
 });
 
-export { registerSchema, loginSchema };
+const forgotPasswordSchema = z.object({
+    email: z.string().trim().email("Email không hợp lệ!"),
+});
+
+export { registerSchema, loginSchema, forgotPasswordSchema };
