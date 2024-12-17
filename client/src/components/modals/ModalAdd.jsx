@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
+import { provinces } from "../../data/data";
+import { useState } from "react";
 
 const ModalWrapper = styled.div`
     position: fixed;
@@ -63,6 +65,20 @@ const ModalWrapper = styled.div`
                 }
             }
 
+            select {
+                width: 100%;
+                padding: 12px;
+                font-size: 16px;
+                border: 1px solid ${defaultTheme.color_gray_light};
+                border-radius: 6px;
+                outline: none;
+                transition: border-color 0.2s;
+
+                &:focus {
+                    border-color: ${defaultTheme.color_primary};
+                }
+            }
+
             span {
                 color: ${defaultTheme.color_red};
                 font-size: 14px;
@@ -107,10 +123,13 @@ const ModalWrapper = styled.div`
 
 const AddressModal = ({ isOpen, onClose, onConfirm }) => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
+    const [selectedProvince, setSelectedProvince] = useState(null); // Tỉnh được chọn
+    const [selectedDistrict, setSelectedDistrict] = useState(null); // Quận được chọn
     const {
         register,
         handleSubmit,
         reset,
+        setValue,
         formState: { errors },
     } = useForm();
 
@@ -131,6 +150,19 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
         };
         // Gọi hàm onConfirm từ parent component với dữ liệu từ form
         onConfirm(payload);
+    };
+    const handleProvinceChange = (event) => {
+        const province = provinces.find((prov) => prov.name === event.target.value);
+        setSelectedProvince(province);
+        setSelectedDistrict(null); // Reset quận khi đổi tỉnh
+        setValue("district", ""); // Reset giá trị district
+        setValue("ward", ""); // Reset giá trị ward
+    };
+    // Xử lý chọn quận/huyện
+    const handleDistrictChange = (event) => {
+        const district = selectedProvince?.districts.find((dist) => dist.name === event.target.value);
+        setSelectedDistrict(district);
+        setValue("ward", ""); // Reset xã/phường khi chọn quận/huyện mới
     };
 
     const handleClose = () => {
@@ -156,37 +188,69 @@ const AddressModal = ({ isOpen, onClose, onConfirm }) => {
                     </div>
                     <div>
                         <label htmlFor="city">Tỉnh / Thành phố</label>
-                        <input
+                        <select
                             id="city"
-                            type="text"
                             {...register("city", { required: "Không được bỏ trống!" })}
-                            placeholder="Tỉnh / Thành phố..."
-                        />
+                            defaultValue=""
+                            onChange={handleProvinceChange}
+                        >
+                            <option value="" disabled>
+                                Chọn tỉnh / thành phố...
+                            </option>
+                            {provinces.map((province) => (
+                                <option key={province.id} value={province.name}>
+                                    {province.name}
+                                </option>
+                            ))}
+                        </select>
                         {errors.city && <span>{errors.city.message}</span>}
                     </div>
 
                     <div>
                         <label htmlFor="district">Quận / Huyện</label>
-                        <input
+                        <select
                             id="district"
-                            type="text"
                             {...register("district", { required: "Không được bỏ trống!" })}
-                            placeholder="Quận / Huyện..."
-                        />
-                        {errors.district && <span>{errors.district.message}</span>}{" "}
+                            defaultValue=""
+                            onChange={(event) => {
+                                const district = selectedProvince?.districts.find(
+                                    (dist) => dist.name === event.target.value
+                                );
+                                setSelectedDistrict(district);
+                            }}
+                            disabled={!selectedProvince} // Vô hiệu hóa nếu chưa chọn tỉnh
+                        >
+                            <option value="" disabled>
+                                Chọn quận / huyện...
+                            </option>
+                            {selectedProvince?.districts.map((district) => (
+                                <option key={district.id} value={district.name}>
+                                    {district.name}
+                                </option>
+                            ))}
+                        </select>
+                        {errors.district && <span>{errors.district.message}</span>}
                     </div>
 
                     <div>
                         <label htmlFor="ward">Xã / Phường</label>
-                        <input
+                        <select
                             id="ward"
-                            type="text"
                             {...register("ward", { required: "Không được bỏ trống!" })}
-                            placeholder="Xã / Phường..."
-                        />
+                            defaultValue=""
+                            disabled={!selectedDistrict}
+                        >
+                            <option value="" disabled>
+                                Chọn xã / phường...
+                            </option>
+                            {selectedDistrict?.wards?.map((ward) => (
+                                <option key={ward.id} value={ward.name}>
+                                    {ward.name}
+                                </option>
+                            ))}
+                        </select>
                         {errors.ward && <span>{errors.ward.message}</span>}
                     </div>
-
                     <div>
                         <label htmlFor="street">Địa chỉ cụ thể</label>
                         <input
