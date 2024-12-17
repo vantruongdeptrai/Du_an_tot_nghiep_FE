@@ -83,6 +83,8 @@ const CreateProduct: React.FC = () => {
             images: {},
             status: "1", // Trạng thái
         };
+        console.log(variantsData);
+        
 
         let hasError = false;
 
