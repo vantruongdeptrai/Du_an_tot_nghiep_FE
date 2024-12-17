@@ -150,47 +150,46 @@ const newArrivalData = [
 ];
 
 const savingZoneData = [
-  {
-    id: "saving-z-1",
-    imgSource: staticImages.home1,
-    title: "Túi xách Hawaii",
-    description: "Phù hợp với phong cách mùa hè",
-    discount: 50,
-    isLimited: false,
-},
-{
-    id: "saving-z-2",
-    imgSource: staticImages.home2,
-    title: "Ví đính bạc da",
-    description: "Thiết kế mới mỗi tuần",
-    discount: 40,
-    isLimited: true,
-},
-{
-    id: "saving-z-3",
-    imgSource: staticImages.home3,
-    title: "Túi xách công sở",
-    description: "Phong cách và sự tiện dụng",
-    discount: 50,
-    isLimited: false,
-},
-{
-    id: "saving-z-4",
-    imgSource: staticImages.home4,
-    title: "Túi xách thời trang",
-    description: "Sống trong phong cách và sự thoải mái",
-    discount: 20,
-    isLimited: false,
-},
-{
-    id: "saving-z-5",
-    imgSource: staticImages.home5,
-    title: "Túi xách dáng rộng",
-    description: "Phong cách đường phố đậm chất",
-    discount: 60,
-    isLimited: false,
-},
-
+    {
+        id: "saving-z-1",
+        imgSource: staticImages.home1,
+        title: "Túi xách Hawaii",
+        description: "Phù hợp với phong cách mùa hè",
+        discount: 50,
+        isLimited: false,
+    },
+    {
+        id: "saving-z-2",
+        imgSource: staticImages.home2,
+        title: "Ví đính bạc da",
+        description: "Thiết kế mới mỗi tuần",
+        discount: 40,
+        isLimited: true,
+    },
+    {
+        id: "saving-z-3",
+        imgSource: staticImages.home3,
+        title: "Túi xách công sở",
+        description: "Phong cách và sự tiện dụng",
+        discount: 50,
+        isLimited: false,
+    },
+    {
+        id: "saving-z-4",
+        imgSource: staticImages.home4,
+        title: "Túi xách thời trang",
+        description: "Sống trong phong cách và sự thoải mái",
+        discount: 20,
+        isLimited: false,
+    },
+    {
+        id: "saving-z-5",
+        imgSource: staticImages.home5,
+        title: "Túi xách dáng rộng",
+        description: "Phong cách đường phố đậm chất",
+        discount: 60,
+        isLimited: false,
+    },
 ];
 
 const products = [
@@ -430,10 +429,10 @@ const footerData = [
         id: "f_location",
         title: "Location",
         lists: [
-          { text: "Tsupport@euphoria.in" },
-          { text: "số 299 nguyễn cao, suối hoa, Bắc Ninh" },
-          { text: "Thành phố Bắc Ninh, Việt Nam" },
-          { text: "Số điện thoại: +000 999 8888" },
+            { text: "Tsupport@euphoria.in" },
+            { text: "số 299 nguyễn cao, suối hoa, Bắc Ninh" },
+            { text: "Thành phố Bắc Ninh, Việt Nam" },
+            { text: "Số điện thoại: +000 999 8888" },
         ],
     },
 ];
@@ -806,6 +805,165 @@ const socialLinksData = [
     },
 ];
 
+const provinces = [
+    {
+        id: "1",
+        name: "Hà Nội",
+        districts: [
+            {
+                id: "1.1",
+                name: "Quận Ba Đình",
+                wards: [
+                    { id: "1.1.1", name: "Phường Cống Vị" },
+                    { id: "1.1.2", name: "Phường Điện Biên" },
+                    { id: "1.1.3", name: "Phường Ngọc Hà" },
+                ],
+            },
+            {
+                id: "1.2",
+                name: "Quận Hoàn Kiếm",
+                wards: [
+                    { id: "1.2.1", name: "Phường Hàng Bạc" },
+                    { id: "1.2.2", name: "Phường Hàng Bài" },
+                    { id: "1.2.3", name: "Phường Cửa Đông" },
+                ],
+            },
+            {
+                id: "1.3",
+                name: "Quận Thanh Xuân",
+                wards: [
+                    { id: "1.3.1", name: "Phường Nhân Chính" },
+                    { id: "1.3.2", name: "Phường Thượng Đình" },
+                ],
+            },
+        ],
+    },
+    {
+        id: "2",
+        name: "TP. Hồ Chí Minh",
+        districts: [
+            {
+                id: "2.1",
+                name: "Quận 1",
+                wards: [
+                    { id: "2.1.1", name: "Phường Bến Nghé" },
+                    { id: "2.1.2", name: "Phường Bến Thành" },
+                    { id: "2.1.3", name: "Phường Đa Kao" },
+                ],
+            },
+            {
+                id: "2.2",
+                name: "Quận 3",
+                wards: [
+                    { id: "2.2.1", name: "Phường Võ Thị Sáu" },
+                    { id: "2.2.2", name: "Phường Nguyễn Thị Minh Khai" },
+                ],
+            },
+            {
+                id: "2.3",
+                name: "Quận 5",
+                wards: [
+                    { id: "2.3.1", name: "Phường 1" },
+                    { id: "2.3.2", name: "Phường 2" },
+                ],
+            },
+        ],
+    },
+    {
+        id: "3",
+        name: "Vĩnh Phúc",
+        districts: [
+            {
+                id: "3.1",
+                name: "TP. Vĩnh Yên",
+                wards: [
+                    { id: "3.1.1", name: "Phường Định Trung" },
+                    { id: "3.1.2", name: "Phường Khai Quang" },
+                    { id: "3.1.3", name: "Phường Tích Sơn" },
+                ],
+            },
+            {
+                id: "3.2",
+                name: "Huyện Bình Xuyên",
+                wards: [
+                    { id: "3.2.1", name: "Xã Sơn Lôi" },
+                    { id: "3.2.2", name: "Xã Quất Lưu" },
+                    { id: "3.2.3", name: "Xã Trung Mỹ" },
+                ],
+            },
+            {
+                id: "3.3",
+                name: "Huyện Lập Thạch",
+                wards: [
+                    { id: "3.3.1", name: "Xã Tân Lập" },
+                    { id: "3.3.2", name: "Xã Hoàng Lâu" },
+                    { id: "3.3.3", name: "Xã Tân Phú" },
+                ],
+            },
+        ],
+    },
+    {
+        id: "4",
+        name: "Bắc Ninh",
+        districts: [
+            {
+                id: "4.1",
+                name: "TP. Bắc Ninh",
+                wards: [
+                    { id: "4.1.1", name: "Phường Suối Hoa" },
+                    { id: "4.1.2", name: "Phường Đại Phúc" },
+                ],
+            },
+            {
+                id: "4.2",
+                name: "Huyện Tiên Du",
+                wards: [
+                    { id: "4.2.1", name: "Xã Tiên Sơn" },
+                    { id: "4.2.2", name: "Xã Hoàn Sơn" },
+                ],
+            },
+            {
+                id: "4.3",
+                name: "Huyện Quế Võ",
+                wards: [
+                    { id: "4.3.1", name: "Xã Phương Liễu" },
+                    { id: "4.3.2", name: "Xã Xuân Lâm" },
+                ],
+            },
+        ],
+    },
+    {
+        id: "5",
+        name: "Thái Nguyên",
+        districts: [
+            {
+                id: "5.1",
+                name: "TP. Thái Nguyên",
+                wards: [
+                    { id: "5.1.1", name: "Phường Quang Trung" },
+                    { id: "5.1.2", name: "Phường Túc Duyên" },
+                ],
+            },
+            {
+                id: "5.2",
+                name: "Huyện Phú Lương",
+                wards: [
+                    { id: "5.2.1", name: "Xã Phú Đô" },
+                    { id: "5.2.2", name: "Xã Động Đạt" },
+                ],
+            },
+            {
+                id: "5.3",
+                name: "Huyện Đồng Hỷ",
+                wards: [
+                    { id: "5.3.1", name: "Xã Tân Lập" },
+                    { id: "5.3.2", name: "Xã Lương Sơn" },
+                ],
+            },
+        ],
+    },
+];
+
 export {
     products,
     cartItems,
@@ -832,4 +990,5 @@ export {
     recentViewedData,
     cardsData,
     socialLinksData,
+    provinces,
 };

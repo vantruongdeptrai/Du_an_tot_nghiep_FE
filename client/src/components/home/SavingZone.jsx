@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { Container, Section } from "../../styles/styles";
 import Title from "../common/Title";
-import { savingZoneData } from "../../data/data";
 import { BaseLinkOutlineWhite } from "../../styles/button";
 import { breakpoints } from "../../styles/themes/default";
 import useCategory from "../../hooks/useCategory";
@@ -116,7 +115,7 @@ const SavingZone = () => {
             <Container>
                 <Title titleText={"Ưu đãi giảm giá"} />
                 <ProductGridWrapper className="grid">
-                    {categories?.map((savingZone) => {
+                    {categories?.slice(0, 5).map((savingZone) => {
                         return (
                             <ProductCardOverlayWrapper className="product-card-overlay text-white" key={savingZone.id}>
                                 <img src={savingZone.image_url} className="object-fit-cover" alt="" />
@@ -128,13 +127,15 @@ const SavingZone = () => {
                                     )}
                                     <h4 className="info-title font-semibold">{savingZone?.name}</h4>
                                     <p className="info-text text-base">Phù hợp với phong cách mùa hè</p>
-                                    <p className="discount-text text-bold text-xxl uppercase">
-                                        Giảm 20%
-                                    </p>
+                                    <p className="discount-text text-bold text-xxl uppercase">Giảm 20%</p>
                                     <div className="info-arrow flex items-center justify-center text-xxl">
                                         <i className="bi bi-arrow-down"></i>
                                     </div>
-                                    <BaseLinkOutlineWhite as={BaseLinkOutlineWhite} to={`/product/${savingZone.slug}`} className="uppercase">
+                                    <BaseLinkOutlineWhite
+                                        as={BaseLinkOutlineWhite}
+                                        to={`/product/${savingZone.slug}`}
+                                        className="uppercase"
+                                    >
                                         Mua ngay
                                     </BaseLinkOutlineWhite>
                                 </div>
