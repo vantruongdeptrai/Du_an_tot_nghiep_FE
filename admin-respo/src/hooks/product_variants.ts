@@ -58,15 +58,15 @@ const useProductVariant = () => {
                 formData.append(`prices[${key}]`, value.toString());
             }
 
-            for (const [key, value] of Object.entries(data.prices)) {
+            for (const [key, value] of Object.entries(data.sale_prices)) {
                 formData.append(`sale_prices[${key}]`, value.toString());
             }
 
-            for (const [key, value] of Object.entries(data.prices)) {
+            for (const [key, value] of Object.entries(data.sale_starts)) {
                 formData.append(`sale_starts[${key}]`, value.toString());
             }
 
-            for (const [key, value] of Object.entries(data.prices)) {
+            for (const [key, value] of Object.entries(data.sale_ends)) {
                 formData.append(`sale_ends[${key}]`, value.toString());
             }
 

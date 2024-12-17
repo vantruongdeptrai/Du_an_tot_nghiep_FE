@@ -174,7 +174,7 @@ const AccountScreen = () => {
                                 />
                                 {/* Trường ảnh đại diện */}
                                 <FormElement className="form-elem">
-                                    <label className="form-label font-semibold text-base">Ảnh cá nhân</label>
+                                    {/* <label className="form-label font-semibold text-base">Ảnh cá nhân</label> */}
                                     {/* <div style={{ marginTop: 10 }} className=" flex items-center">
                                         <img
                                             src={

@@ -292,6 +292,7 @@ const Header = () => {
                                     <Link to="/order">Đơn hàng của tôi</Link>
                                     <Link to="/cart">Giỏ hàng của tôi</Link>
                                     <Link to="/account">Hồ sơ cá nhân</Link>
+                                    <Link to="/change_password">Đổi mật khẩu</Link>
                                     <Link to="/sign_in" onClick={() => handleLogout()}>
                                         Đăng xuất
                                     </Link>

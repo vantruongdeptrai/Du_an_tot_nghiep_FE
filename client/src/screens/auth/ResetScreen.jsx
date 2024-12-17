@@ -1,4 +1,3 @@
-
 import styled from "styled-components";
 import { FormGridWrapper, FormTitle } from "../../styles/form_grid";
 import { Container } from "../../styles/styles";
@@ -11,43 +10,7 @@ import apiClient from "../../api/axiosConfig";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 
-
-const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  // Xử lý thay đổi giá trị input
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  // Xử lý gửi yêu cầu quên mật khẩu
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setLoading(true);
-    setError(""); // Reset lỗi
-    setSuccess(""); // Reset thông báo thành công
-
-    try {
-      // Gửi email yêu cầu quên mật khẩu
-      const response = await axios.post(
-        "http://localhost:8000/api/forgot-password",
-        { email }
-      );
-
-      // Hiển thị thông báo thành công
-      setSuccess("Mật khẩu mới dã được gửi về mail của bạn");
-    } catch (err) {
-      // Xử lý lỗi nếu có
-      setError("Xảy ra lỗi");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+const ResetScreenWrapper = styled.div``;
 
 const ResetScreen = () => {
     const navigate = useNavigate();
@@ -117,4 +80,4 @@ const ResetScreen = () => {
     );
 };
 
-export default ForgotPassword;
+export default ResetScreen;
