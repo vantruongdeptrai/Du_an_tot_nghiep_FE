@@ -171,7 +171,7 @@ const ModalComment = ({ product, isOpen, onClose, onConfirm }) => {
 
     const ratingValue = watch("rating");
     console.log(ratingValue);
-     // Theo dõi giá trị rating
+    // Theo dõi giá trị rating
 
     const onSubmit = async (data) => {
         const productId = product?.id;
@@ -187,7 +187,6 @@ const ModalComment = ({ product, isOpen, onClose, onConfirm }) => {
             handleClose();
         } catch (error) {
             console.log(error);
-            
         }
     };
 
@@ -217,22 +216,19 @@ const ModalComment = ({ product, isOpen, onClose, onConfirm }) => {
                     <label htmlFor="">Đánh giá sao</label>
                     <StarContainer>
                         <div className="rate">
-                            {[5, 4, 3, 2, 1].map((star) => {
-                                console.log(star); // Log giá trị của star tại mỗi vòng lặp
-                                return (
-                                    <React.Fragment key={star}>
-                                        <input
-                                            {...register("rating", { required: "Chưa chọn số sao!" })}
-                                            type="radio"
-                                            id={`star${star}`}
-                                            value={star}
-                                        />
-                                        <label htmlFor={`star${star}`} title={`${star} sao`}>
-                                            {star} sao
-                                        </label>
-                                    </React.Fragment>
-                                );
-                            })}
+                            {[5, 4, 3, 2, 1].map((star) => (
+                                <React.Fragment key={star}>
+                                    <input
+                                        {...register("rating", { required: "Chưa chọn số sao!" })}
+                                        type="radio"
+                                        id={`star${star}`}
+                                        value={star}
+                                    />
+                                    <label htmlFor={`star${star}`} title={`${star} sao`}>
+                                        {star} sao
+                                    </label>
+                                </React.Fragment>
+                            ))}
                         </div>
                     </StarContainer>
                     {errors.rating && <span>{errors.rating.message}</span>}

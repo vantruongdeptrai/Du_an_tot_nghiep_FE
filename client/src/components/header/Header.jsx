@@ -11,6 +11,8 @@ import { toggleSidebar } from "../../redux/slices/sidebarSlice";
 import { useNavigate } from "react-router-dom";
 import useSearch from "../../../hooks/search";
 import useCart from "../../hooks/useCart";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 const NavigationAndSearchWrapper = styled.div`
     column-gap: 20px;
@@ -170,12 +172,11 @@ const UserDropdownWrapper = styled.div`
     }
 `;
 
-
 const Header = () => {
     const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { keyword, setKeyword } = useSearch();
+    const [keyword, setKeyword] = useState("");
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const userId = user?.id;
     const { carts = { cart: [] } } = useCart(userId);
@@ -185,6 +186,11 @@ const Header = () => {
     const cartLocalStorage = JSON.parse(localStorage.getItem("cart"));
     const cartLength = user ? filteredCartItems?.length : cartLocalStorage?.length;
     const handleSubmit = (e) => {
+        if(!keyword){
+            toast.warn("Hãy nhập kết quả tìm kiếm!");
+            e.preventDefault();
+            return;
+        }
         e.preventDefault();
         navigate(`/search?name=${keyword}`);
     };
@@ -238,8 +244,20 @@ const Header = () => {
                                     type="text"
                                     className="input-control w-full"
                                     placeholder="Tìm kiếm tên sản phẩm"
-                                    onChange={(e) => setKeyword(e.target.value)}
+                                    onChange={(e) => setKeyword(e.target.value.trim())}
                                 />
+                                <button
+                                    type="submit"
+                                    style={{
+                                        color: "white",
+                                        fontWeight: "bold",
+                                        width: 150,
+                                        backgroundColor: `${defaultTheme.color_sea_green}`,
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    Tìm kiếm
+                                </button>
                             </InputGroupWrapper>
                         </form>
                     </NavigationAndSearchWrapper>
@@ -254,13 +272,16 @@ const Header = () => {
                             <img src={staticImages.heart} alt="" />
                         </Link> */}
                         <UserDropdownWrapper>
-                            <button className="flex" style={{alignItems: "center" ,border: "1px solid #ccc", padding: 3, borderRadius: 50}} onClick={handleUserClick}>
+                            <button
+                                className="flex"
+                                style={{ alignItems: "center", border: "1px solid #ccc", padding: 3, borderRadius: 50 }}
+                                onClick={handleUserClick}
+                            >
                                 <img
-                                    style={{width: "25px", height: "25px", objectFit: "contain", }}
+                                    style={{ width: "25px", height: "25px", objectFit: "contain" }}
                                     src={
                                         user
                                             ? "https://chiemtaimobile.vn/images/companies/1/%E1%BA%A2nh%20Blog/avatar-facebook-dep/Anh-avatar-hoat-hinh-de-thuong-xinh-xan.jpg?1704788263223"
-                                              
                                             : staticImages.user
                                     }
                                     alt="user avatar"
@@ -284,7 +305,7 @@ const Header = () => {
                                 location.pathname === "/cart" ? "active" : ""
                             } inline-flex items-center justify-center`}
                         >
-                            <img style={{height: "25px" , width: "25px"}} src={staticImages.cart} alt="" />
+                            <img style={{ height: "25px", width: "25px" }} src={staticImages.cart} alt="" />
                             <span
                                 style={{
                                     position: "absolute",

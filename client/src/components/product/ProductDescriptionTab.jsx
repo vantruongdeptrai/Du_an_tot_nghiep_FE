@@ -166,7 +166,8 @@ const ProductDescriptionTab = ({ product_id, user }) => {
     };
 
     const commentUser = comments ? comments.filter((comment) => comment.product_id == product_id) : [];
-
+    console.log(commentUser);
+    
     // const { register, handleSubmit } = useForm();
 
     // const onSubmit = (data) => {
@@ -255,7 +256,7 @@ const ProductDescriptionTab = ({ product_id, user }) => {
                                                 >
                                                     <div className="flex" style={{ gap: 20, alignItems: "center" }}>
                                                         <div style={{ fontSize: 16, fontWeight: 600 }}>
-                                                            {user?.name}
+                                                            {comment.user?.name}
                                                         </div>
                                                         <StarContainer>
                                                             <div className="rate">

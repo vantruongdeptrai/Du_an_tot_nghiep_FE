@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import apiClient from "../src/api/axiosConfig";
-import { useState } from "react";
 
 // Hàm fetch dữ liệu tìm kiếm
 const fetchSearchResults = async (keyword) => {
@@ -15,8 +14,7 @@ const fetchSearchResults = async (keyword) => {
     }
 };
 
-const useSearch = () => {
-    const [keyword, setKeyword] = useState("");
+const useSearch = (keyword) => {
 
     // Sử dụng React Query để gọi API và nhận dữ liệu tìm kiếm
     const { data: results, isLoading, error } = useQuery(
@@ -29,7 +27,6 @@ const useSearch = () => {
 
     return {
         keyword,
-        setKeyword,
         results,
         isLoading,
         error,

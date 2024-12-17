@@ -218,7 +218,7 @@ const ProductListPage = () => {
                                                 ? product.name.substring(0, 20) + "..."
                                                 : product.name}
                                         </h3>
-                                        <p className="product-price">
+                                        <p style={{color: `${defaultTheme.color_sea_green}`}} className="product-price">
                                             Giá:{" "}
                                             {minPrice !== maxPrice ? (
                                                 <>

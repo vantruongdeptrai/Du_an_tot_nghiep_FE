@@ -39,6 +39,7 @@ const DetailsContent = styled.div`
 const ProductDetailsWrapper = styled.div`
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 24px;
+    height: 500px;
 
     @media (max-width: ${breakpoints.sm}) {
         padding: 16px;
@@ -471,7 +472,7 @@ const ProductDetailsScreen = () => {
                     <ProductPreview previewImagesVariant={variants} previewImages={product?.image_url || []} />
                     <ProductDetailsWrapper>
                         <h2 className="prod-title">{product?.name}</h2>
-
+                        
                         {/* Hiển thị size và màu */}
                         {size.length > 0 && (
                             <ProductSizeWrapper>

@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { breakpoints, defaultTheme } from "../../styles/themes/default";
 import ProductFilter from "../../components/product/ProductFilter";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import useSearch from "../../../hooks/search";
 import formatCurrency from "../../utils/formatUtils";
+import Loader from "../../components/loader/loader";
+import { useQuery } from "@tanstack/react-query";
+import useCategory from "../../hooks/useCategory";
 
 const ProductsContent = styled.div`
     display: grid;
@@ -120,14 +123,17 @@ const ProductsContentRight = styled.div`
 `;
 
 const SearchResult = () => {
-    const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
+    const { categories } = useCategory();
     // State để lưu các bộ lọc
-    const [minRange, setMinRange] = useState(0);
-    const [maxRange, setMaxRange] = useState(2000000);
-    const [selectedColors, setSelectedColors] = useState([]);
-    const [selectedSizes, setSelectedSizes] = useState([]);
-    const { keyword, setKeyword, results } = useSearch();
+    // State để lưu các bộ lọc trong một đối tượng duy nhất
+    const [filters, setFilters] = useState({
+        minRange: 0,
+        maxRange: 2000000,
+        selectedColors: [],
+        selectedSizes: [],
+    });
+    const [keyword, setKeyword] = useState("");
+    const { results, isLoading } = useSearch(keyword);
     console.log(keyword);
 
     const location = useLocation(); // Lấy đối tượng location
@@ -144,106 +150,62 @@ const SearchResult = () => {
     const fetchFilteredProducts = async () => {
         try {
             const response = await fetch(
-                `http://127.0.0.1:8000/api/products/filter?min_price=${minRange}&max_price=${maxRange}}`
+                `http://127.0.0.1:8000/api/filter?min_price=${filters.minRange}&max_price=${filters.maxRange}&color_id=${filters.selectedColors}&size_id=${filters.selectedSizes}`
             );
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
             const data = await response.json();
-            setProducts(data);
+            return data;
         } catch (error) {
             console.error("Error fetching filtered products:", error);
+            return [];
         }
     };
 
-    useEffect(() => {
-        const fetchProductsAndCategories = async () => {
-            try {
-                const productsResponse = await fetch("http://127.0.0.1:8000/api/products");
-                const productsData = await productsResponse.json();
-                setProducts(productsData);
-
-                const categoriesResponse = await fetch("http://127.0.0.1:8000/api/categories");
-                const categoriesData = await categoriesResponse.json();
-                setCategories(categoriesData.categories);
-            } catch (error) {
-                console.error("Error fetching products and categories:", error);
-            }
-        };
-
-        fetchProductsAndCategories();
-    }, []);
-
-    useEffect(() => {
-        fetchFilteredProducts(); // Gọi hàm lọc sản phẩm mỗi khi bộ lọc thay đổi
-    }, [minRange, maxRange, selectedColors, selectedSizes]);
+    const { data = [] } = useQuery(
+        ["filteredProducts", filters.minRange, filters.maxRange, filters.selectedColors, filters.selectedSizes],
+        fetchFilteredProducts,
+        {
+            keepPreviousData: true,
+            refetchOnWindowFocus: false,
+        }
+    );
 
     const getCategoryById = (categoryId) => {
-        return categories.find((category) => category.id == categoryId);
+        return categories ? categories.find((category) => category.id == categoryId) : undefined;
+    };
+    const { slug } = useParams();
+    const getProductByCategory = slug ? data.filter((product) => product.category.slug === slug) : data;
+    const calculateMinMaxPrices = (productVariants) => {
+        const prices = productVariants
+            .map((variant) => parseFloat(variant.price || "0"))
+            .filter((price) => !isNaN(price));
+        const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+        const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+        return { minPrice, maxPrice };
     };
 
-    const handleAddToCart = async (productId) => {
-        const user = JSON.parse(localStorage.getItem("userInfo")); // Parse userInfo từ localStorage
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const existingProduct = cart.find((item) => item.product_id === productId);
-
-        if (existingProduct) {
-            existingProduct.quantity += 1; // Tăng số lượng sản phẩm trong localStorage
-        } else {
-            const productToAdd = products.find((product) => product.id === productId);
-            if (productToAdd) {
-                cart.push({
-                    product_id: productToAdd.id,
-                    name: productToAdd.name,
-                    price: productToAdd.price,
-                    quantity: 1,
-                });
-            }
-        }
-
-        if (!user) {
-            localStorage.setItem("cart", JSON.stringify(cart));
-            alert("Sản phẩm đã được thêm vào giỏ hàng (local storage)!");
-        } else {
-            try {
-                const response = await fetch("http://127.0.0.1:8000/api/cart/add", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                    body: JSON.stringify({
-                        user_id: user.id,
-                        product_id: productId,
-                        quantity: existingProduct ? existingProduct.quantity : 1, // Không cộng thêm lần nữa
-                        price: products.find((product) => product.id === productId).price,
-                    }),
-                });
-
-                if (response.ok) {
-                    alert("Sản phẩm đã được thêm vào giỏ hàng (database)!");
-                } else {
-                    alert("Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng.");
-                }
-            } catch (error) {
-                console.error("Lỗi khi gửi giỏ hàng lên server:", error);
-                alert("Lỗi kết nối đến server.");
-            }
-        }
-    };
+    if (isLoading) {
+        return (
+            <p>
+                <Loader />
+            </p>
+        );
+    }
 
     return (
         <ProductsContent>
             <ProductsContentLeft>
                 <ProductFilter
-                    minRange={minRange}
-                    setMinRange={setMinRange}
-                    maxRange={maxRange}
-                    setMaxRange={setMaxRange}
-                    selectedColors={selectedColors}
-                    setSelectedColors={setSelectedColors}
-                    selectedSizes={selectedSizes}
-                    setSelectedSizes={setSelectedSizes}
+                    minRange={filters.minRange}
+                    setMinRange={(value) => setFilters({ ...filters, minRange: value })}
+                    maxRange={filters.maxRange}
+                    setMaxRange={(value) => setFilters({ ...filters, maxRange: value })}
+                    selectedColors={filters.selectedColors}
+                    setSelectedColors={(colors) => setFilters({ ...filters, selectedColors: colors })}
+                    selectedSizes={filters.selectedSizes}
+                    setSelectedSizes={(sizes) => setFilters({ ...filters, selectedSizes: sizes })}
                 />
             </ProductsContentLeft>
 
@@ -255,6 +217,7 @@ const SearchResult = () => {
                 <div className="product-card-list">
                     {results?.map((product) => {
                         const category = getCategoryById(product.category_id);
+                        const { minPrice, maxPrice } = calculateMinMaxPrices(product.product_variants);
                         return (
                             <Link to={`/product/details/${product.id}`} key={product.id}>
                                 <div key={product.id} className="product-card">
@@ -264,8 +227,21 @@ const SearchResult = () => {
                                         className="product-image"
                                     />
                                     <div className="product-info">
-                                        <h3 className="product-name">{product.name}</h3>
-                                        <p className="product-price">{formatCurrency(product.price)}</p>
+                                        <h3 className="product-name">
+                                            {product.name.length > 20
+                                                ? product.name.substring(0, 20) + "..."
+                                                : product.name}
+                                        </h3>
+                                        <p style={{color: `${defaultTheme.color_sea_green}`}} className="product-price">
+                                            Giá:{" "}
+                                            {minPrice !== maxPrice ? (
+                                                <>
+                                                    {formatCurrency(minPrice)} - {formatCurrency(maxPrice)}
+                                                </>
+                                            ) : (
+                                                formatCurrency(minPrice)
+                                            )}
+                                        </p>
                                         {category && <p className="category-info">Danh mục: {category.name}</p>}
                                     </div>
                                 </div>
