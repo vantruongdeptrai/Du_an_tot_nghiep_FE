@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { Category, categoryInput } from "../api/categories/types";
 import { useParams } from "react-router-dom";
@@ -48,7 +48,7 @@ const useCategory = () => {
             queryClient.invalidateQueries(["categories"]);
             toast.success("Thêm mới danh mục thành công.");
         } catch (err) {
-            toast.error("Lỗi cập nhất danh mục");
+            toast.error("Lỗi thêm danh mục danh mục");
             console.log(err);
         }
     };
@@ -71,9 +71,13 @@ const useCategory = () => {
 
             toast.success("Cập nhật danh mục thành công.");
         } catch (error) {
-
-            toast.error("Lỗi cập nhất danh mục");
-
+            if (error instanceof AxiosError) {
+                // Khi lỗi là một AxiosError
+                toast.error(error.response?.data.message);
+            } else {
+                // Xử lý các lỗi không phải là AxiosError
+                toast.error("Something went wrong!");
+            }
             console.error(error);
         }
     };

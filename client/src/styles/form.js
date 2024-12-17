@@ -35,13 +35,13 @@ export const Textarea = styled.textarea`
 `;
 
 export const InputGroupWrapper = styled.div`
-    min-width: 400px;
+    min-width: 350px;
     width: 100%;
     border-radius: 4px;
-    display: grid;
+    display: flex;
     align-items: stretch;
     grid-template-columns: 40px auto;
-    gap: 12px;
+    gap: 10px;
     background-color: ${defaultTheme.color_whitesmoke};
 
     .input-icon {
