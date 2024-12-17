@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { HiOutlineTrash } from "react-icons/hi";
 import { toast } from "react-toastify";
 
-// Định nghĩa kiểu dữ liệu cho comment, người dùng, và sản phẩm
+// Define types for comment, user, and product
 interface Comment {
   id: number;
   product_id: number;
@@ -34,7 +34,7 @@ const getProductName = (productId: number, products: Product[]) => {
   return product ? product.name : "Không rõ";
 };
 
-// Hàm để hiển thị sao dựa trên rating
+// Render stars based on rating
 const renderStars = (rating: number) => {
   const stars = [];
   for (let i = 0; i < 5; i++) {
@@ -60,10 +60,16 @@ const ReviewsTable = () => {
   const [reviews, setReviews] = useState<Comment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [replyContent, setReplyContent] = useState<string>(""); // Lưu nội dung trả lời
+  const [replyContent, setReplyContent] = useState<string>(""); // Store reply content
   const [replyingCommentId, setReplyingCommentId] = useState<number | null>(
     null
-  ); // Lưu ID của bình luận đang trả lời
+  ); // Store the ID of the comment being replied to
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 5;
+  const totalReviews = reviews.length;
+  const totalPages = Math.ceil(totalReviews / reviewsPerPage);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,7 +97,7 @@ const ReviewsTable = () => {
     fetchData();
   }, []);
 
-  // Hàm xử lý xóa bình luận
+  // Handle delete comment
   const handleDelete = async (id: number) => {
     if (window.confirm("Bạn có chắc chắn muốn xóa bình luận này?")) {
       try {
@@ -119,7 +125,7 @@ const ReviewsTable = () => {
     }
   };
 
-  // Hàm xử lý gửi trả lời
+  // Handle reply to comment
   const handleReply = async () => {
     if (!replyContent || replyingCommentId === null) return;
 
@@ -137,8 +143,8 @@ const ReviewsTable = () => {
 
       if (response.ok) {
         alert("Trả lời thành công!");
-        setReplyContent(""); // Xóa nội dung sau khi gửi
-        setReplyingCommentId(null); // Hủy trạng thái đang trả lời
+        setReplyContent(""); // Clear the content after reply
+        setReplyingCommentId(null); // Reset reply status
       } else {
         alert("Không thể gửi trả lời.");
         console.log("Lỗi:", await response.json());
@@ -147,6 +153,24 @@ const ReviewsTable = () => {
       console.error("Lỗi khi trả lời:", error);
       alert("Đã xảy ra lỗi khi trả lời bình luận.");
     }
+  };
+
+  // Get current reviews based on the current page
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+  const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
+
+  // Pagination controls
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -182,7 +206,7 @@ const ReviewsTable = () => {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">
-          {reviews.map((item) => (
+          {currentReviews.map((item) => (
             <tr key={item.id} className="hover:bg-gray-50 transition-colors">
               <td className="py-4 px-4 text-center">
                 <div className="text-gray-800 font-medium">
@@ -214,18 +238,50 @@ const ReviewsTable = () => {
                   >
                     Xóa
                   </button>
-                  {/* <button
-                    onClick={() => setReplyingCommentId(item.id)}
-                    className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-                  >
-                    Trả lời
-                  </button> */}
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {/* Pagination controls */}
+      <div className="flex justify-center mt-4">
+        <nav aria-label="Page navigation example">
+          <ul className="inline-flex -space-x-px text-sm">
+            <li>
+              <button
+                onClick={handlePreviousPage}
+                className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                disabled={currentPage === 1}
+              >
+                Trước
+              </button>
+            </li>
+            {[...Array(totalPages)].map((_, index) => (
+              <li key={index}>
+                <button
+                  onClick={() => handlePageChange(index + 1)}
+                  className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${
+                    currentPage === index + 1 ? "text-blue-600 bg-blue-50" : ""
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+            <li>
+              <button
+                onClick={handleNextPage}
+                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                disabled={currentPage === totalPages}
+              >
+                Sau
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
 
       {/* Form trả lời */}
       {replyingCommentId !== null && (

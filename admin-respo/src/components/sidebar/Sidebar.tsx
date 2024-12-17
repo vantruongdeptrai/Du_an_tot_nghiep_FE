@@ -148,13 +148,13 @@ const Sidebar = () => {
             <span className="text-lg">Đánh giá</span>
           </NavLink>
 
-          <div
+          {/* <div
             onClick={() => setIsAuthOpen(() => !isAuthOpen)}
             className="block flex items-center self-stretch gap-4 py-4 px-6 dark:bg-blackPrimary dark:hover:bg-blackSecondary cursor-pointer max-xl:py-3 dark:text-whiteSecondary hover:bg-white text-blackPrimary bg-whiteSecondary"
           >
             <HiUserGroup className="text-xl" />
             <span className="text-lg">Xác thực</span>
-          </div>
+          </div> */}
           {isAuthOpen && (
             <div>
               <NavLink
